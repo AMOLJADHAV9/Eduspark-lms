@@ -34,6 +34,23 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(express.json());
+
+// Simple root route for testing
+app.get('/', (req, res) => {
+  res.json({
+    message: 'LMS Backend API is running',
+    status: 'success',
+    timestamp: new Date().toISOString(),
+    endpoints: {
+      health: '/api/health',
+      auth: '/api/auth',
+      courses: '/api/courses',
+      liveClasses: '/api/live-classes',
+      quizzes: '/api/quizzes',
+      assignments: '/api/assignments'
+    }
+  });
+});
 app.use('/api/auth', authRoutes);
 app.use('/api/courses', courseRoutes);
 app.use('/api/lectures', lectureRoutes);
