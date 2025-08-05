@@ -1,0 +1,317 @@
+import React, { useState, useEffect } from 'react';
+import {
+  Box,
+  Flex,
+  Heading,
+  Text,
+  SimpleGrid,
+  Stat,
+  StatLabel,
+  StatNumber,
+  StatHelpText,
+  Card,
+  CardBody,
+  CardHeader,
+  VStack,
+  HStack,
+  Badge,
+  Button,
+  useToast,
+  Spinner,
+  Center,
+  Progress,
+  Avatar,
+  AvatarGroup,
+  Icon,
+  Divider
+} from '@chakra-ui/react';
+import {
+  FaBook,
+  FaUsers,
+  FaVideo,
+  FaDollarSign,
+  FaStar,
+  FaPlay,
+  FaCalendarAlt,
+  FaChartLine,
+  FaGraduationCap,
+  FaComments,
+  FaFileAlt
+} from 'react-icons/fa';
+import { useAuth } from '../../context/AuthContext';
+import TeacherSidebar from '../../components/teacher/TeacherSidebar';
+import Navbar from '../../components/Navbar';
+
+const StatCard = ({ label, value, icon: IconComponent, color, helpText }) => (
+  <Card bg={`${color}.50`} borderLeft={`4px solid ${color}.500`}>
+    <CardBody>
+      <HStack justify="space-between">
+        <VStack align="start" spacing={1}>
+          <Text fontSize="sm" color="gray.600" fontWeight="medium">
+            {label}
+          </Text>
+          <Stat>
+            <StatNumber fontSize="2xl" color={`${color}.600`}>
+              {value}
+            </StatNumber>
+            {helpText && <StatHelpText color="gray.500">{helpText}</StatHelpText>}
+          </Stat>
+        </VStack>
+        <Icon as={IconComponent} color={`${color}.500`} boxSize={8} />
+      </HStack>
+    </CardBody>
+  </Card>
+);
+
+const TeacherDashboard = () => {
+  const { user, token } = useAuth();
+  const [dashboardData, setDashboardData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const toast = useToast();
+
+  useEffect(() => {
+    fetchDashboardData();
+  }, []);
+
+  const fetchDashboardData = async () => {
+    try {
+      const res = await fetch('/api/teacher/dashboard', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      if (!res.ok) {
+        throw new Error('Failed to fetch dashboard data');
+      }
+      
+      const data = await res.json();
+      setDashboardData(data);
+    } catch (error) {
+      console.error('Error fetching teacher dashboard data:', error);
+      // Set mock data for development
+      setDashboardData({
+        stats: {
+          totalCourses: 3,
+          totalStudents: 45,
+          totalEarnings: 1250,
+          averageRating: 4.8,
+          activeCourses: 2,
+          totalLectures: 24,
+          upcomingLiveClasses: 1,
+          totalAssignments: 12
+        },
+        recentCourses: [
+          {
+            id: 1,
+            title: 'JavaScript Fundamentals',
+            students: 25,
+            progress: 85,
+            rating: 4.9
+          },
+          {
+            id: 2,
+            title: 'React Development',
+            students: 18,
+            progress: 72,
+            rating: 4.7
+          },
+          {
+            id: 3,
+            title: 'Node.js Backend',
+            students: 12,
+            progress: 60,
+            rating: 4.6
+          }
+        ],
+        recentStudents: [
+          { id: 1, name: 'John Doe', course: 'JavaScript Fundamentals', progress: 85 },
+          { id: 2, name: 'Jane Smith', course: 'React Development', progress: 72 },
+          { id: 3, name: 'Mike Johnson', course: 'Node.js Backend', progress: 60 }
+        ]
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <>
+        <Navbar />
+        <Flex minH="100vh" bgGradient="linear(to-br, gray.900, teal.700)">
+          <TeacherSidebar />
+          <Box flex={1} p={8}>
+            <Center h="50vh">
+              <Spinner size="xl" color="teal.300" />
+            </Center>
+          </Box>
+        </Flex>
+      </>
+    );
+  }
+
+  return (
+    <>
+      <Navbar />
+      <Flex minH="100vh" bgGradient="linear(to-br, gray.900, teal.700)">
+        <TeacherSidebar />
+        <Box flex={1} p={8}>
+          <VStack spacing={8} align="stretch">
+            {/* Header */}
+            <Box
+              bg="rgba(255, 255, 255, 0.15)"
+              boxShadow="0 8px 32px 0 rgba(31, 38, 135, 0.37)"
+              backdropFilter="blur(8px)"
+              borderRadius="2xl"
+              border="1px solid rgba(255, 255, 255, 0.18)"
+              p={8}
+            >
+              <VStack spacing={4} align="start">
+                <Heading color="teal.300" fontSize="3xl" fontWeight="extrabold">
+                  Welcome back, {user?.name}!
+                </Heading>
+                <Text color="gray.100" fontSize="lg">
+                  Here's what's happening with your courses today
+                </Text>
+              </VStack>
+            </Box>
+
+            {/* Stats Grid */}
+            <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={6}>
+              <StatCard
+                label="Total Courses"
+                value={dashboardData?.stats?.totalCourses || 0}
+                icon={FaBook}
+                color="blue"
+                helpText="Active courses"
+              />
+              <StatCard
+                label="Total Students"
+                value={dashboardData?.stats?.totalStudents || 0}
+                icon={FaUsers}
+                color="green"
+                helpText="Enrolled students"
+              />
+              <StatCard
+                label="Total Earnings"
+                value={`$${dashboardData?.stats?.totalEarnings || 0}`}
+                icon={FaDollarSign}
+                color="purple"
+                helpText="This month"
+              />
+              <StatCard
+                label="Average Rating"
+                value={dashboardData?.stats?.averageRating || 0}
+                icon={FaStar}
+                color="yellow"
+                helpText="Student feedback"
+              />
+            </SimpleGrid>
+
+            {/* Recent Courses */}
+            <Card bg="rgba(255, 255, 255, 0.15)" backdropFilter="blur(8px)" borderRadius="xl">
+              <CardHeader>
+                <HStack justify="space-between">
+                  <Heading size="md" color="white">Recent Courses</Heading>
+                  <Button size="sm" colorScheme="teal" variant="outline">
+                    View All
+                  </Button>
+                </HStack>
+              </CardHeader>
+              <CardBody>
+                <VStack spacing={4} align="stretch">
+                  {dashboardData?.recentCourses?.map((course) => (
+                    <Box
+                      key={course.id}
+                      p={4}
+                      bg="rgba(255, 255, 255, 0.1)"
+                      borderRadius="lg"
+                      border="1px solid rgba(255, 255, 255, 0.2)"
+                    >
+                      <HStack justify="space-between" mb={3}>
+                        <VStack align="start" spacing={1}>
+                          <Text fontWeight="bold" color="white">
+                            {course.title}
+                          </Text>
+                          <HStack spacing={4}>
+                            <Text fontSize="sm" color="gray.300">
+                              {course.students} students
+                            </Text>
+                            <HStack spacing={1}>
+                              <Icon as={FaStar} color="yellow.400" boxSize={3} />
+                              <Text fontSize="sm" color="gray.300">
+                                {course.rating}
+                              </Text>
+                            </HStack>
+                          </HStack>
+                        </VStack>
+                        <Badge colorScheme="green" variant="solid">
+                          {course.progress}% Complete
+                        </Badge>
+                      </HStack>
+                      <Progress value={course.progress} colorScheme="teal" size="sm" />
+                    </Box>
+                  ))}
+                </VStack>
+              </CardBody>
+            </Card>
+
+            {/* Quick Actions */}
+            <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
+              <Card bg="rgba(255, 255, 255, 0.15)" backdropFilter="blur(8px)" borderRadius="xl">
+                <CardHeader>
+                  <Heading size="md" color="white">Quick Actions</Heading>
+                </CardHeader>
+                <CardBody>
+                  <VStack spacing={4} align="stretch">
+                    <Button leftIcon={<FaBook />} colorScheme="teal" variant="outline" size="lg">
+                      Create New Course
+                    </Button>
+                    <Button leftIcon={<FaVideo />} colorScheme="blue" variant="outline" size="lg">
+                      Schedule Live Class
+                    </Button>
+                    <Button leftIcon={<FaFileAlt />} colorScheme="purple" variant="outline" size="lg">
+                      Add Assignment
+                    </Button>
+                    <Button leftIcon={<FaComments />} colorScheme="orange" variant="outline" size="lg">
+                      Create Quiz
+                    </Button>
+                  </VStack>
+                </CardBody>
+              </Card>
+
+              <Card bg="rgba(255, 255, 255, 0.15)" backdropFilter="blur(8px)" borderRadius="xl">
+                <CardHeader>
+                  <Heading size="md" color="white">Recent Students</Heading>
+                </CardHeader>
+                <CardBody>
+                  <VStack spacing={4} align="stretch">
+                    {dashboardData?.recentStudents?.map((student) => (
+                      <HStack key={student.id} justify="space-between" p={3} bg="rgba(255, 255, 255, 0.1)" borderRadius="lg">
+                        <HStack spacing={3}>
+                          <Avatar size="sm" name={student.name} />
+                          <VStack align="start" spacing={1}>
+                            <Text fontWeight="bold" color="white" fontSize="sm">
+                              {student.name}
+                            </Text>
+                            <Text fontSize="xs" color="gray.300">
+                              {student.course}
+                            </Text>
+                          </VStack>
+                        </HStack>
+                        <Badge colorScheme="green" variant="solid">
+                          {student.progress}%
+                        </Badge>
+                      </HStack>
+                    ))}
+                  </VStack>
+                </CardBody>
+              </Card>
+            </SimpleGrid>
+          </VStack>
+        </Box>
+      </Flex>
+    </>
+  );
+};
+
+export default TeacherDashboard; 
