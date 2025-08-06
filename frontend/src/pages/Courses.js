@@ -23,6 +23,7 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import CourseSearch from '../components/CourseSearch';
+import { courseApi } from '../utils/api';
 
 const MotionBox = motion(Box);
 
@@ -42,12 +43,9 @@ const Courses = () => {
 
   const fetchCourses = async () => {
     try {
-      const response = await fetch('/api/courses');
-      if (response.ok) {
-        const data = await response.json();
-        setCourses(data);
-        setFilteredCourses(data);
-      }
+      const data = await courseApi.getAll();
+      setCourses(data);
+      setFilteredCourses(data);
     } catch (error) {
       console.error('Error fetching courses:', error);
     } finally {

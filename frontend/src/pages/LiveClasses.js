@@ -41,6 +41,7 @@ import { useAuth } from '../context/AuthContext';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import CreateLiveClassModal from '../components/CreateLiveClassModal';
+import { liveClassApi } from '../utils/api';
 
 const MotionBox = motion(Box);
 
@@ -62,11 +63,8 @@ const LiveClasses = () => {
 
   const fetchLiveClasses = async () => {
     try {
-      const response = await fetch('/api/live-classes');
-      if (response.ok) {
-        const data = await response.json();
-        setLiveClasses(data);
-      }
+      const data = await liveClassApi.getAll();
+      setLiveClasses(data);
     } catch (error) {
       console.error('Error fetching live classes:', error);
     } finally {
