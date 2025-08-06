@@ -1,5 +1,5 @@
 // API utility for handling all API calls
-const API_BASE_URL = process.env.REACT_APP_API_URL || '';
+const API_BASE_URL = 'https://lms-yoh3.onrender.com';
 
 // Helper function to get full API URL
 export const getApiUrl = (endpoint) => {
