@@ -25,6 +25,8 @@ const analyticsRoutes = require('./routes/analytics');
 app.use(cors({
   origin: [
     'https://lms-frontend.vercel.app',
+    'https://lms23.vercel.app',
+    'https://lms-drab-six.vercel.app', // Added current Vercel deployment
     'https://yourdomain.com',
     'https://www.yourdomain.com',
     'http://localhost:3000' // for development
