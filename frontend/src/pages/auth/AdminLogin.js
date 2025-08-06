@@ -16,6 +16,7 @@ import {
 } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { authApi } from '../../utils/api';
 
 const AdminLogin = () => {
   const [formData, setFormData] = useState({
@@ -41,38 +42,20 @@ const AdminLogin = () => {
     
     setLoading(true);
     try {
-      const response = await fetch('/api/auth/admin/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          username: formData.username,
-          password: formData.password,
-        }),
+      const data = await authApi.adminLogin({
+        username: formData.username,
+        password: formData.password,
       });
 
-      const data = await response.json();
-
-      if (response.ok) {
-        login(data.user, data.token);
-        toast({
-          title: 'Success',
-          description: 'Admin login successful!',
-          status: 'success',
-          duration: 3000,
-          isClosable: true,
-        });
-        navigate('/admin/dashboard');
-      } else {
-        toast({
-          title: 'Error',
-          description: data.message || 'Invalid admin credentials',
-          status: 'error',
-          duration: 3000,
-          isClosable: true,
-        });
-      }
+      login(data.user, data.token);
+      toast({
+        title: 'Success',
+        description: 'Admin login successful!',
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      });
+      navigate('/admin/dashboard');
     } catch (error) {
       toast({
         title: 'Error',

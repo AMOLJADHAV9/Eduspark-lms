@@ -16,6 +16,7 @@ import {
 } from '@chakra-ui/react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { authApi } from '../../utils/api';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -65,38 +66,20 @@ const Register = () => {
 
     setLoading(true);
     try {
-      const response = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          password: formData.password,
-          role: 'user', // Ensure regular registration always creates user role
-        }),
+      const data = await authApi.register({
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+        role: 'user', // Ensure regular registration always creates user role
       });
 
-      const data = await response.json();
-
-      if (response.ok) {
-        login(data.user, data.token);
-        toast({
-          title: 'Registration successful!',
-          description: 'Please choose your role to continue.',
-          status: 'success'
-        });
-        navigate('/role-selection');
-      } else {
-        toast({
-          title: 'Error',
-          description: data.message || 'Registration failed',
-          status: 'error',
-          duration: 3000,
-          isClosable: true,
-        });
-      }
+      login(data.user, data.token);
+      toast({
+        title: 'Registration successful!',
+        description: 'Please choose your role to continue.',
+        status: 'success'
+      });
+      navigate('/role-selection');
     } catch (error) {
       toast({
         title: 'Error',

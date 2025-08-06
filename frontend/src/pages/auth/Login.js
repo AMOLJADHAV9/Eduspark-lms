@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Box, Button, Heading, Input, FormControl, FormLabel, VStack, HStack, Text, Link, useToast } from '@chakra-ui/react';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { authApi } from '../../utils/api';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -15,13 +16,7 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || 'Login failed');
+      const data = await authApi.login({ email, password });
       login(data.user, data.token);
       toast({ title: 'Login successful', status: 'success', duration: 2000 });
       
