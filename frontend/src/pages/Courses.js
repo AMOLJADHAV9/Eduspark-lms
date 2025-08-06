@@ -23,7 +23,7 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import CourseSearch from '../components/CourseSearch';
-import { courseApi } from '../utils/api';
+import { courseApi, api } from '../utils/api';
 
 const MotionBox = motion(Box);
 
@@ -56,7 +56,6 @@ const Courses = () => {
   const searchCourses = async (searchData) => {
     try {
       const { searchTerm, filters } = searchData;
-      
       // Build query parameters
       const params = new URLSearchParams();
       if (searchTerm) params.append('searchTerm', searchTerm);
@@ -66,30 +65,24 @@ const Courses = () => {
         params.append('priceMin', filters.priceRange[0]);
         params.append('priceMax', filters.priceRange[1]);
       }
-      
-      const response = await fetch(`/api/courses/search?${params.toString()}`);
-      if (response.ok) {
-        let data = await response.json();
-        
-        // Apply duration filter on frontend since it's not in backend yet
-        if (filters.duration) {
-          const [min, max] = filters.duration.split('-').map(Number);
-          data = data.filter(course => {
-            const duration = course.duration || 3; // Default to 3 hours if no duration
-            if (filters.duration === '10+') {
-              return duration >= 10;
-            }
-            return duration >= min && duration <= max;
-          });
-        }
-        
-        setFilteredCourses(data);
-        setSearchResults({
-          searchTerm,
-          filters,
-          count: data.length,
+      let data = await api.get(`/api/courses/search?${params.toString()}`);
+      // Apply duration filter on frontend since it's not in backend yet
+      if (filters.duration) {
+        const [min, max] = filters.duration.split('-').map(Number);
+        data = data.filter(course => {
+          const duration = course.duration || 3; // Default to 3 hours if no duration
+          if (filters.duration === '10+') {
+            return duration >= 10;
+          }
+          return duration >= min && duration <= max;
         });
       }
+      setFilteredCourses(data);
+      setSearchResults({
+        searchTerm,
+        filters,
+        count: data.length,
+      });
     } catch (error) {
       console.error('Error searching courses:', error);
     }

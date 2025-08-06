@@ -21,6 +21,7 @@ import {
 import { useAuth } from '../context/AuthContext';
 import { FaPlay, FaBook, FaChartLine } from 'react-icons/fa';
 import Navbar from '../components/Navbar';
+import { api } from '../utils/api';
 
 const UserDashboard = () => {
   const { user } = useAuth();
@@ -36,15 +37,8 @@ const UserDashboard = () => {
 
   const fetchEnrollments = async () => {
     try {
-      const response = await fetch('/api/enrollments/user', {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('lms_token')}`,
-        },
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setEnrollments(data);
-      }
+      const data = await api.get('/api/enrollments/user');
+      setEnrollments(data);
     } catch (error) {
       console.error('Error fetching enrollments:', error);
     } finally {

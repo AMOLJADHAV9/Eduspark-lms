@@ -25,6 +25,7 @@ import {
 import { FaPlay, FaBook, FaUser, FaClock, FaStar } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
 import Navbar from '../components/Navbar';
+import { api } from '../utils/api';
 
 const CourseDetail = () => {
   const { id } = useParams();
@@ -47,14 +48,8 @@ const CourseDetail = () => {
 
   const fetchCourse = async () => {
     try {
-      const response = await fetch(`/api/courses/${id}`);
-      if (response.ok) {
-        const data = await response.json();
-        setCourse(data);
-      } else {
-        toast({ title: 'Error', description: 'Course not found', status: 'error' });
-        navigate('/');
-      }
+      const data = await api.get(`/api/courses/${id}`);
+      setCourse(data);
     } catch (error) {
       toast({ title: 'Error', description: 'Failed to fetch course', status: 'error' });
       navigate('/');
@@ -65,13 +60,8 @@ const CourseDetail = () => {
 
   const checkEnrollment = async () => {
     try {
-      const response = await fetch(`/api/enrollments/check/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setEnrolled(data.enrolled);
-      }
+      const data = await api.get(`/api/enrollments/check/${id}`);
+      setEnrolled(data.enrolled);
     } catch (error) {
       console.error('Error checking enrollment:', error);
     }
@@ -82,25 +72,11 @@ const CourseDetail = () => {
       navigate('/login');
       return;
     }
-
     setEnrolling(true);
     try {
-      const response = await fetch('/api/enrollments', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ courseId: id }),
-      });
-
-      if (response.ok) {
-        setEnrolled(true);
-        toast({ title: 'Success', description: 'Successfully enrolled in course!', status: 'success' });
-      } else {
-        const data = await response.json();
-        toast({ title: 'Error', description: data.message || 'Failed to enroll', status: 'error' });
-      }
+      await api.post('/api/enrollments', { courseId: id });
+      setEnrolled(true);
+      toast({ title: 'Success', description: 'Successfully enrolled in course!', status: 'success' });
     } catch (error) {
       toast({ title: 'Error', description: 'Failed to enroll in course', status: 'error' });
     } finally {
