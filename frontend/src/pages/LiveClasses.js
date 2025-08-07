@@ -217,7 +217,7 @@ const LiveClasses = () => {
                 Join real-time learning sessions with expert instructors
               </Text>
             </Box>
-            {user && (
+            {user && user.role === 'teacher' && (
               <Button
                 leftIcon={<FaPlus />}
                 colorScheme="teal"
