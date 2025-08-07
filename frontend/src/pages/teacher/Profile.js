@@ -62,6 +62,7 @@ const TeacherProfile = () => {
   };
 
   if (loading) return <Box p={8}>Loading...</Box>;
+  if (!profile) return <Box p={8}>No profile data found.</Box>;
 
   return (
     <Box maxW="2xl" mx="auto" p={8}>
@@ -126,14 +127,14 @@ const TeacherProfile = () => {
           </form>
         ) : (
           <VStack spacing={4} align="stretch">
-            <Box><b>Full Name:</b> {profile.fullName}</Box>
-            <Box><b>Email:</b> {profile.email}</Box>
-            <Box><b>Phone:</b> {profile.phone}</Box>
-            <Box><b>Bio:</b> {profile.bio}</Box>
-            <Box><b>Expertise:</b> {profile.expertise}</Box>
-            <Box><b>Experience:</b> {profile.experience}</Box>
-            <Box><b>Education:</b> {profile.education}</Box>
-            <Box><b>Portfolio:</b> <a href={profile.portfolio} target="_blank" rel="noopener noreferrer">{profile.portfolio}</a></Box>
+            <Box><b>Full Name:</b> {profile.fullName || 'Not set'}</Box>
+            <Box><b>Email:</b> {profile.email || 'Not set'}</Box>
+            <Box><b>Phone:</b> {profile.phone || 'Not set'}</Box>
+            <Box><b>Bio:</b> {profile.bio || 'Not set'}</Box>
+            <Box><b>Expertise:</b> {profile.expertise || 'Not set'}</Box>
+            <Box><b>Experience:</b> {profile.experience || 'Not set'}</Box>
+            <Box><b>Education:</b> {profile.education || 'Not set'}</Box>
+            <Box><b>Portfolio:</b> <a href={profile.portfolio} target="_blank" rel="noopener noreferrer">{profile.portfolio || 'Not set'}</a></Box>
             <Box><b>Social Links:</b> <VStack align="start">{(profile.socialLinks || []).map((link, idx) => <a key={idx} href={link.url} target="_blank" rel="noopener noreferrer">{link.platform}</a>)}</VStack></Box>
             <Button colorScheme="teal" onClick={() => setEdit(true)}>Edit Profile</Button>
           </VStack>

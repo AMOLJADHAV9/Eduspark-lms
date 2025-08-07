@@ -76,6 +76,7 @@ const StudentProfile = () => {
   };
 
   if (loading) return <Box p={8}>Loading...</Box>;
+  if (!profile) return <Box p={8}>No profile data found.</Box>;
 
   return (
     <Box maxW="2xl" mx="auto" p={8}>
@@ -144,12 +145,12 @@ const StudentProfile = () => {
           </form>
         ) : (
           <VStack spacing={4} align="stretch">
-            <Box><b>Full Name:</b> {profile.fullName}</Box>
-            <Box><b>Email:</b> {profile.email}</Box>
-            <Box><b>Age:</b> {profile.age}</Box>
-            <Box><b>Bio:</b> {profile.bio}</Box>
-            <Box><b>Grade Level:</b> {profile.gradeLevel}</Box>
-            <Box><b>School:</b> {profile.school}</Box>
+            <Box><b>Full Name:</b> {profile.fullName || 'Not set'}</Box>
+            <Box><b>Email:</b> {profile.email || 'Not set'}</Box>
+            <Box><b>Age:</b> {profile.age || 'Not set'}</Box>
+            <Box><b>Bio:</b> {profile.bio || 'Not set'}</Box>
+            <Box><b>Grade Level:</b> {profile.gradeLevel || 'Not set'}</Box>
+            <Box><b>School:</b> {profile.school || 'Not set'}</Box>
             <Box><b>Interests:</b> <VStack align="start">{(profile.interests || []).map((interest, idx) => <span key={idx}>{interest}</span>)}</VStack></Box>
             <Box><b>Social Links:</b> <VStack align="start">{(profile.socialLinks || []).map((link, idx) => <a key={idx} href={link.url} target="_blank" rel="noopener noreferrer">{link.platform}</a>)}</VStack></Box>
             <Button colorScheme="teal" onClick={() => setEdit(true)}>Edit Profile</Button>
