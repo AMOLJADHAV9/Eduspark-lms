@@ -30,11 +30,14 @@ app.use(cors({
     'https://lms-drab-six.vercel.app', // Added current Vercel deployment
     'https://yourdomain.com',
     'https://www.yourdomain.com',
-    'http://localhost:3000' // for development
+    'http://localhost:3000', // for development
+    '*' // Temporarily allow all origins for debugging
   ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'Accept'],
+  preflightContinue: false,
+  optionsSuccessStatus: 204
 }));
 app.use(express.json());
 
