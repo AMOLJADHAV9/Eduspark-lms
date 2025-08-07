@@ -37,7 +37,8 @@ import {
   ListIcon,
   Progress,
   Spinner,
-  Center
+  Center,
+  Icon
 } from '@chakra-ui/react';
 import {
   FaVideo,
