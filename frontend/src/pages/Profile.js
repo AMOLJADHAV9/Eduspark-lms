@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Box, Heading, FormControl, FormLabel, Input, Textarea, Button, VStack, Avatar, HStack, IconButton, useToast } from '@chakra-ui/react';
 import { FaPlus, FaTrash } from 'react-icons/fa';
 import axios from 'axios';
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from '../context/AuthContext';
 
 const StudentProfile = () => {
   const { token } = useAuth();
