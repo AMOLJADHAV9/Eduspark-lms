@@ -29,6 +29,7 @@ import { FaDownload, FaTrash, FaUpload, FaClock, FaFile } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { api } from '../utils/api';
 
 const AssignmentSubmit = () => {
   const { id } = useParams();
@@ -49,21 +50,12 @@ const AssignmentSubmit = () => {
 
   const fetchAssignment = async () => {
     try {
-      const res = await fetch(`/api/assignments/${id}`);
-      if (res.ok) {
-        const data = await res.json();
-        setAssignment(data);
-        
-        // Check if user has already submitted
-        const submissionRes = await fetch(`/api/assignments/user/submissions?assignment=${id}`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        if (submissionRes.ok) {
-          const submissions = await submissionRes.json();
-          if (submissions.length > 0) {
-            setSubmission(submissions[0]);
-          }
-        }
+      const data = await api.get(`/api/assignments/${id}`);
+      setAssignment(data);
+      // Check if user has already submitted
+      const submissions = await api.get(`/api/assignments/user/submissions?assignment=${id}`);
+      if (submissions.length > 0) {
+        setSubmission(submissions[0]);
       }
     } catch (error) {
       console.error('Error fetching assignment:', error);

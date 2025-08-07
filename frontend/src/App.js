@@ -48,6 +48,8 @@ import TeacherEarnings from './pages/teacher/Earnings';
 import TeacherSettings from './pages/teacher/Settings';
 import RoleSelection from './pages/RoleSelection';
 import TeacherApplications from './pages/admin/TeacherApplications';
+import TeacherProfile from './pages/teacher/Profile';
+import StudentProfile from './pages/Profile';
 
 function App() {
   return (
@@ -101,6 +103,8 @@ function App() {
           <Route path="/teacher/settings" element={<TeacherSettings />} />
           <Route path="/role-selection" element={<RoleSelection />} />
             <Route path="/admin/teacher-applications" element={<TeacherApplications />} />
+            <Route path="/teacher/profile" element={<TeacherProfile />} />
+            <Route path="/profile" element={<StudentProfile />} />
             <Route path="*" element={<Navigate to="/login" />} />
           </Routes>
         </Router>

@@ -35,6 +35,7 @@ import { FaDownload, FaEye, FaPlus, FaTrophy, FaGraduationCap } from 'react-icon
 import { useAuth } from '../context/AuthContext';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { api } from '../utils/api';
 
 const Certificates = () => {
   const [certificates, setCertificates] = useState([]);
@@ -56,22 +57,11 @@ const Certificates = () => {
   const fetchData = async () => {
     try {
       // Fetch user's certificates
-      const certificatesRes = await fetch('/api/certificates/user', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (certificatesRes.ok) {
-        const certificatesData = await certificatesRes.json();
-        setCertificates(certificatesData);
-      }
-
+      const certificatesData = await api.get('/api/certificates/user');
+      setCertificates(certificatesData);
       // Fetch enrolled courses
-      const enrollmentsRes = await fetch('/api/enrollments/user', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (enrollmentsRes.ok) {
-        const enrollmentsData = await enrollmentsRes.json();
-        setEnrolledCourses(enrollmentsData);
-      }
+      const enrollmentsData = await api.get('/api/enrollments/user');
+      setEnrolledCourses(enrollmentsData);
     } catch (error) {
       console.error('Error fetching data:', error);
       toast({
@@ -86,36 +76,18 @@ const Certificates = () => {
 
   const generateCertificate = async () => {
     if (!selectedCourse) return;
-
     setGenerating(true);
     try {
-      const res = await fetch(`/api/certificates/generate/${selectedCourse._id}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify({ customMessage })
-      });
-
-      if (!res.ok) {
-        const error = await res.json();
-        throw new Error(error.message || 'Failed to generate certificate');
-      }
-
-      const certificate = await res.json();
-      
+      const certificate = await api.post(`/api/certificates/generate/${selectedCourse._id}`, { customMessage });
       toast({
         title: 'Certificate generated successfully!',
         status: 'success',
         duration: 3000
       });
-
       setIsGenerateModalOpen(false);
       setSelectedCourse(null);
       setCustomMessage('');
       fetchData(); // Refresh the list
-      
       // Navigate to the new certificate
       navigate(`/certificate/${certificate._id}`);
     } catch (error) {

@@ -140,6 +140,9 @@ const Navbar = () => {
                   <MenuItem as={RouterLink} to={isAdmin ? "/admin/dashboard" : "/user/dashboard"}>
                     Dashboard
                   </MenuItem>
+                  {!isAdmin && (
+                    <MenuItem as={RouterLink} to="/profile">Profile</MenuItem>
+                  )}
                   <MenuItem onClick={handleLogout}>
                     Logout
                   </MenuItem>

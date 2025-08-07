@@ -25,6 +25,7 @@ const links = [
   { to: '/teacher/analytics', label: 'Analytics', icon: FaChartLine },
   { to: '/teacher/earnings', label: 'Earnings', icon: FaDollarSign },
   { to: '/teacher/settings', label: 'Settings', icon: FaCog },
+  { to: '/teacher/profile', label: 'Profile', icon: FaCog },
 ];
 
 const TeacherSidebar = () => (

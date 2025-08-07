@@ -21,6 +21,7 @@ const gamificationRoutes = require('./routes/gamification');
 const personalizationRoutes = require('./routes/personalization');
 const paymentRoutes = require('./routes/payment');
 const analyticsRoutes = require('./routes/analytics');
+const profileRoutes = require('./routes/profile');
 
 app.use(cors({
   origin: [
@@ -69,6 +70,7 @@ app.use('/api/gamification', gamificationRoutes);
 app.use('/api/personalization', personalizationRoutes);
 app.use('/api/payment', paymentRoutes);
 app.use('/api/analytics', analyticsRoutes);
+app.use('/api/profile', profileRoutes);
 
 // Health check route
 app.get('/api/health', (req, res) => {

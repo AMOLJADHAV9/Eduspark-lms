@@ -30,6 +30,7 @@ import { FaPlus, FaTrash, FaUpload } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { api } from '../utils/api';
 
 const AssignmentCreate = () => {
   const [form, setForm] = useState({
@@ -60,11 +61,8 @@ const AssignmentCreate = () => {
 
   const fetchCourses = async () => {
     try {
-      const res = await fetch('/api/courses');
-      if (res.ok) {
-        const data = await res.json();
-        setCourses(data);
-      }
+      const data = await api.get('/api/courses');
+      setCourses(data);
     } catch (error) {
       console.error('Error fetching courses:', error);
     } finally {
