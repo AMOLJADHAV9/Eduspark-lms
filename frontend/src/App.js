@@ -73,7 +73,7 @@ function App() {
             <Route path="/contact" element={<Contact />} />
             <Route path="/courses" element={<Courses />} />
                       <Route path="/live-classes" element={<LiveClasses />} />
-          <Route path="/live-class/:id" element={<LiveClassRoom />} />
+          <Route path="/live-class/:classId" element={<LiveClassRoom />} />
           <Route path="/quiz/create" element={<QuizCreate />} />
           <Route path="/quiz/:id" element={<QuizTake />} />
           <Route path="/course/:courseId/quizzes" element={<CourseQuizzes />} />

@@ -17,6 +17,7 @@ import {
   TabPanels,
   Tab,
   TabPanel,
+  Card,
   CardBody,
   CardHeader,
   Icon,
@@ -260,116 +261,118 @@ const LiveClasses = () => {
                         overflow="hidden"
                         _hover={{ shadow: 'xl' }}
                       >
-                        <CardHeader pb={2}>
-                          <VStack align="start" spacing={2}>
-                            <HStack justify="space-between" w="full">
-                              <Badge colorScheme={getStatusColor(liveClass.status)}>
-                                {liveClass.status.toUpperCase()}
-                              </Badge>
-                              <Text fontSize="sm" color="gray.500">
-                                {liveClass.duration} min
+                        <Card>
+                          <CardHeader pb={2}>
+                            <VStack align="start" spacing={2}>
+                              <HStack justify="space-between" w="full">
+                                <Badge colorScheme={getStatusColor(liveClass.status)}>
+                                  {liveClass.status.toUpperCase()}
+                                </Badge>
+                                <Text fontSize="sm" color="gray.500">
+                                  {liveClass.duration} min
+                                </Text>
+                              </HStack>
+                              <Heading size="md" noOfLines={2}>
+                                {liveClass.title}
+                              </Heading>
+                              <Text color="gray.600" fontSize="sm" noOfLines={2}>
+                                {liveClass.description}
                               </Text>
-                            </HStack>
-                            <Heading size="md" noOfLines={2}>
-                              {liveClass.title}
-                            </Heading>
-                            <Text color="gray.600" fontSize="sm" noOfLines={2}>
-                              {liveClass.description}
-                            </Text>
-                          </VStack>
-                        </CardHeader>
+                            </VStack>
+                          </CardHeader>
 
-                        <CardBody pt={0}>
-                          <VStack spacing={4} align="stretch">
-                            <HStack spacing={4} fontSize="sm" color="gray.500">
-                              <HStack>
-                                <FaUser />
-                                <Text>{liveClass.instructor.name}</Text>
+                          <CardBody pt={0}>
+                            <VStack spacing={4} align="stretch">
+                              <HStack spacing={4} fontSize="sm" color="gray.500">
+                                <HStack>
+                                  <FaUser />
+                                  <Text>{liveClass.instructor.name}</Text>
+                                </HStack>
+                                <HStack>
+                                  <FaUsers />
+                                  <Text>{liveClass.enrolledStudents.length} enrolled</Text>
+                                </HStack>
                               </HStack>
-                              <HStack>
-                                <FaUsers />
-                                <Text>{liveClass.enrolledStudents.length} enrolled</Text>
+
+                              <HStack spacing={4} fontSize="sm" color="gray.500">
+                                <HStack>
+                                  <FaCalendar />
+                                  <Text>{formatDateTime(liveClass.scheduledAt)}</Text>
+                                </HStack>
                               </HStack>
-                            </HStack>
 
-                            <HStack spacing={4} fontSize="sm" color="gray.500">
-                              <HStack>
-                                <FaCalendar />
-                                <Text>{formatDateTime(liveClass.scheduledAt)}</Text>
+                              <HStack justify="space-between">
+                                <Text fontSize="sm" fontWeight="medium" color="teal.600">
+                                  {liveClass.course.title}
+                                </Text>
+                                {liveClass.allowChat && (
+                                  <Icon as={FaComments} color="teal.500" />
+                                )}
                               </HStack>
-                            </HStack>
 
-                            <HStack justify="space-between">
-                              <Text fontSize="sm" fontWeight="medium" color="teal.600">
-                                {liveClass.course.title}
-                              </Text>
-                              {liveClass.allowChat && (
-                                <Icon as={FaComments} color="teal.500" />
-                              )}
-                            </HStack>
-
-                            {/* Action Buttons */}
-                            <HStack spacing={2}>
-                              {isInstructor(liveClass) ? (
-                                <>
-                                  {liveClass.status === 'scheduled' && (
-                                    <Button
-                                      size="sm"
-                                      colorScheme="green"
-                                      leftIcon={<FaPlay />}
-                                      onClick={() => handleStartClass(liveClass)}
-                                      flex={1}
-                                    >
-                                      Start Class
-                                    </Button>
-                                  )}
-                                  {liveClass.status === 'live' && (
-                                    <Button
-                                      size="sm"
-                                      colorScheme="red"
-                                      leftIcon={<FaStop />}
-                                      onClick={() => handleEndClass(liveClass)}
-                                      flex={1}
-                                    >
-                                      End Class
-                                    </Button>
-                                  )}
-                                  <Button
-                                    size="sm"
-                                    variant="outline"
-                                    onClick={() => navigate(`/live-class/${liveClass._id}`)}
-                                    flex={1}
-                                  >
-                                    Manage
-                                  </Button>
-                                </>
-                              ) : (
-                                <>
-                                  <Button
-                                    size="sm"
-                                    colorScheme="teal"
-                                    leftIcon={<FaVideo />}
-                                    onClick={() => handleJoinClass(liveClass)}
-                                    flex={1}
-                                    isDisabled={!user}
-                                  >
-                                    {isEnrolled(liveClass) ? 'Join Class' : 'Enroll'}
-                                  </Button>
-                                  {liveClass.status === 'live' && (
+                              {/* Action Buttons */}
+                              <HStack spacing={2}>
+                                {isInstructor(liveClass) ? (
+                                  <>
+                                    {liveClass.status === 'scheduled' && (
+                                      <Button
+                                        size="sm"
+                                        colorScheme="green"
+                                        leftIcon={<FaPlay />}
+                                        onClick={() => handleStartClass(liveClass)}
+                                        flex={1}
+                                      >
+                                        Start Class
+                                      </Button>
+                                    )}
+                                    {liveClass.status === 'live' && (
+                                      <Button
+                                        size="sm"
+                                        colorScheme="red"
+                                        leftIcon={<FaStop />}
+                                        onClick={() => handleEndClass(liveClass)}
+                                        flex={1}
+                                      >
+                                        End Class
+                                      </Button>
+                                    )}
                                     <Button
                                       size="sm"
                                       variant="outline"
                                       onClick={() => navigate(`/live-class/${liveClass._id}`)}
                                       flex={1}
                                     >
-                                      Join Now
+                                      Manage
                                     </Button>
-                                  )}
-                                </>
-                              )}
-                            </HStack>
-                          </VStack>
-                        </CardBody>
+                                  </>
+                                ) : (
+                                  <>
+                                    <Button
+                                      size="sm"
+                                      colorScheme="teal"
+                                      leftIcon={<FaVideo />}
+                                      onClick={() => handleJoinClass(liveClass)}
+                                      flex={1}
+                                      isDisabled={!user}
+                                    >
+                                      {isEnrolled(liveClass) ? 'Join Class' : 'Enroll'}
+                                    </Button>
+                                    {liveClass.status === 'live' && (
+                                      <Button
+                                        size="sm"
+                                        variant="outline"
+                                        onClick={() => navigate(`/live-class/${liveClass._id}`)}
+                                        flex={1}
+                                      >
+                                        Join Now
+                                      </Button>
+                                    )}
+                                  </>
+                                )}
+                              </HStack>
+                            </VStack>
+                          </CardBody>
+                        </Card>
                       </MotionBox>
                     ))}
                   </SimpleGrid>
@@ -396,61 +399,63 @@ const LiveClasses = () => {
                         shadow="md"
                         overflow="hidden"
                       >
-                        <CardHeader pb={2}>
-                          <VStack align="start" spacing={2}>
-                            <HStack justify="space-between" w="full">
-                              <Badge colorScheme="gray">ENDED</Badge>
-                              <Text fontSize="sm" color="gray.500">
-                                {liveClass.duration} min
+                        <Card>
+                          <CardHeader pb={2}>
+                            <VStack align="start" spacing={2}>
+                              <HStack justify="space-between" w="full">
+                                <Badge colorScheme="gray">ENDED</Badge>
+                                <Text fontSize="sm" color="gray.500">
+                                  {liveClass.duration} min
+                                </Text>
+                              </HStack>
+                              <Heading size="md" noOfLines={2}>
+                                {liveClass.title}
+                              </Heading>
+                              <Text color="gray.600" fontSize="sm" noOfLines={2}>
+                                {liveClass.description}
                               </Text>
-                            </HStack>
-                            <Heading size="md" noOfLines={2}>
-                              {liveClass.title}
-                            </Heading>
-                            <Text color="gray.600" fontSize="sm" noOfLines={2}>
-                              {liveClass.description}
-                            </Text>
-                          </VStack>
-                        </CardHeader>
+                            </VStack>
+                          </CardHeader>
 
-                        <CardBody pt={0}>
-                          <VStack spacing={4} align="stretch">
-                            <HStack spacing={4} fontSize="sm" color="gray.500">
-                              <HStack>
-                                <FaUser />
-                                <Text>{liveClass.instructor.name}</Text>
+                          <CardBody pt={0}>
+                            <VStack spacing={4} align="stretch">
+                              <HStack spacing={4} fontSize="sm" color="gray.500">
+                                <HStack>
+                                  <FaUser />
+                                  <Text>{liveClass.instructor.name}</Text>
+                                </HStack>
+                                <HStack>
+                                  <FaUsers />
+                                  <Text>{liveClass.attendanceCount || 0} attended</Text>
+                                </HStack>
                               </HStack>
-                              <HStack>
-                                <FaUsers />
-                                <Text>{liveClass.attendanceCount || 0} attended</Text>
+
+                              <HStack spacing={4} fontSize="sm" color="gray.500">
+                                <HStack>
+                                  <FaCalendar />
+                                  <Text>{formatDateTime(liveClass.scheduledAt)}</Text>
+                                </HStack>
                               </HStack>
-                            </HStack>
 
-                            <HStack spacing={4} fontSize="sm" color="gray.500">
-                              <HStack>
-                                <FaCalendar />
-                                <Text>{formatDateTime(liveClass.scheduledAt)}</Text>
+                              <HStack justify="space-between">
+                                <Text fontSize="sm" fontWeight="medium" color="teal.600">
+                                  {liveClass.course.title}
+                                </Text>
+                                {liveClass.isRecorded && (
+                                  <Badge colorScheme="purple" size="sm">Recorded</Badge>
+                                )}
                               </HStack>
-                            </HStack>
 
-                            <HStack justify="space-between">
-                              <Text fontSize="sm" fontWeight="medium" color="teal.600">
-                                {liveClass.course.title}
-                              </Text>
-                              {liveClass.isRecorded && (
-                                <Badge colorScheme="purple" size="sm">Recorded</Badge>
-                              )}
-                            </HStack>
-
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => navigate(`/live-class/${liveClass._id}`)}
-                            >
-                              View Details
-                            </Button>
-                          </VStack>
-                        </CardBody>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => navigate(`/live-class/${liveClass._id}`)}
+                              >
+                                View Details
+                              </Button>
+                            </VStack>
+                          </CardBody>
+                        </Card>
                       </MotionBox>
                     ))}
                   </SimpleGrid>
@@ -484,78 +489,80 @@ const LiveClasses = () => {
                           shadow="lg"
                           overflow="hidden"
                         >
-                          <CardHeader pb={2}>
-                            <VStack align="start" spacing={2}>
-                              <HStack justify="space-between" w="full">
-                                <Badge colorScheme={getStatusColor(liveClass.status)}>
-                                  {liveClass.status.toUpperCase()}
-                                </Badge>
-                                <Text fontSize="sm" color="gray.500">
-                                  {liveClass.duration} min
-                                </Text>
-                              </HStack>
-                              <Heading size="md" noOfLines={2}>
-                                {liveClass.title}
-                              </Heading>
-                              <Text color="gray.600" fontSize="sm" noOfLines={2}>
-                                {liveClass.description}
-                              </Text>
-                            </VStack>
-                          </CardHeader>
-
-                          <CardBody pt={0}>
-                            <VStack spacing={4} align="stretch">
-                              <HStack spacing={4} fontSize="sm" color="gray.500">
-                                <HStack>
-                                  <FaUsers />
-                                  <Text>{liveClass.enrolledStudents.length} enrolled</Text>
+                          <Card>
+                            <CardHeader pb={2}>
+                              <VStack align="start" spacing={2}>
+                                <HStack justify="space-between" w="full">
+                                  <Badge colorScheme={getStatusColor(liveClass.status)}>
+                                    {liveClass.status.toUpperCase()}
+                                  </Badge>
+                                  <Text fontSize="sm" color="gray.500">
+                                    {liveClass.duration} min
+                                  </Text>
                                 </HStack>
-                                <HStack>
-                                  <FaCalendar />
-                                  <Text>{formatDateTime(liveClass.scheduledAt)}</Text>
-                                </HStack>
-                              </HStack>
-
-                              <HStack justify="space-between">
-                                <Text fontSize="sm" fontWeight="medium" color="teal.600">
-                                  {liveClass.course.title}
+                                <Heading size="md" noOfLines={2}>
+                                  {liveClass.title}
+                                </Heading>
+                                <Text color="gray.600" fontSize="sm" noOfLines={2}>
+                                  {liveClass.description}
                                 </Text>
-                              </HStack>
+                              </VStack>
+                            </CardHeader>
 
-                              <HStack spacing={2}>
-                                {liveClass.status === 'scheduled' && (
+                            <CardBody pt={0}>
+                              <VStack spacing={4} align="stretch">
+                                <HStack spacing={4} fontSize="sm" color="gray.500">
+                                  <HStack>
+                                    <FaUsers />
+                                    <Text>{liveClass.enrolledStudents.length} enrolled</Text>
+                                  </HStack>
+                                  <HStack>
+                                    <FaCalendar />
+                                    <Text>{formatDateTime(liveClass.scheduledAt)}</Text>
+                                  </HStack>
+                                </HStack>
+
+                                <HStack justify="space-between">
+                                  <Text fontSize="sm" fontWeight="medium" color="teal.600">
+                                    {liveClass.course.title}
+                                  </Text>
+                                </HStack>
+
+                                <HStack spacing={2}>
+                                  {liveClass.status === 'scheduled' && (
+                                    <Button
+                                      size="sm"
+                                      colorScheme="green"
+                                      leftIcon={<FaPlay />}
+                                      onClick={() => handleStartClass(liveClass)}
+                                      flex={1}
+                                    >
+                                      Start Class
+                                    </Button>
+                                  )}
+                                  {liveClass.status === 'live' && (
+                                    <Button
+                                      size="sm"
+                                      colorScheme="red"
+                                      leftIcon={<FaStop />}
+                                      onClick={() => handleEndClass(liveClass)}
+                                      flex={1}
+                                    >
+                                      End Class
+                                    </Button>
+                                  )}
                                   <Button
                                     size="sm"
-                                    colorScheme="green"
-                                    leftIcon={<FaPlay />}
-                                    onClick={() => handleStartClass(liveClass)}
+                                    variant="outline"
+                                    onClick={() => navigate(`/live-class/${liveClass._id}`)}
                                     flex={1}
                                   >
-                                    Start Class
+                                    Manage
                                   </Button>
-                                )}
-                                {liveClass.status === 'live' && (
-                                  <Button
-                                    size="sm"
-                                    colorScheme="red"
-                                    leftIcon={<FaStop />}
-                                    onClick={() => handleEndClass(liveClass)}
-                                    flex={1}
-                                  >
-                                    End Class
-                                  </Button>
-                                )}
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  onClick={() => navigate(`/live-class/${liveClass._id}`)}
-                                  flex={1}
-                                >
-                                  Manage
-                                </Button>
-                              </HStack>
-                            </VStack>
-                          </CardBody>
+                                </HStack>
+                              </VStack>
+                            </CardBody>
+                          </Card>
                         </MotionBox>
                       ))}
                     </SimpleGrid>
