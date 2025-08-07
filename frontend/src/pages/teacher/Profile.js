@@ -21,7 +21,26 @@ const TeacherProfile = () => {
         setProfile(res.data);
         setForm(res.data);
       } catch (err) {
-        toast({ title: 'Error loading profile', status: 'error' });
+        console.error('Profile fetch error:', err);
+        if (err.response && err.response.status === 404) {
+          // Profile doesn't exist, create a default one
+          const defaultProfile = {
+            fullName: '',
+            email: '',
+            phone: '',
+            bio: '',
+            expertise: '',
+            experience: '',
+            education: '',
+            portfolio: '',
+            profilePicture: '',
+            socialLinks: []
+          };
+          setProfile(defaultProfile);
+          setForm(defaultProfile);
+        } else {
+          toast({ title: 'Error loading profile', status: 'error' });
+        }
       } finally {
         setLoading(false);
       }
@@ -62,7 +81,7 @@ const TeacherProfile = () => {
   };
 
   if (loading) return <Box p={8}>Loading...</Box>;
-  if (!profile) return <Box p={8}>No profile data found.</Box>;
+  if (!profile) return <Box p={8}>Loading profile...</Box>;
 
   return (
     <Box maxW="2xl" mx="auto" p={8}>
