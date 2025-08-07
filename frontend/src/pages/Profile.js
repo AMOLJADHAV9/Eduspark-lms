@@ -5,7 +5,7 @@ import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 
 const StudentProfile = () => {
-  const { token } = useAuth();
+  const { token, apiBaseUrl } = useAuth();
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [edit, setEdit] = useState(false);
@@ -15,7 +15,7 @@ const StudentProfile = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const res = await axios.get('/api/profile', {
+        const res = await axios.get(`${apiBaseUrl}/api/profile`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setProfile(res.data);
@@ -27,7 +27,7 @@ const StudentProfile = () => {
       }
     };
     fetchProfile();
-  }, [token, toast]);
+  }, [token, toast, apiBaseUrl]);
 
   const handleChange = e => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -64,7 +64,7 @@ const StudentProfile = () => {
   const handleSubmit = async e => {
     e.preventDefault();
     try {
-      const res = await axios.put('/api/profile', form, {
+      const res = await axios.put(`${apiBaseUrl}/api/profile`, form, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setProfile(res.data);
