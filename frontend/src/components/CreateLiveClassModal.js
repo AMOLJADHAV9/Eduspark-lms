@@ -15,47 +15,61 @@ import {
   Select,
   VStack,
   HStack,
-  Checkbox,
+  Switch,
+  Text,
   useToast,
   Spinner,
-  Text,
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  AlertDescription
 } from '@chakra-ui/react';
 import { useAuth } from '../context/AuthContext';
+import axios from 'axios';
 
 const CreateLiveClassModal = ({ isOpen, onClose, onSuccess }) => {
-  const [formData, setFormData] = useState({
+  const { token, apiBaseUrl, user } = useAuth();
+  const toast = useToast();
+  
+  const [form, setForm] = useState({
     title: '',
     description: '',
     courseId: '',
     scheduledAt: '',
     duration: 60,
-    maxParticipants: 100,
+    maxStudents: 50,
     allowChat: true,
+    allowRecording: false,
     allowScreenShare: true,
-    allowWhiteboard: true,
-    requireApproval: false,
+    allowHandRaise: true,
+    isPublic: true
   });
+  
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(false);
   const [fetchingCourses, setFetchingCourses] = useState(true);
-  const { token } = useAuth();
-  const toast = useToast();
 
   useEffect(() => {
     if (isOpen) {
-      fetchCourses();
+      fetchTeacherCourses();
     }
   }, [isOpen]);
 
-  const fetchCourses = async () => {
+  const fetchTeacherCourses = async () => {
     try {
-      const response = await fetch('/api/courses');
-      if (response.ok) {
-        const data = await response.json();
-        setCourses(data);
-      }
+      const response = await axios.get(`${apiBaseUrl}/api/courses/teacher`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setCourses(response.data);
     } catch (error) {
       console.error('Error fetching courses:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to load your courses',
+        status: 'error',
+        duration: 5000,
+        isClosable: true
+      });
     } finally {
       setFetchingCourses(false);
     }
@@ -63,42 +77,64 @@ const CreateLiveClassModal = ({ isOpen, onClose, onSuccess }) => {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData(prev => ({
+    setForm(prev => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value,
+      [name]: type === 'checkbox' ? checked : value
     }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    
+    if (!form.title || !form.courseId || !form.scheduledAt) {
+      toast({
+        title: 'Validation Error',
+        description: 'Please fill in all required fields',
+        status: 'error',
+        duration: 3000,
+        isClosable: true
+      });
+      return;
+    }
 
+    // Validate scheduled time is in the future
+    const scheduledTime = new Date(form.scheduledAt);
+    const now = new Date();
+    if (scheduledTime <= now) {
+      toast({
+        title: 'Invalid Time',
+        description: 'Scheduled time must be in the future',
+        status: 'error',
+        duration: 3000,
+        isClosable: true
+      });
+      return;
+    }
+
+    setLoading(true);
     try {
-      const response = await fetch('/api/live-classes', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(formData),
+      const response = await axios.post(`${apiBaseUrl}/api/live-classes`, form, {
+        headers: { Authorization: `Bearer ${token}` }
       });
 
-      if (response.ok) {
-        toast({
-          title: 'Success',
-          description: 'Live class created successfully!',
-          status: 'success',
-        });
-        onSuccess();
-      } else {
-        const error = await response.json();
-        throw new Error(error.message || 'Failed to create live class');
-      }
+      toast({
+        title: 'Success',
+        description: 'Live class created successfully!',
+        status: 'success',
+        duration: 3000,
+        isClosable: true
+      });
+
+      onSuccess();
+      resetForm();
     } catch (error) {
+      console.error('Error creating live class:', error);
       toast({
         title: 'Error',
-        description: error.message,
+        description: error.response?.data?.message || 'Failed to create live class',
         status: 'error',
+        duration: 5000,
+        isClosable: true
       });
     } finally {
       setLoading(false);
@@ -106,17 +142,18 @@ const CreateLiveClassModal = ({ isOpen, onClose, onSuccess }) => {
   };
 
   const resetForm = () => {
-    setFormData({
+    setForm({
       title: '',
       description: '',
       courseId: '',
       scheduledAt: '',
       duration: 60,
-      maxParticipants: 100,
+      maxStudents: 50,
       allowChat: true,
+      allowRecording: false,
       allowScreenShare: true,
-      allowWhiteboard: true,
-      requireApproval: false,
+      allowHandRaise: true,
+      isPublic: true
     });
   };
 
@@ -125,128 +162,196 @@ const CreateLiveClassModal = ({ isOpen, onClose, onSuccess }) => {
     onClose();
   };
 
+  // Get minimum date (today)
+  const getMinDate = () => {
+    const today = new Date();
+    today.setMinutes(today.getMinutes() + 30); // Minimum 30 minutes from now
+    return today.toISOString().slice(0, 16);
+  };
+
+  if (fetchingCourses) {
+    return (
+      <Modal isOpen={isOpen} onClose={onClose} size="lg">
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Create Live Class</ModalHeader>
+          <ModalBody>
+            <VStack spacing={4} py={8}>
+              <Spinner size="lg" color="teal.500" />
+              <Text>Loading your courses...</Text>
+            </VStack>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+    );
+  }
+
   return (
     <Modal isOpen={isOpen} onClose={handleClose} size="xl">
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Create Live Class</ModalHeader>
         <ModalCloseButton />
+        
         <form onSubmit={handleSubmit}>
           <ModalBody>
-            <VStack spacing={4}>
+            <VStack spacing={6}>
+              {courses.length === 0 && (
+                <Alert status="warning">
+                  <AlertIcon />
+                  <AlertTitle>No Courses Available!</AlertTitle>
+                  <AlertDescription>
+                    You need to create a course first before scheduling live classes.
+                  </AlertDescription>
+                </Alert>
+              )}
+
               <FormControl isRequired>
-                <FormLabel>Title</FormLabel>
+                <FormLabel>Class Title</FormLabel>
                 <Input
                   name="title"
-                  value={formData.title}
+                  value={form.title}
                   onChange={handleChange}
                   placeholder="Enter live class title"
                 />
               </FormControl>
 
-              <FormControl isRequired>
+              <FormControl>
                 <FormLabel>Description</FormLabel>
                 <Textarea
                   name="description"
-                  value={formData.description}
+                  value={form.description}
                   onChange={handleChange}
-                  placeholder="Describe what this live class will cover"
+                  placeholder="Describe what this live class will cover..."
                   rows={3}
                 />
               </FormControl>
 
               <FormControl isRequired>
                 <FormLabel>Course</FormLabel>
-                {fetchingCourses ? (
-                  <HStack>
-                    <Spinner size="sm" />
-                    <Text>Loading courses...</Text>
-                  </HStack>
-                ) : (
-                  <Select
-                    name="courseId"
-                    value={formData.courseId}
-                    onChange={handleChange}
-                    placeholder="Select a course"
-                  >
-                    {courses.map(course => (
-                      <option key={course._id} value={course._id}>
-                        {course.title}
-                      </option>
-                    ))}
-                  </Select>
-                )}
+                <Select
+                  name="courseId"
+                  value={form.courseId}
+                  onChange={handleChange}
+                  placeholder="Select a course"
+                  isDisabled={courses.length === 0}
+                >
+                  {courses.map(course => (
+                    <option key={course._id} value={course._id}>
+                      {course.title}
+                    </option>
+                  ))}
+                </Select>
               </FormControl>
 
               <HStack spacing={4} w="full">
                 <FormControl isRequired>
-                  <FormLabel>Date & Time</FormLabel>
+                  <FormLabel>Scheduled Date & Time</FormLabel>
                   <Input
                     name="scheduledAt"
                     type="datetime-local"
-                    value={formData.scheduledAt}
+                    value={form.scheduledAt}
                     onChange={handleChange}
+                    min={getMinDate()}
                   />
                 </FormControl>
 
-                <FormControl isRequired>
+                <FormControl>
                   <FormLabel>Duration (minutes)</FormLabel>
-                  <Input
+                  <Select
                     name="duration"
-                    type="number"
-                    value={formData.duration}
+                    value={form.duration}
                     onChange={handleChange}
-                    min={15}
-                    max={480}
-                  />
+                  >
+                    <option value={30}>30 minutes</option>
+                    <option value={60}>1 hour</option>
+                    <option value={90}>1.5 hours</option>
+                    <option value={120}>2 hours</option>
+                    <option value={180}>3 hours</option>
+                  </Select>
                 </FormControl>
               </HStack>
 
               <FormControl>
-                <FormLabel>Max Participants</FormLabel>
+                <FormLabel>Maximum Students</FormLabel>
                 <Input
-                  name="maxParticipants"
+                  name="maxStudents"
                   type="number"
-                  value={formData.maxParticipants}
+                  value={form.maxStudents}
                   onChange={handleChange}
                   min={1}
-                  max={500}
+                  max={200}
                 />
               </FormControl>
 
-              <FormControl>
-                <FormLabel>Class Settings</FormLabel>
-                <VStack align="start" spacing={2}>
-                  <Checkbox
+              <VStack spacing={4} w="full" align="start">
+                <Text fontWeight="bold" fontSize="sm">Class Settings</Text>
+                
+                <FormControl display="flex" alignItems="center">
+                  <FormLabel htmlFor="allowChat" mb="0">
+                    Allow Chat
+                  </FormLabel>
+                  <Switch
+                    id="allowChat"
                     name="allowChat"
-                    isChecked={formData.allowChat}
+                    isChecked={form.allowChat}
                     onChange={handleChange}
-                  >
-                    Allow chat during class
-                  </Checkbox>
-                  <Checkbox
+                    colorScheme="teal"
+                  />
+                </FormControl>
+
+                <FormControl display="flex" alignItems="center">
+                  <FormLabel htmlFor="allowRecording" mb="0">
+                    Allow Recording
+                  </FormLabel>
+                  <Switch
+                    id="allowRecording"
+                    name="allowRecording"
+                    isChecked={form.allowRecording}
+                    onChange={handleChange}
+                    colorScheme="teal"
+                  />
+                </FormControl>
+
+                <FormControl display="flex" alignItems="center">
+                  <FormLabel htmlFor="allowScreenShare" mb="0">
+                    Allow Screen Sharing
+                  </FormLabel>
+                  <Switch
+                    id="allowScreenShare"
                     name="allowScreenShare"
-                    isChecked={formData.allowScreenShare}
+                    isChecked={form.allowScreenShare}
                     onChange={handleChange}
-                  >
-                    Allow screen sharing
-                  </Checkbox>
-                  <Checkbox
-                    name="allowWhiteboard"
-                    isChecked={formData.allowWhiteboard}
+                    colorScheme="teal"
+                  />
+                </FormControl>
+
+                <FormControl display="flex" alignItems="center">
+                  <FormLabel htmlFor="allowHandRaise" mb="0">
+                    Allow Hand Raising
+                  </FormLabel>
+                  <Switch
+                    id="allowHandRaise"
+                    name="allowHandRaise"
+                    isChecked={form.allowHandRaise}
                     onChange={handleChange}
-                  >
-                    Enable interactive whiteboard
-                  </Checkbox>
-                  <Checkbox
-                    name="requireApproval"
-                    isChecked={formData.requireApproval}
+                    colorScheme="teal"
+                  />
+                </FormControl>
+
+                <FormControl display="flex" alignItems="center">
+                  <FormLabel htmlFor="isPublic" mb="0">
+                    Public Class
+                  </FormLabel>
+                  <Switch
+                    id="isPublic"
+                    name="isPublic"
+                    isChecked={form.isPublic}
                     onChange={handleChange}
-                  >
-                    Require approval to join
-                  </Checkbox>
-                </VStack>
-              </FormControl>
+                    colorScheme="teal"
+                  />
+                </FormControl>
+              </VStack>
             </VStack>
           </ModalBody>
 
@@ -259,6 +364,7 @@ const CreateLiveClassModal = ({ isOpen, onClose, onSuccess }) => {
               type="submit"
               isLoading={loading}
               loadingText="Creating..."
+              isDisabled={courses.length === 0}
             >
               Create Live Class
             </Button>
