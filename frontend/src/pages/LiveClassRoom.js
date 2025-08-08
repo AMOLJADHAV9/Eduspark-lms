@@ -109,7 +109,11 @@ const LiveClassRoom = () => {
       
       const classData = await response.json();
       setLiveClass(classData);
-      setIsTeacher(classData.instructor._id === user.id);
+      
+      // Check if user is the instructor with proper null checks
+      const instructorId = classData.instructor?._id || classData.instructor?.id;
+      const userId = user?.id || user?._id;
+      setIsTeacher(instructorId === userId);
       
       // Initialize Socket.IO connection
       initializeSocket();
@@ -151,11 +155,11 @@ const LiveClassRoom = () => {
       console.log('Connected to Socket.IO server');
       setIsConnected(true);
       
-      // Join the live class room
+      // Join the live class room with safety checks
       socketRef.current.emit('join-room', {
         liveClassId: classId,
-        userId: user.id,
-        userName: user.name
+        userId: user?.id || user?._id || 'unknown',
+        userName: user?.name || user?.email || 'Unknown User'
       });
     });
 
@@ -190,7 +194,7 @@ const LiveClassRoom = () => {
     socketRef.current.on('chat-message', ({ message, user: sender }) => {
       addMessage({
         type: 'message',
-        sender: sender.name,
+        sender: sender?.name || 'Unknown',
         content: message,
         timestamp: new Date()
       });
@@ -731,10 +735,10 @@ const LiveClassRoom = () => {
                         </HStack>
                       </ListItem>
                       {participants.map((participant) => (
-                        <ListItem key={participant.id}>
+                        <ListItem key={participant.id || participant.socketId}>
                           <HStack>
-                            <Avatar size="sm" name={participant.name} />
-                            <Text fontSize="sm">{participant.name}</Text>
+                            <Avatar size="sm" name={participant.name || 'Unknown'} />
+                            <Text fontSize="sm">{participant.name || 'Unknown'}</Text>
                             {participant.handRaised && (
                               <Icon as={FaHandPaper} color="orange.500" />
                             )}

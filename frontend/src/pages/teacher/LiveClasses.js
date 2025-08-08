@@ -112,8 +112,8 @@ const TeacherLiveClasses = () => {
     e.preventDefault();
     try {
       const url = selectedClass 
-        ? `/api/live-classes/teacher/${selectedClass._id}`
-        : '/api/live-classes/teacher';
+        ? `${apiBaseUrl}/api/live-classes/teacher/${selectedClass._id}`
+        : `${apiBaseUrl}/api/live-classes/teacher`;
       
       const method = selectedClass ? 'PUT' : 'POST';
       
