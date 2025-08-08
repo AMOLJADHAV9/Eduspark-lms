@@ -13,7 +13,7 @@ const StatCard = ({ label, value, color }) => (
 );
 
 const AdminDashboard = () => {
-  const { token } = useAuth();
+  const { token, apiBaseUrl } = useAuth();
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const toast = useToast();
@@ -21,7 +21,7 @@ const AdminDashboard = () => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const res = await fetch('/api/admin/stats', {
+        const res = await fetch(`${apiBaseUrl}/api/admin/stats`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();

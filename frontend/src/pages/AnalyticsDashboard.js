@@ -24,7 +24,7 @@ const AnalyticsDashboard = () => {
   const [reportType, setReportType] = useState('user');
   const [reportPeriod, setReportPeriod] = useState('30d');
   
-  const { token } = useAuth();
+  const { token, apiBaseUrl } = useAuth();
   const toast = useToast();
 
   useEffect(() => {
@@ -37,7 +37,7 @@ const AnalyticsDashboard = () => {
       
       // Fetch overview data
       try {
-        const overviewRes = await fetch(`/api/analytics/dashboard?period=${selectedPeriod}`, {
+        const overviewRes = await fetch(`${apiBaseUrl}/api/analytics/dashboard?period=${selectedPeriod}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         if (overviewRes.ok) {
@@ -54,7 +54,7 @@ const AnalyticsDashboard = () => {
 
       // Fetch revenue data
       try {
-        const revenueRes = await fetch(`/api/analytics/revenue?period=${selectedPeriod}`, {
+        const revenueRes = await fetch(`${apiBaseUrl}/api/analytics/revenue?period=${selectedPeriod}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         if (revenueRes.ok) {
@@ -71,7 +71,7 @@ const AnalyticsDashboard = () => {
 
       // Fetch engagement data
       try {
-        const engagementRes = await fetch(`/api/analytics/engagement?period=${selectedPeriod}`, {
+        const engagementRes = await fetch(`${apiBaseUrl}/api/analytics/engagement?period=${selectedPeriod}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         if (engagementRes.ok) {
@@ -88,7 +88,7 @@ const AnalyticsDashboard = () => {
 
       // Fetch insights data
       try {
-        const insightsRes = await fetch('/api/analytics/insights', {
+        const insightsRes = await fetch(`${apiBaseUrl}/api/analytics/insights`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         if (insightsRes.ok) {

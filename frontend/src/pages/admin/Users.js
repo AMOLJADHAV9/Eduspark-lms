@@ -7,7 +7,7 @@ import { useAuth } from '../../context/AuthContext';
 import AdminSidebar from '../../components/admin/AdminSidebar';
 
 const Users = () => {
-  const { token, user } = useAuth();
+  const { token, user, apiBaseUrl } = useAuth();
   const [users, setUsers] = useState([]);
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
@@ -16,7 +16,7 @@ const Users = () => {
   const fetchUsers = async () => {
     setLoading(true);
     try {
-      const res = await fetch('/api/admin/users', {
+      const res = await fetch(`${apiBaseUrl}/api/admin/users`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -33,7 +33,7 @@ const Users = () => {
 
   const handleRoleChange = async (id, role) => {
     try {
-      const res = await fetch(`/api/admin/users/${id}/role`, {
+      const res = await fetch(`${apiBaseUrl}/api/admin/users/${id}/role`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -53,7 +53,7 @@ const Users = () => {
   const handleDelete = async (id) => {
     if (!window.confirm('Are you sure you want to delete this user?')) return;
     try {
-      const res = await fetch(`/api/admin/users/${id}`, {
+      const res = await fetch(`${apiBaseUrl}/api/admin/users/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
       });
