@@ -7,7 +7,7 @@ import { useAuth } from '../../context/AuthContext';
 import AdminSidebar from '../../components/admin/AdminSidebar';
 
 const Lectures = () => {
-  const { token } = useAuth();
+  const { token, apiBaseUrl } = useAuth();
   const [courses, setCourses] = useState([]);
   const [selectedCourse, setSelectedCourse] = useState('');
   const [lectures, setLectures] = useState([]);
@@ -20,7 +20,7 @@ const Lectures = () => {
 
   const fetchCourses = async () => {
     try {
-      const res = await fetch('/api/courses');
+      const res = await fetch(`${apiBaseUrl}/api/courses`);
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || 'Failed to fetch courses');
       setCourses(data);
@@ -33,7 +33,7 @@ const Lectures = () => {
   const fetchLectures = async (courseId) => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/lectures/course/${courseId}`);
+      const res = await fetch(`${apiBaseUrl}/api/lectures/course/${courseId}`);
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || 'Failed to fetch lectures');
       setLectures(data);
@@ -72,7 +72,7 @@ const Lectures = () => {
     e.preventDefault();
     try {
       const method = modalMode === 'add' ? 'POST' : 'PUT';
-      const url = modalMode === 'add' ? '/api/lectures' : `/api/lectures/${selected._id}`;
+      const url = modalMode === 'add' ? `${apiBaseUrl}/api/lectures` : `${apiBaseUrl}/api/lectures/${selected._id}`;
       const res = await fetch(url, {
         method,
         headers: {
@@ -94,7 +94,7 @@ const Lectures = () => {
   const handleDelete = async id => {
     if (!window.confirm('Are you sure you want to delete this lecture?')) return;
     try {
-      const res = await fetch(`/api/lectures/${id}`, {
+      const res = await fetch(`${apiBaseUrl}/api/lectures/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
       });

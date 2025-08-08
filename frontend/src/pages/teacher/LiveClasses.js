@@ -44,7 +44,7 @@ import TeacherSidebar from '../../components/teacher/TeacherSidebar';
 import Navbar from '../../components/Navbar';
 
 const TeacherLiveClasses = () => {
-  const { token } = useAuth();
+  const { token, apiBaseUrl } = useAuth();
   const [liveClasses, setLiveClasses] = useState([]);
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -69,7 +69,7 @@ const TeacherLiveClasses = () => {
 
   const fetchLiveClasses = async () => {
     try {
-      const res = await fetch('/api/live-classes/teacher', {
+      const res = await fetch(`${apiBaseUrl}/api/live-classes/teacher`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       
@@ -95,7 +95,7 @@ const TeacherLiveClasses = () => {
 
   const fetchCourses = async () => {
     try {
-      const res = await fetch('/api/courses/teacher', {
+      const res = await fetch(`${apiBaseUrl}/api/courses/teacher`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       
@@ -179,7 +179,7 @@ const TeacherLiveClasses = () => {
     }
 
     try {
-      const res = await fetch(`/api/live-classes/teacher/${classId}`, {
+      const res = await fetch(`${apiBaseUrl}/api/live-classes/teacher/${classId}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       });

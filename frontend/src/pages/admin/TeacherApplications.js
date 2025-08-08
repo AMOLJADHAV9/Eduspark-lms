@@ -47,7 +47,7 @@ import AdminSidebar from '../../components/admin/AdminSidebar';
 import Navbar from '../../components/Navbar';
 
 const TeacherApplications = () => {
-  const { token } = useAuth();
+  const { token, apiBaseUrl } = useAuth();
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedApplication, setSelectedApplication] = useState(null);
@@ -61,7 +61,7 @@ const TeacherApplications = () => {
   const fetchApplications = async () => {
     try {
       setLoading(true);
-      const res = await fetch('/api/admin/teacher-applications', {
+      const res = await fetch(`${apiBaseUrl}/api/admin/teacher-applications`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       
@@ -88,7 +88,7 @@ const TeacherApplications = () => {
 
   const handleApplicationAction = async (applicationId, action) => {
     try {
-      const res = await fetch(`/api/admin/teacher-applications/${applicationId}/review`, {
+      const res = await fetch(`${apiBaseUrl}/api/admin/teacher-applications/${applicationId}/review`, {
         method: 'PUT',
         headers: { 
           'Content-Type': 'application/json',

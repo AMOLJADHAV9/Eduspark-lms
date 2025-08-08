@@ -57,7 +57,7 @@ const AdminCertificates = () => {
     grade: ''
   });
   
-  const { token } = useAuth();
+  const { token, apiBaseUrl } = useAuth();
   const toast = useToast();
 
   useEffect(() => {
@@ -67,7 +67,7 @@ const AdminCertificates = () => {
   const fetchData = async () => {
     try {
       // Fetch certificates
-      const certificatesRes = await fetch('/api/certificates', {
+      const certificatesRes = await fetch(`${apiBaseUrl}/api/certificates`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (certificatesRes.ok) {
@@ -76,7 +76,7 @@ const AdminCertificates = () => {
       }
 
       // Fetch statistics
-      const statsRes = await fetch('/api/certificates/stats/overview', {
+      const statsRes = await fetch(`${apiBaseUrl}/api/certificates/stats/overview`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (statsRes.ok) {
@@ -112,7 +112,7 @@ const AdminCertificates = () => {
     e.preventDefault();
     
     try {
-      const res = await fetch(`/api/certificates/${editingCertificate._id}`, {
+      const res = await fetch(`${apiBaseUrl}/api/certificates/${editingCertificate._id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -150,7 +150,7 @@ const AdminCertificates = () => {
     }
 
     try {
-      const res = await fetch(`/api/certificates/${certificateId}`, {
+      const res = await fetch(`${apiBaseUrl}/api/certificates/${certificateId}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       });

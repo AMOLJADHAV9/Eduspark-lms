@@ -58,7 +58,7 @@ const AdminAssignments = () => {
   });
   const [submitting, setSubmitting] = useState(false);
   
-  const { token } = useAuth();
+  const { token, apiBaseUrl } = useAuth();
   const toast = useToast();
 
   useEffect(() => {
@@ -68,7 +68,7 @@ const AdminAssignments = () => {
   const fetchData = async () => {
     try {
       // Fetch assignments
-      const assignmentsRes = await fetch('/api/assignments', {
+      const assignmentsRes = await fetch(`${apiBaseUrl}/api/assignments`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (assignmentsRes.ok) {
@@ -77,7 +77,7 @@ const AdminAssignments = () => {
       }
 
       // Fetch courses
-      const coursesRes = await fetch('/api/courses');
+      const coursesRes = await fetch(`${apiBaseUrl}/api/courses`);
       if (coursesRes.ok) {
         const coursesData = await coursesRes.json();
         setCourses(coursesData);
@@ -136,8 +136,8 @@ const AdminAssignments = () => {
     
     try {
       const url = editingAssignment 
-        ? `/api/assignments/${editingAssignment._id}`
-        : '/api/assignments';
+        ? `${apiBaseUrl}/api/assignments/${editingAssignment._id}`
+        : `${apiBaseUrl}/api/assignments`;
       
       const method = editingAssignment ? 'PUT' : 'POST';
       
@@ -181,7 +181,7 @@ const AdminAssignments = () => {
     }
 
     try {
-      const res = await fetch(`/api/assignments/${assignmentId}`, {
+      const res = await fetch(`${apiBaseUrl}/api/assignments/${assignmentId}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       });

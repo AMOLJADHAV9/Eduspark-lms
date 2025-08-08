@@ -6,7 +6,7 @@ import { useAuth } from '../../context/AuthContext';
 import AdminSidebar from '../../components/admin/AdminSidebar';
 
 const Enrollments = () => {
-  const { token } = useAuth();
+  const { token, apiBaseUrl } = useAuth();
   const [courses, setCourses] = useState([]);
   const [selectedCourse, setSelectedCourse] = useState('');
   const [enrollments, setEnrollments] = useState([]);
@@ -14,7 +14,7 @@ const Enrollments = () => {
 
   const fetchCourses = async () => {
     try {
-      const res = await fetch('/api/courses');
+      const res = await fetch(`${apiBaseUrl}/api/courses`);
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || 'Failed to fetch courses');
       setCourses(data);
@@ -25,7 +25,7 @@ const Enrollments = () => {
   const fetchEnrollments = async (courseId) => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/enrollments/course/${courseId}`, {
+      const res = await fetch(`${apiBaseUrl}/api/enrollments/course/${courseId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();

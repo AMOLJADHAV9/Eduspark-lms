@@ -43,7 +43,7 @@ import TeacherSidebar from '../../components/teacher/TeacherSidebar';
 import Navbar from '../../components/Navbar';
 
 const TeacherLectures = () => {
-  const { token } = useAuth();
+  const { token, apiBaseUrl } = useAuth();
   const [lectures, setLectures] = useState([]);
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -66,7 +66,7 @@ const TeacherLectures = () => {
 
   const fetchLectures = async () => {
     try {
-      const res = await fetch('/api/lectures/teacher', {
+      const res = await fetch(`${apiBaseUrl}/api/lectures/teacher`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       
@@ -92,7 +92,7 @@ const TeacherLectures = () => {
 
   const fetchCourses = async () => {
     try {
-      const res = await fetch('/api/courses/teacher', {
+      const res = await fetch(`${apiBaseUrl}/api/courses/teacher`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       
@@ -172,7 +172,7 @@ const TeacherLectures = () => {
     }
 
     try {
-      const res = await fetch(`/api/lectures/${lectureId}`, {
+      const res = await fetch(`${apiBaseUrl}/api/lectures/${lectureId}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       });

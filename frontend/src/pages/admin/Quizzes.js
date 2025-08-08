@@ -8,7 +8,7 @@ import Navbar from '../../components/Navbar';
 import AdminSidebar from '../../components/admin/AdminSidebar';
 
 const Quizzes = () => {
-  const { token } = useAuth();
+  const { token, apiBaseUrl } = useAuth();
   const toast = useToast();
   const [quizzes, setQuizzes] = useState([]);
   const [courses, setCourses] = useState([]);
@@ -31,7 +31,7 @@ const Quizzes = () => {
 
   const fetchQuizzes = async () => {
     try {
-      const res = await fetch('/api/quizzes', {
+      const res = await fetch(`${apiBaseUrl}/api/quizzes`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (!res.ok) throw new Error('Failed to fetch quizzes');
@@ -46,7 +46,7 @@ const Quizzes = () => {
 
   const fetchCourses = async () => {
     try {
-      const res = await fetch('/api/courses');
+      const res = await fetch(`${apiBaseUrl}/api/courses`);
       if (!res.ok) throw new Error('Failed to fetch courses');
       const data = await res.json();
       setCourses(data);
@@ -58,7 +58,7 @@ const Quizzes = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const url = editingQuiz ? `/api/quizzes/${editingQuiz._id}` : '/api/quizzes';
+      const url = editingQuiz ? `${apiBaseUrl}/api/quizzes/${editingQuiz._id}` : `${apiBaseUrl}/api/quizzes`;
       const method = editingQuiz ? 'PUT' : 'POST';
       
       const res = await fetch(url, {
@@ -96,7 +96,7 @@ const Quizzes = () => {
     if (!window.confirm('Are you sure you want to delete this quiz?')) return;
     
     try {
-      const res = await fetch(`/api/quizzes/${quizId}`, {
+      const res = await fetch(`${apiBaseUrl}/api/quizzes/${quizId}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       });

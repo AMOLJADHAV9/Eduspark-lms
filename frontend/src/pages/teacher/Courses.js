@@ -66,7 +66,7 @@ import TeacherSidebar from '../../components/teacher/TeacherSidebar';
 import Navbar from '../../components/Navbar';
 
 const TeacherCourses = () => {
-  const { user, token } = useAuth();
+  const { user, token, apiBaseUrl } = useAuth();
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -87,7 +87,7 @@ const TeacherCourses = () => {
 
   const fetchCourses = async () => {
     try {
-      const res = await fetch('/api/courses/teacher', {
+      const res = await fetch(`${apiBaseUrl}/api/courses/teacher`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       
@@ -183,7 +183,7 @@ const TeacherCourses = () => {
   const handleDelete = async (courseId) => {
     if (window.confirm('Are you sure you want to delete this course?')) {
       try {
-        const res = await fetch(`/api/courses/teacher/${courseId}`, {
+        const res = await fetch(`${apiBaseUrl}/api/courses/teacher/${courseId}`, {
           method: 'DELETE',
           headers: { Authorization: `Bearer ${token}` }
         });
