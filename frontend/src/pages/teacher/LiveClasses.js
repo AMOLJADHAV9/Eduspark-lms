@@ -42,6 +42,7 @@ import {
 import { useAuth } from '../../context/AuthContext';
 import TeacherSidebar from '../../components/teacher/TeacherSidebar';
 import Navbar from '../../components/Navbar';
+import { useNavigate } from 'react-router-dom';
 
 const TeacherLiveClasses = () => {
   const { token, apiBaseUrl } = useAuth();
@@ -61,6 +62,7 @@ const TeacherLiveClasses = () => {
     meetingLink: ''
   });
   const toast = useToast();
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchLiveClasses();
@@ -202,6 +204,10 @@ const TeacherLiveClasses = () => {
         status: 'error'
       });
     }
+  };
+
+  const handleJoinLive = (liveClass) => {
+    navigate(`/live-class/${liveClass._id}`);
   };
 
   const getCourseName = (courseId) => {
@@ -358,7 +364,7 @@ const TeacherLiveClasses = () => {
                               size="sm"
                               colorScheme="green"
                               leftIcon={<FaPlay />}
-                              onClick={() => window.open(liveClass.meetingLink, '_blank')}
+                              onClick={() => handleJoinLive(liveClass)}
                             >
                               Join Live
                             </Button>

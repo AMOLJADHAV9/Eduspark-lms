@@ -117,7 +117,7 @@ const AnalyticsDashboard = () => {
 
   const generateReport = async () => {
     try {
-      const res = await fetch('/api/analytics/reports', {
+      const res = await fetch(`${apiBaseUrl}/api/analytics/reports`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -4,67 +4,68 @@ import {
   Flex,
   Heading,
   Text,
+  VStack,
+  HStack,
   SimpleGrid,
   Stat,
   StatLabel,
   StatNumber,
   StatHelpText,
+  useColorModeValue,
   Card,
   CardBody,
   CardHeader,
-  VStack,
-  HStack,
+  Avatar,
+  Progress,
   Badge,
-  Button,
   useToast,
   Spinner,
   Center,
-  Progress,
-  Avatar,
-  AvatarGroup,
-  Icon,
-  Divider
+  Icon
 } from '@chakra-ui/react';
 import {
   FaBook,
   FaUsers,
-  FaVideo,
   FaDollarSign,
   FaStar,
   FaPlay,
-  FaCalendarAlt,
-  FaChartLine,
-  FaGraduationCap,
-  FaComments,
-  FaFileAlt
+  FaVideo,
+  FaClipboardList,
+  FaGraduationCap
 } from 'react-icons/fa';
 import { useAuth } from '../../context/AuthContext';
 import TeacherSidebar from '../../components/teacher/TeacherSidebar';
 import Navbar from '../../components/Navbar';
 
 const StatCard = ({ label, value, icon: IconComponent, color, helpText }) => (
-  <Card bg={`${color}.50`} borderLeft={`4px solid ${color}.500`}>
+  <Card
+    bg="rgba(255, 255, 255, 0.15)"
+    backdropFilter="blur(8px)"
+    borderRadius="xl"
+    border="1px solid rgba(255, 255, 255, 0.18)"
+  >
     <CardBody>
-      <HStack justify="space-between">
+      <HStack spacing={4}>
+        <Box
+          p={3}
+          bg={`${color}.500`}
+          borderRadius="lg"
+          color="white"
+        >
+          <IconComponent size={24} />
+        </Box>
         <VStack align="start" spacing={1}>
-          <Text fontSize="sm" color="gray.600" fontWeight="medium">
-            {label}
-          </Text>
-          <Stat>
-            <StatNumber fontSize="2xl" color={`${color}.600`}>
-              {value}
-            </StatNumber>
-            {helpText && <StatHelpText color="gray.500">{helpText}</StatHelpText>}
-          </Stat>
+          <StatLabel color="gray.300" fontSize="sm">{label}</StatLabel>
+          <StatNumber color="white" fontSize="2xl" fontWeight="bold">{value}</StatNumber>
+          {helpText && <StatHelpText color="gray.400" fontSize="xs">{helpText}</StatHelpText>}
         </VStack>
-        <Icon as={IconComponent} color={`${color}.500`} boxSize={8} />
       </HStack>
     </CardBody>
   </Card>
 );
 
 const TeacherDashboard = () => {
-  const { user, token } = useAuth();
+  const { user, token, apiBaseUrl } = useAuth();
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
   const toast = useToast();
@@ -75,7 +76,7 @@ const TeacherDashboard = () => {
 
   const fetchDashboardData = async () => {
     try {
-      const res = await fetch('/api/teacher/dashboard', {
+      const res = await fetch(`${apiBaseUrl}/api/teacher/dashboard`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       

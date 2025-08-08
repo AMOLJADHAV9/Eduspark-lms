@@ -98,6 +98,10 @@ const LiveClassRoom = () => {
 
   const initializeClass = async () => {
     try {
+      console.log('Initializing class with ID:', classId);
+      console.log('User object:', user);
+      console.log('API Base URL:', apiBaseUrl);
+      
       // Fetch live class details
       const response = await fetch(`${apiBaseUrl}/api/live-classes/${classId}`, {
         headers: { Authorization: `Bearer ${token}` }
@@ -108,19 +112,47 @@ const LiveClassRoom = () => {
       }
       
       const classData = await response.json();
-      console.log('Live class data:', classData); // Debug log
+      console.log('Live class data received:', classData);
       
       // Ensure the classData is properly structured
       if (!classData || typeof classData !== 'object') {
         throw new Error('Invalid live class data received');
       }
       
+      // Validate required fields
+      if (!classData.title || typeof classData.title !== 'string') {
+        console.warn('Live class title is missing or invalid:', classData.title);
+        classData.title = 'Untitled Class';
+      }
+      
+      // Ensure instructor object is properly structured
+      if (classData.instructor && typeof classData.instructor === 'object') {
+        if (!classData.instructor.name && classData.instructor.email) {
+          classData.instructor.name = classData.instructor.email;
+        }
+        if (!classData.instructor.name) {
+          classData.instructor.name = 'Unknown Instructor';
+        }
+      } else {
+        classData.instructor = { name: 'Unknown Instructor', email: 'unknown@example.com' };
+      }
+      
+      // Ensure course object is properly structured
+      if (classData.course && typeof classData.course === 'object') {
+        if (!classData.course.title) {
+          classData.course.title = 'Unknown Course';
+        }
+      } else {
+        classData.course = { title: 'Unknown Course' };
+      }
+      
+      console.log('Processed live class data:', classData);
       setLiveClass(classData);
       
       // Check if user is the instructor with proper null checks
       const instructorId = classData.instructor?._id || classData.instructor?.id;
       const userId = user?.id || user?._id;
-      console.log('Instructor ID:', instructorId, 'User ID:', userId); // Debug log
+      console.log('Instructor ID:', instructorId, 'User ID:', userId);
       setIsTeacher(instructorId === userId);
       
       // Initialize Socket.IO connection
@@ -511,6 +543,7 @@ const LiveClassRoom = () => {
 
   // Additional safety check for liveClass structure
   if (!liveClass.title || typeof liveClass.title !== 'string') {
+    console.error('Invalid liveClass structure:', liveClass);
     return (
       <Box bg={bgColor} minH="100vh">
         <Navbar />
@@ -527,6 +560,10 @@ const LiveClassRoom = () => {
     );
   }
 
+  // Ensure instructor and course objects are properly structured
+  const instructorName = liveClass.instructor?.name || liveClass.instructor?.email || 'Unknown Instructor';
+  const courseTitle = liveClass.course?.title || 'Unknown Course';
+
   return (
     <Box bg={bgColor} minH="100vh">
       <Navbar />
@@ -540,7 +577,7 @@ const LiveClassRoom = () => {
                 {liveClass.title}
               </Heading>
               <Text fontSize="sm" color="gray.500">
-                {liveClass.instructor?.name || liveClass.instructor?.email || 'Unknown Instructor'} • {liveClass.course?.title || 'Unknown Course'}
+                {instructorName} • {courseTitle}
               </Text>
             </VStack>
             
@@ -757,9 +794,9 @@ const LiveClassRoom = () => {
                     <List spacing={2}>
                       <ListItem>
                         <HStack>
-                          <Avatar size="sm" name={liveClass.instructor?.name || liveClass.instructor?.email || 'Unknown'} />
+                          <Avatar size="sm" name={instructorName} />
                           <Text fontSize="sm" fontWeight="bold">
-                            {liveClass.instructor?.name || liveClass.instructor?.email || 'Unknown'} (Teacher)
+                            {instructorName} (Teacher)
                           </Text>
                         </HStack>
                       </ListItem>
