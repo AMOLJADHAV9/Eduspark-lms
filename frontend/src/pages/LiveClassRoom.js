@@ -11,18 +11,9 @@ import {
   Flex,
   IconButton,
   Badge,
-  Divider,
   Input,
-  Textarea,
   Avatar,
   useColorModeValue,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalCloseButton,
-  useDisclosure,
   Alert,
   AlertIcon,
   AlertTitle,
@@ -34,8 +25,6 @@ import {
   CardHeader,
   List,
   ListItem,
-  ListIcon,
-  Progress,
   Spinner,
   Center,
   Icon
@@ -47,20 +36,9 @@ import {
   FaMicrophoneSlash,
   FaComments,
   FaUsers,
-  FaShare,
-  FaStop,
-  FaCog,
   FaSignOutAlt,
   FaHandPaper,
-  FaCheck,
-  FaTimes,
-  FaPlay,
-  FaPause,
-  FaVolumeUp,
-  FaVolumeMute,
-  FaDesktop,
-  FaMobile,
-  FaTablet
+  FaDesktop
 } from 'react-icons/fa';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -93,19 +71,16 @@ const LiveClassRoom = () => {
   const [isAudioEnabled, setIsAudioEnabled] = useState(true);
   const [isScreenSharing, setIsScreenSharing] = useState(false);
   const [isHandRaised, setIsHandRaised] = useState(false);
-  const [isMuted, setIsMuted] = useState(false);
   
   // UI state
   const [showChat, setShowChat] = useState(true);
   const [showParticipants, setShowParticipants] = useState(false);
-  const [showSettings, setShowSettings] = useState(false);
   
   // WebRTC state
   const [peerConnection, setPeerConnection] = useState(null);
   const [localStream, setLocalStream] = useState(null);
   const [remoteStream, setRemoteStream] = useState(null);
   const [screenStream, setScreenStream] = useState(null);
-  const [peers, setPeers] = useState([]);
   
   const bgColor = useColorModeValue('gray.50', 'gray.900');
   const cardBg = useColorModeValue('white', 'gray.800');
