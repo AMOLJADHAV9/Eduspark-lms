@@ -507,7 +507,7 @@ const LiveClassRoom = () => {
                 {liveClass.title}
               </Heading>
               <Text fontSize="sm" color="gray.500">
-                {liveClass.instructor.name} • {liveClass.course.title}
+                {liveClass.instructor?.name || liveClass.instructor?.email || 'Unknown Instructor'} • {liveClass.course?.title || 'Unknown Course'}
               </Text>
             </VStack>
             
@@ -724,9 +724,9 @@ const LiveClassRoom = () => {
                     <List spacing={2}>
                       <ListItem>
                         <HStack>
-                          <Avatar size="sm" name={liveClass.instructor.name} />
+                          <Avatar size="sm" name={liveClass.instructor?.name || liveClass.instructor?.email || 'Unknown'} />
                           <Text fontSize="sm" fontWeight="bold">
-                            {liveClass.instructor.name} (Teacher)
+                            {liveClass.instructor?.name || liveClass.instructor?.email || 'Unknown'} (Teacher)
                           </Text>
                         </HStack>
                       </ListItem>

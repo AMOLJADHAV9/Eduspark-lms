@@ -116,8 +116,8 @@ const TeacherCourses = () => {
     e.preventDefault();
     try {
       const url = editingCourse 
-        ? `/api/courses/teacher/${editingCourse._id}`
-        : '/api/courses/teacher';
+        ? `${apiBaseUrl}/api/courses/teacher/${editingCourse._id}`
+        : `${apiBaseUrl}/api/courses/teacher`;
       
       const method = editingCourse ? 'PUT' : 'POST';
 

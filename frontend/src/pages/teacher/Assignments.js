@@ -26,12 +26,14 @@ import {
 import { useAuth } from '../../context/AuthContext';
 import TeacherSidebar from '../../components/teacher/TeacherSidebar';
 import Navbar from '../../components/Navbar';
+import { useNavigate } from 'react-router-dom';
 
 const TeacherAssignments = () => {
-  const { token } = useAuth();
+  const { token, apiBaseUrl } = useAuth();
   const [assignments, setAssignments] = useState([]);
   const [loading, setLoading] = useState(true);
   const toast = useToast();
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchAssignments();
@@ -39,7 +41,7 @@ const TeacherAssignments = () => {
 
   const fetchAssignments = async () => {
     try {
-      const res = await fetch('/api/assignments/teacher', {
+      const res = await fetch(`${apiBaseUrl}/api/assignments/teacher`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       
@@ -107,7 +109,7 @@ const TeacherAssignments = () => {
                 <Button
                   colorScheme="teal"
                   leftIcon={<FaPlus />}
-                  onClick={() => window.location.href = '/assignment/create'}
+                  onClick={() => navigate('/assignment/create')}
                 >
                   Create Assignment
                 </Button>
@@ -135,7 +137,7 @@ const TeacherAssignments = () => {
                   <Button
                     colorScheme="teal"
                     leftIcon={<FaPlus />}
-                    onClick={() => window.location.href = '/assignment/create'}
+                    onClick={() => navigate('/assignment/create')}
                   >
                     Create First Assignment
                   </Button>

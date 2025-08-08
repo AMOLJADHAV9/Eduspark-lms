@@ -36,7 +36,7 @@ const CourseAssignments = () => {
   const [loading, setLoading] = useState(true);
   const [userSubmissions, setUserSubmissions] = useState([]);
   
-  const { token, user } = useAuth();
+  const { token, user, apiBaseUrl } = useAuth();
   const navigate = useNavigate();
   const toast = useToast();
 
@@ -47,21 +47,21 @@ const CourseAssignments = () => {
   const fetchData = async () => {
     try {
       // Fetch course details
-      const courseRes = await fetch(`/api/courses/${courseId}`);
+      const courseRes = await fetch(`${apiBaseUrl}/api/courses/${courseId}`);
       if (courseRes.ok) {
         const courseData = await courseRes.json();
         setCourse(courseData);
       }
 
       // Fetch assignments for this course
-      const assignmentsRes = await fetch(`/api/assignments?course=${courseId}&published=true`);
+      const assignmentsRes = await fetch(`${apiBaseUrl}/api/assignments?course=${courseId}&published=true`);
       if (assignmentsRes.ok) {
         const assignmentsData = await assignmentsRes.json();
         setAssignments(assignmentsData);
       }
 
       // Fetch user's submissions for this course
-      const submissionsRes = await fetch(`/api/assignments/user/submissions?course=${courseId}`, {
+      const submissionsRes = await fetch(`${apiBaseUrl}/api/assignments/user/submissions?course=${courseId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (submissionsRes.ok) {
