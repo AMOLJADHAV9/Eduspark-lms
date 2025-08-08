@@ -108,11 +108,19 @@ const LiveClassRoom = () => {
       }
       
       const classData = await response.json();
+      console.log('Live class data:', classData); // Debug log
+      
+      // Ensure the classData is properly structured
+      if (!classData || typeof classData !== 'object') {
+        throw new Error('Invalid live class data received');
+      }
+      
       setLiveClass(classData);
       
       // Check if user is the instructor with proper null checks
       const instructorId = classData.instructor?._id || classData.instructor?.id;
       const userId = user?.id || user?._id;
+      console.log('Instructor ID:', instructorId, 'User ID:', userId); // Debug log
       setIsTeacher(instructorId === userId);
       
       // Initialize Socket.IO connection
@@ -406,7 +414,7 @@ const LiveClassRoom = () => {
     // Send hand raise event to other participants
     addMessage({
       type: 'system',
-      content: `${user.name} ${isHandRaised ? 'lowered' : 'raised'} their hand`,
+      content: `${user?.name || user?.email || 'Unknown User'} ${isHandRaised ? 'lowered' : 'raised'} their hand`,
       timestamp: new Date()
     });
   };
@@ -415,7 +423,7 @@ const LiveClassRoom = () => {
     if (newMessage.trim() && socketRef.current) {
       const message = {
         id: Date.now(),
-        sender: user.name,
+        sender: user?.name || user?.email || 'Unknown User',
         content: newMessage,
         timestamp: new Date(),
         type: 'message'
@@ -428,7 +436,10 @@ const LiveClassRoom = () => {
       socketRef.current.emit('chat-message', {
         liveClassId: classId,
         message: newMessage,
-        user: { id: user.id, name: user.name }
+        user: { 
+          id: user?.id || user?._id || 'unknown', 
+          name: user?.name || user?.email || 'Unknown User' 
+        }
       });
     }
   };
@@ -491,6 +502,24 @@ const LiveClassRoom = () => {
             <AlertTitle>Class Not Found!</AlertTitle>
             <AlertDescription>
               The live class you're looking for doesn't exist or you don't have access.
+            </AlertDescription>
+          </Alert>
+        </Center>
+      </Box>
+    );
+  }
+
+  // Additional safety check for liveClass structure
+  if (!liveClass.title || typeof liveClass.title !== 'string') {
+    return (
+      <Box bg={bgColor} minH="100vh">
+        <Navbar />
+        <Center h="50vh">
+          <Alert status="error">
+            <AlertIcon />
+            <AlertTitle>Invalid Class Data!</AlertTitle>
+            <AlertDescription>
+              The live class data is not properly formatted. Please try again.
             </AlertDescription>
           </Alert>
         </Center>
