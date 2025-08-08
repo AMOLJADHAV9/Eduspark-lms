@@ -52,7 +52,7 @@ const LiveClasses = () => {
   const [activeTab, setActiveTab] = useState('upcoming');
   const [showCreateModal, setShowCreateModal] = useState(false);
   const navigate = useNavigate();
-  const { user, token } = useAuth();
+  const { user, token, apiBaseUrl } = useAuth();
   const toast = useToast();
   
   const bg = useColorModeValue('gray.50', 'gray.900');
@@ -75,7 +75,7 @@ const LiveClasses = () => {
 
   const handleJoinClass = async (liveClass) => {
     try {
-      const response = await fetch(`/api/live-classes/${liveClass._id}/join`, {
+      const response = await fetch(`${apiBaseUrl}/api/live-classes/${liveClass._id}/join`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -104,7 +104,7 @@ const LiveClasses = () => {
 
   const handleStartClass = async (liveClass) => {
     try {
-      const response = await fetch(`/api/live-classes/${liveClass._id}/start`, {
+      const response = await fetch(`${apiBaseUrl}/api/live-classes/${liveClass._id}/start`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -131,7 +131,7 @@ const LiveClasses = () => {
 
   const handleEndClass = async (liveClass) => {
     try {
-      const response = await fetch(`/api/live-classes/${liveClass._id}/end`, {
+      const response = await fetch(`${apiBaseUrl}/api/live-classes/${liveClass._id}/end`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
