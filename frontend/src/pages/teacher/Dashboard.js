@@ -21,7 +21,8 @@ import {
   useToast,
   Spinner,
   Center,
-  Icon
+  Icon,
+  Button
 } from '@chakra-ui/react';
 import {
   FaBook,
@@ -31,7 +32,9 @@ import {
   FaPlay,
   FaVideo,
   FaClipboardList,
-  FaGraduationCap
+  FaGraduationCap,
+  FaFileAlt,
+  FaComments
 } from 'react-icons/fa';
 import { useAuth } from '../../context/AuthContext';
 import TeacherSidebar from '../../components/teacher/TeacherSidebar';

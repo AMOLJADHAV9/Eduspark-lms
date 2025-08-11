@@ -23,6 +23,13 @@ import {
   Icon,
   Flex,
   useToast,
+  Image,
+  Divider,
+  Avatar,
+  AvatarGroup,
+  Progress,
+  IconButton,
+  Tooltip,
 } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 import { 
@@ -35,7 +42,22 @@ import {
   FaUsers,
   FaComments,
   FaEdit,
-  FaPlus
+  FaPlus,
+  FaRocket,
+  FaStar,
+  FaGraduationCap,
+  FaMicrophone,
+  FaEye,
+  FaHeart,
+  FaShare,
+  FaBookmark,
+  FaCrown,
+  FaTrophy,
+  FaMedal,
+  FaFire,
+  FaSparkles,
+  FaMagic,
+  FaSpinner
 } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -45,6 +67,7 @@ import CreateLiveClassModal from '../components/CreateLiveClassModal';
 import { liveClassApi } from '../utils/api';
 
 const MotionBox = motion(Box);
+const MotionCard = motion(Card);
 
 const LiveClasses = () => {
   const [liveClasses, setLiveClasses] = useState([]);
@@ -166,6 +189,16 @@ const LiveClasses = () => {
     }
   };
 
+  const getStatusGradient = (status) => {
+    switch (status) {
+      case 'scheduled': return 'gradients.primary';
+      case 'live': return 'gradients.success';
+      case 'ended': return 'gradients.dark';
+      case 'cancelled': return 'gradients.danger';
+      default: return 'gradients.dark';
+    }
+  };
+
   const formatDateTime = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleString('en-IN', {
@@ -193,384 +226,795 @@ const LiveClasses = () => {
 
   if (loading) {
     return (
-      <Box bg={bg} minH="100vh">
+      <Box 
+        bg="gradients.primary" 
+        minH="100vh"
+        position="relative"
+        overflow="hidden"
+      >
+        {/* Animated background elements */}
+        <Box
+          position="absolute"
+          top="10%"
+          left="10%"
+          w="200px"
+          h="200px"
+          bg="neon.blue"
+          borderRadius="full"
+          opacity="0.1"
+          filter="blur(40px)"
+          animation="pulse 3s infinite"
+        />
+        <Box
+          position="absolute"
+          top="60%"
+          right="15%"
+          w="150px"
+          h="150px"
+          bg="neon.purple"
+          borderRadius="full"
+          opacity="0.1"
+          filter="blur(30px)"
+          animation="pulse 4s infinite"
+        />
+        
         <Navbar />
         <Center h="50vh">
-          <Spinner size="xl" />
+          <VStack spacing={6}>
+            <Box
+              w="80px"
+              h="80px"
+              bg="gradients.success"
+              borderRadius="full"
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              boxShadow="neon-green"
+              animation="spin 2s linear infinite"
+            >
+              <Icon as={FaSpinner} boxSize={8} color="white" />
+            </Box>
+            <Text fontSize="xl" fontWeight="bold" color="white">
+              Loading Live Classes...
+            </Text>
+          </VStack>
         </Center>
       </Box>
     );
   }
 
   return (
-    <Box bg={bg} minH="100vh">
+    <Box 
+      bg="gradients.primary" 
+      minH="100vh"
+      position="relative"
+      overflow="hidden"
+    >
+      {/* Animated background elements */}
+      <Box
+        position="absolute"
+        top="10%"
+        left="10%"
+        w="300px"
+        h="300px"
+        bg="neon.blue"
+        borderRadius="full"
+        opacity="0.05"
+        filter="blur(60px)"
+        animation="pulse 6s infinite"
+      />
+      <Box
+        position="absolute"
+        top="60%"
+        right="15%"
+        w="250px"
+        h="250px"
+        bg="neon.purple"
+        borderRadius="full"
+        opacity="0.05"
+        filter="blur(50px)"
+        animation="pulse 8s infinite"
+      />
+      <Box
+        position="absolute"
+        bottom="20%"
+        left="20%"
+        w="200px"
+        h="200px"
+        bg="neon.pink"
+        borderRadius="full"
+        opacity="0.05"
+        filter="blur(40px)"
+        animation="pulse 7s infinite"
+      />
+
       <Navbar />
-      <Container maxW="7xl" py={8}>
-        <VStack spacing={8} align="stretch">
-          {/* Header */}
-          <Flex justify="space-between" align="center">
-            <Box>
-              <Heading size="2xl" mb={2} color="teal.600">
-                Live Classes
-              </Heading>
-              <Text fontSize="lg" color="gray.600">
-                Join real-time learning sessions with expert instructors
-              </Text>
-            </Box>
-            {user && user.role === 'teacher' && (
-              <Button
-                leftIcon={<FaPlus />}
-                colorScheme="teal"
-                size="lg"
-                onClick={() => setShowCreateModal(true)}
-              >
-                Create Live Class
-              </Button>
-            )}
-          </Flex>
+      <Container maxW="7xl" py={8} position="relative" zIndex={1}>
+        <VStack spacing={12} align="stretch">
+          {/* Enhanced Header */}
+          <MotionBox
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            <Flex justify="space-between" align="center" mb={8}>
+              <VStack align="start" spacing={4}>
+                <HStack spacing={4}>
+                  <Box
+                    w="60px"
+                    h="60px"
+                    bg="gradients.success"
+                    borderRadius="xl"
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                    boxShadow="neon-green"
+                  >
+                    <Icon as={FaVideo} boxSize={6} color="white" />
+                  </Box>
+                  <Box>
+                    <Heading 
+                      size="3xl" 
+                      color="white" 
+                      fontWeight="extrabold"
+                      className="gradient-text"
+                      textShadow="0 4px 8px rgba(0,0,0,0.5), 0 0 20px rgba(255,255,255,0.3)"
+                      letterSpacing="wide"
+                    >
+                      Live Classes
+                    </Heading>
+                    <Text 
+                      fontSize="xl" 
+                      color="white" 
+                      opacity={0.95}
+                      textShadow="0 2px 4px rgba(0,0,0,0.3)"
+                      fontWeight="medium"
+                    >
+                      Join real-time learning sessions with expert instructors
+                    </Text>
+                  </Box>
+                </HStack>
+                <HStack spacing={6} color="white" opacity={0.8}>
+                  <HStack>
+                    <Icon as={FaRocket} />
+                    <Text>Interactive Learning</Text>
+                  </HStack>
+                  <HStack>
+                    <Icon as={FaStar} />
+                    <Text>Expert Instructors</Text>
+                  </HStack>
+                  <HStack>
+                    <Icon as={FaGraduationCap} />
+                    <Text>Real-time Q&A</Text>
+                  </HStack>
+                </HStack>
+              </VStack>
+              {user && user.role === 'teacher' && (
+                <Button
+                  leftIcon={<FaPlus />}
+                  variant="3d-primary"
+                  size="lg"
+                  onClick={() => setShowCreateModal(true)}
+                  boxShadow="neon-blue"
+                  _hover={{
+                    boxShadow: "neon-blue",
+                    transform: "translateY(-3px) scale(1.05)",
+                  }}
+                >
+                  Create Live Class
+                </Button>
+              )}
+            </Flex>
+          </MotionBox>
 
-          {/* Tabs */}
-          <Tabs value={activeTab} onChange={setActiveTab} colorScheme="teal">
-            <TabList>
-              <Tab>Upcoming Classes</Tab>
-              <Tab>Past Classes</Tab>
-              {user && <Tab>My Classes</Tab>}
-            </TabList>
+          {/* Enhanced Tabs */}
+          <MotionBox
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+          >
+            <Card variant="glass" p={6}>
+              <Tabs value={activeTab} onChange={setActiveTab} colorScheme="teal">
+                <TabList bg="transparent" border="none">
+                  <Tab 
+                    _selected={{ 
+                      bg: "gradients.primary", 
+                      color: "white",
+                      boxShadow: "neon-blue",
+                      transform: "translateY(-2px)"
+                    }}
+                    borderRadius="xl"
+                    fontWeight="semibold"
+                    transition="all 0.3s"
+                  >
+                    <HStack spacing={2}>
+                      <Icon as={FaRocket} />
+                      <Text>Upcoming Classes</Text>
+                    </HStack>
+                  </Tab>
+                  <Tab 
+                    _selected={{ 
+                      bg: "gradients.dark", 
+                      color: "white",
+                      boxShadow: "neon-purple",
+                      transform: "translateY(-2px)"
+                    }}
+                    borderRadius="xl"
+                    fontWeight="semibold"
+                    transition="all 0.3s"
+                  >
+                    <HStack spacing={2}>
+                      <Icon as={FaClock} />
+                      <Text>Past Classes</Text>
+                    </HStack>
+                  </Tab>
+                  {user && (
+                    <Tab 
+                      _selected={{ 
+                        bg: "gradients.success", 
+                        color: "white",
+                        boxShadow: "neon-green",
+                        transform: "translateY(-2px)"
+                      }}
+                      borderRadius="xl"
+                      fontWeight="semibold"
+                      transition="all 0.3s"
+                    >
+                      <HStack spacing={2}>
+                        <Icon as={FaCrown} />
+                        <Text>My Classes</Text>
+                      </HStack>
+                    </Tab>
+                  )}
+                </TabList>
 
-            <TabPanels>
-              {/* Upcoming Classes */}
-              <TabPanel>
-                {upcomingClasses.length === 0 ? (
-                  <Center py={12}>
-                    <VStack spacing={4}>
-                      <Icon as={FaVideo} boxSize={12} color="gray.400" />
-                      <Text fontSize="xl" color="gray.500">No upcoming live classes</Text>
-                      <Text color="gray.400">Check back later for new sessions</Text>
-                    </VStack>
-                  </Center>
-                ) : (
-                  <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6}>
-                    {upcomingClasses.map(liveClass => (
-                      <MotionBox
-                        key={liveClass._id}
-                        whileHover={{ scale: 1.02 }}
-                        transition={{ type: 'spring', stiffness: 300 }}
-                        bg={cardBg}
-                        rounded="xl"
-                        shadow="lg"
-                        overflow="hidden"
-                        _hover={{ shadow: 'xl' }}
-                      >
-                        <Card>
-                          <CardHeader pb={2}>
-                            <VStack align="start" spacing={2}>
-                              <HStack justify="space-between" w="full">
-                                <Badge colorScheme={getStatusColor(liveClass.status)}>
-                                  {liveClass.status.toUpperCase()}
-                                </Badge>
-                                <Text fontSize="sm" color="gray.500">
-                                  {liveClass.duration} min
-                                </Text>
-                              </HStack>
-                              <Heading size="md" noOfLines={2}>
-                                {liveClass.title}
-                              </Heading>
-                              <Text color="gray.600" fontSize="sm" noOfLines={2}>
-                                {liveClass.description}
-                              </Text>
-                            </VStack>
-                          </CardHeader>
-
-                          <CardBody pt={0}>
-                            <VStack spacing={4} align="stretch">
-                              <HStack spacing={4} fontSize="sm" color="gray.500">
-                                <HStack>
-                                  <FaUser />
-                                  <Text>{liveClass.instructor.name}</Text>
-                                </HStack>
-                                <HStack>
-                                  <FaUsers />
-                                  <Text>{liveClass.enrolledStudents.length} enrolled</Text>
-                                </HStack>
-                              </HStack>
-
-                              <HStack spacing={4} fontSize="sm" color="gray.500">
-                                <HStack>
-                                  <FaCalendar />
-                                  <Text>{formatDateTime(liveClass.scheduledAt)}</Text>
-                                </HStack>
-                              </HStack>
-
-                              <HStack justify="space-between">
-                                <Text fontSize="sm" fontWeight="medium" color="teal.600">
-                                  {liveClass.course.title}
-                                </Text>
-                                {liveClass.allowChat && (
-                                  <Icon as={FaComments} color="teal.500" />
-                                )}
-                              </HStack>
-
-                              {/* Action Buttons */}
-                              <HStack spacing={2}>
-                                {isInstructor(liveClass) ? (
-                                  <>
-                                    {liveClass.status === 'scheduled' && (
-                                      <Button
-                                        size="sm"
-                                        colorScheme="green"
-                                        leftIcon={<FaPlay />}
-                                        onClick={() => handleStartClass(liveClass)}
-                                        flex={1}
-                                      >
-                                        Start Class
-                                      </Button>
-                                    )}
-                                    {liveClass.status === 'live' && (
-                                      <Button
-                                        size="sm"
-                                        colorScheme="red"
-                                        leftIcon={<FaStop />}
-                                        onClick={() => handleEndClass(liveClass)}
-                                        flex={1}
-                                      >
-                                        End Class
-                                      </Button>
-                                    )}
-                                    <Button
-                                      size="sm"
-                                      variant="outline"
-                                      onClick={() => navigate(`/live-class/${liveClass._id}`)}
-                                      flex={1}
-                                    >
-                                      Manage
-                                    </Button>
-                                  </>
-                                ) : (
-                                  <>
-                                    <Button
-                                      size="sm"
-                                      colorScheme="teal"
-                                      leftIcon={<FaVideo />}
-                                      onClick={() => handleJoinClass(liveClass)}
-                                      flex={1}
-                                      isDisabled={!user}
-                                    >
-                                      {isEnrolled(liveClass) ? 'Join Class' : 'Enroll'}
-                                    </Button>
-                                    {liveClass.status === 'live' && (
-                                      <Button
-                                        size="sm"
-                                        variant="outline"
-                                        onClick={() => navigate(`/live-class/${liveClass._id}`)}
-                                        flex={1}
-                                      >
-                                        Join Now
-                                      </Button>
-                                    )}
-                                  </>
-                                )}
-                              </HStack>
-                            </VStack>
-                          </CardBody>
-                        </Card>
-                      </MotionBox>
-                    ))}
-                  </SimpleGrid>
-                )}
-              </TabPanel>
-
-              {/* Past Classes */}
-              <TabPanel>
-                {pastClasses.length === 0 ? (
-                  <Center py={12}>
-                    <VStack spacing={4}>
-                      <Icon as={FaClock} boxSize={12} color="gray.400" />
-                      <Text fontSize="xl" color="gray.500">No past live classes</Text>
-                      <Text color="gray.400">Completed sessions will appear here</Text>
-                    </VStack>
-                  </Center>
-                ) : (
-                  <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6}>
-                    {pastClasses.map(liveClass => (
-                      <MotionBox
-                        key={liveClass._id}
-                        bg={cardBg}
-                        rounded="xl"
-                        shadow="md"
-                        overflow="hidden"
-                      >
-                        <Card>
-                          <CardHeader pb={2}>
-                            <VStack align="start" spacing={2}>
-                              <HStack justify="space-between" w="full">
-                                <Badge colorScheme="gray">ENDED</Badge>
-                                <Text fontSize="sm" color="gray.500">
-                                  {liveClass.duration} min
-                                </Text>
-                              </HStack>
-                              <Heading size="md" noOfLines={2}>
-                                {liveClass.title}
-                              </Heading>
-                              <Text color="gray.600" fontSize="sm" noOfLines={2}>
-                                {liveClass.description}
-                              </Text>
-                            </VStack>
-                          </CardHeader>
-
-                          <CardBody pt={0}>
-                            <VStack spacing={4} align="stretch">
-                              <HStack spacing={4} fontSize="sm" color="gray.500">
-                                <HStack>
-                                  <FaUser />
-                                  <Text>{liveClass.instructor.name}</Text>
-                                </HStack>
-                                <HStack>
-                                  <FaUsers />
-                                  <Text>{liveClass.attendanceCount || 0} attended</Text>
-                                </HStack>
-                              </HStack>
-
-                              <HStack spacing={4} fontSize="sm" color="gray.500">
-                                <HStack>
-                                  <FaCalendar />
-                                  <Text>{formatDateTime(liveClass.scheduledAt)}</Text>
-                                </HStack>
-                              </HStack>
-
-                              <HStack justify="space-between">
-                                <Text fontSize="sm" fontWeight="medium" color="teal.600">
-                                  {liveClass.course.title}
-                                </Text>
-                                {liveClass.isRecorded && (
-                                  <Badge colorScheme="purple" size="sm">Recorded</Badge>
-                                )}
-                              </HStack>
-
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() => navigate(`/live-class/${liveClass._id}`)}
+                <TabPanels>
+                  {/* Upcoming Classes */}
+                  <TabPanel>
+                    {upcomingClasses.length === 0 ? (
+                      <Center py={16}>
+                        <VStack spacing={6}>
+                          <Box
+                            w="120px"
+                            h="120px"
+                            bg="gradients.secondary"
+                            borderRadius="full"
+                            display="flex"
+                            alignItems="center"
+                            justifyContent="center"
+                            boxShadow="neon-pink"
+                          >
+                            <Icon as={FaVideo} boxSize={12} color="white" />
+                          </Box>
+                          <VStack spacing={2}>
+                            <Text fontSize="2xl" fontWeight="bold" color="gray.700">
+                              No upcoming live classes
+                            </Text>
+                            <Text color="gray.500" textAlign="center">
+                              Check back later for new interactive learning sessions
+                            </Text>
+                          </VStack>
+                        </VStack>
+                      </Center>
+                    ) : (
+                      <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={8} pt={6}>
+                        {upcomingClasses.map((liveClass, index) => (
+                          <MotionBox
+                            key={liveClass._id}
+                            initial={{ opacity: 0, y: 50 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.6, delay: index * 0.1, type: 'spring', stiffness: 300 }}
+                            whileHover={{ 
+                              scale: 1.03,
+                              rotateY: 5,
+                              rotateX: 5
+                            }}
+                          >
+                            <Card variant="3d" h="full">
+                              {/* Status Header */}
+                              <Box
+                                bg={getStatusGradient(liveClass.status)}
+                                p={4}
+                                position="relative"
+                                overflow="hidden"
                               >
-                                View Details
-                              </Button>
-                            </VStack>
-                          </CardBody>
-                        </Card>
-                      </MotionBox>
-                    ))}
-                  </SimpleGrid>
-                )}
-              </TabPanel>
-
-              {/* My Classes */}
-              {user && (
-                <TabPanel>
-                  {myClasses.length === 0 ? (
-                    <Center py={12}>
-                      <VStack spacing={4}>
-                        <Icon as={FaEdit} boxSize={12} color="gray.400" />
-                        <Text fontSize="xl" color="gray.500">No classes created yet</Text>
-                        <Text color="gray.400">Create your first live class to get started</Text>
-                        <Button
-                          colorScheme="teal"
-                          onClick={() => setShowCreateModal(true)}
-                        >
-                          Create Live Class
-                        </Button>
-                      </VStack>
-                    </Center>
-                  ) : (
-                    <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6}>
-                      {myClasses.map(liveClass => (
-                        <MotionBox
-                          key={liveClass._id}
-                          bg={cardBg}
-                          rounded="xl"
-                          shadow="lg"
-                          overflow="hidden"
-                        >
-                          <Card>
-                            <CardHeader pb={2}>
-                              <VStack align="start" spacing={2}>
-                                <HStack justify="space-between" w="full">
-                                  <Badge colorScheme={getStatusColor(liveClass.status)}>
+                                <Box
+                                  position="absolute"
+                                  top="-50%"
+                                  right="-50%"
+                                  w="100px"
+                                  h="100px"
+                                  bg="white"
+                                  opacity="0.1"
+                                  borderRadius="full"
+                                />
+                                <HStack justify="space-between" align="center">
+                                  <Badge variant="neon" fontSize="sm">
+                                    {liveClass.status === 'live' && <Icon as={FaFire} mr={1} />}
                                     {liveClass.status.toUpperCase()}
                                   </Badge>
-                                  <Text fontSize="sm" color="gray.500">
-                                    {liveClass.duration} min
-                                  </Text>
-                                </HStack>
-                                <Heading size="md" noOfLines={2}>
-                                  {liveClass.title}
-                                </Heading>
-                                <Text color="gray.600" fontSize="sm" noOfLines={2}>
-                                  {liveClass.description}
-                                </Text>
-                              </VStack>
-                            </CardHeader>
-
-                            <CardBody pt={0}>
-                              <VStack spacing={4} align="stretch">
-                                <HStack spacing={4} fontSize="sm" color="gray.500">
-                                  <HStack>
-                                    <FaUsers />
-                                    <Text>{liveClass.enrolledStudents.length} enrolled</Text>
-                                  </HStack>
-                                  <HStack>
-                                    <FaCalendar />
-                                    <Text>{formatDateTime(liveClass.scheduledAt)}</Text>
+                                  <HStack spacing={2}>
+                                    <Icon as={FaClock} color="white" />
+                                    <Text color="white" fontWeight="semibold">
+                                      {liveClass.duration} min
+                                    </Text>
                                   </HStack>
                                 </HStack>
+                              </Box>
 
-                                <HStack justify="space-between">
-                                  <Text fontSize="sm" fontWeight="medium" color="teal.600">
-                                    {liveClass.course.title}
-                                  </Text>
+                              <CardBody p={6}>
+                                <VStack spacing={4} align="stretch">
+                                  {/* Title and Description */}
+                                  <Box>
+                                    <Heading size="md" mb={2} noOfLines={2} color="gray.800">
+                                      {liveClass.title}
+                                    </Heading>
+                                    <Text color="gray.600" fontSize="sm" noOfLines={3}>
+                                      {liveClass.description}
+                                    </Text>
+                                  </Box>
+
+                                  <Divider />
+
+                                  {/* Instructor and Students */}
+                                  <VStack spacing={3} align="stretch">
+                                    <HStack justify="space-between">
+                                      <HStack>
+                                        <Avatar size="sm" name={liveClass.instructor.name} />
+                                        <VStack align="start" spacing={0}>
+                                          <Text fontSize="sm" fontWeight="semibold" color="gray.800">
+                                            {liveClass.instructor.name}
+                                          </Text>
+                                          <Text fontSize="xs" color="gray.500">
+                                            Instructor
+                                          </Text>
+                                        </VStack>
+                                      </HStack>
+                                      <HStack>
+                                        <Icon as={FaUsers} color="neon.blue" />
+                                        <Text fontSize="sm" color="gray.600">
+                                          {liveClass.enrolledStudents.length} enrolled
+                                        </Text>
+                                      </HStack>
+                                    </HStack>
+
+                                    {/* Schedule */}
+                                    <HStack justify="space-between" p={3} bg="gray.50" borderRadius="lg">
+                                      <HStack>
+                                        <Icon as={FaCalendar} color="neon.purple" />
+                                        <Text fontSize="sm" color="gray.700">
+                                          {formatDateTime(liveClass.scheduledAt)}
+                                        </Text>
+                                      </HStack>
+                                      {liveClass.allowChat && (
+                                        <Tooltip label="Chat enabled">
+                                          <Icon as={FaComments} color="neon.green" />
+                                        </Tooltip>
+                                      )}
+                                    </HStack>
+                                  </VStack>
+
+                                  <Divider />
+
+                                  {/* Course Info */}
+                                  <HStack justify="space-between">
+                                    <Text fontSize="sm" fontWeight="medium" color="neon.blue">
+                                      {liveClass.course.title}
+                                    </Text>
+                                    {liveClass.status === 'live' && (
+                                      <Box
+                                        w="8px"
+                                        h="8px"
+                                        bg="neon.green"
+                                        borderRadius="full"
+                                        animation="pulse 2s infinite"
+                                      />
+                                    )}
+                                  </HStack>
+
+                                  {/* Action Buttons */}
+                                  <VStack spacing={3}>
+                                    {isInstructor(liveClass) ? (
+                                      <HStack spacing={3} w="full">
+                                        {liveClass.status === 'scheduled' && (
+                                          <Button
+                                            size="sm"
+                                            variant="3d-primary"
+                                            leftIcon={<FaPlay />}
+                                            onClick={() => handleStartClass(liveClass)}
+                                            flex={1}
+                                            boxShadow="neon-green"
+                                            _hover={{
+                                              boxShadow: "neon-green",
+                                              transform: "translateY(-2px)",
+                                            }}
+                                          >
+                                            Start Class
+                                          </Button>
+                                        )}
+                                        {liveClass.status === 'live' && (
+                                          <Button
+                                            size="sm"
+                                            variant="3d"
+                                            leftIcon={<FaStop />}
+                                            onClick={() => handleEndClass(liveClass)}
+                                            flex={1}
+                                            colorScheme="red"
+                                            _hover={{
+                                              transform: "translateY(-2px)",
+                                            }}
+                                          >
+                                            End Class
+                                          </Button>
+                                        )}
+                                        <Button
+                                          size="sm"
+                                          variant="glass"
+                                          onClick={() => navigate(`/live-class/${liveClass._id}`)}
+                                          flex={1}
+                                        >
+                                          Manage
+                                        </Button>
+                                      </HStack>
+                                    ) : (
+                                      <HStack spacing={3} w="full">
+                                        <Button
+                                          size="sm"
+                                          variant="3d-primary"
+                                          leftIcon={<FaVideo />}
+                                          onClick={() => handleJoinClass(liveClass)}
+                                          flex={1}
+                                          isDisabled={!user}
+                                          boxShadow="neon-blue"
+                                          _hover={{
+                                            boxShadow: "neon-blue",
+                                            transform: "translateY(-2px)",
+                                          }}
+                                        >
+                                          {isEnrolled(liveClass) ? 'Join Class' : 'Enroll'}
+                                        </Button>
+                                        {liveClass.status === 'live' && (
+                                          <Button
+                                            size="sm"
+                                            variant="glass"
+                                            onClick={() => navigate(`/live-class/${liveClass._id}`)}
+                                            flex={1}
+                                          >
+                                            Join Now
+                                          </Button>
+                                        )}
+                                      </HStack>
+                                    )}
+                                  </VStack>
+                                </VStack>
+                              </CardBody>
+                            </Card>
+                          </MotionBox>
+                        ))}
+                      </SimpleGrid>
+                    )}
+                  </TabPanel>
+
+                  {/* Past Classes */}
+                  <TabPanel>
+                    {pastClasses.length === 0 ? (
+                      <Center py={16}>
+                        <VStack spacing={6}>
+                          <Box
+                            w="120px"
+                            h="120px"
+                            bg="gradients.dark"
+                            borderRadius="full"
+                            display="flex"
+                            alignItems="center"
+                            justifyContent="center"
+                            boxShadow="neon-purple"
+                          >
+                            <Icon as={FaClock} boxSize={12} color="white" />
+                          </Box>
+                          <VStack spacing={2}>
+                            <Text fontSize="2xl" fontWeight="bold" color="gray.700">
+                              No past live classes
+                            </Text>
+                            <Text color="gray.500" textAlign="center">
+                              Completed sessions will appear here
+                            </Text>
+                          </VStack>
+                        </VStack>
+                      </Center>
+                    ) : (
+                      <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={8} pt={6}>
+                        {pastClasses.map((liveClass, index) => (
+                          <MotionBox
+                            key={liveClass._id}
+                            initial={{ opacity: 0, y: 50 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.6, delay: index * 0.1 }}
+                            whileHover={{ scale: 1.02 }}
+                          >
+                            <Card variant="3d" h="full" opacity={0.8}>
+                              {/* Status Header */}
+                              <Box
+                                bg="gradients.dark"
+                                p={4}
+                                position="relative"
+                                overflow="hidden"
+                              >
+                                <HStack justify="space-between" align="center">
+                                  <Badge variant="3d" colorScheme="gray" fontSize="sm">
+                                    <Icon as={FaTrophy} mr={1} />
+                                    ENDED
+                                  </Badge>
+                                  <HStack spacing={2}>
+                                    <Icon as={FaClock} color="white" />
+                                    <Text color="white" fontWeight="semibold">
+                                      {liveClass.duration} min
+                                    </Text>
+                                  </HStack>
                                 </HStack>
+                              </Box>
 
-                                <HStack spacing={2}>
-                                  {liveClass.status === 'scheduled' && (
-                                    <Button
-                                      size="sm"
-                                      colorScheme="green"
-                                      leftIcon={<FaPlay />}
-                                      onClick={() => handleStartClass(liveClass)}
-                                      flex={1}
-                                    >
-                                      Start Class
-                                    </Button>
-                                  )}
-                                  {liveClass.status === 'live' && (
-                                    <Button
-                                      size="sm"
-                                      colorScheme="red"
-                                      leftIcon={<FaStop />}
-                                      onClick={() => handleEndClass(liveClass)}
-                                      flex={1}
-                                    >
-                                      End Class
-                                    </Button>
-                                  )}
+                              <CardBody p={6}>
+                                <VStack spacing={4} align="stretch">
+                                  {/* Title and Description */}
+                                  <Box>
+                                    <Heading size="md" mb={2} noOfLines={2} color="gray.800">
+                                      {liveClass.title}
+                                    </Heading>
+                                    <Text color="gray.600" fontSize="sm" noOfLines={3}>
+                                      {liveClass.description}
+                                    </Text>
+                                  </Box>
+
+                                  <Divider />
+
+                                  {/* Instructor and Attendance */}
+                                  <VStack spacing={3} align="stretch">
+                                    <HStack justify="space-between">
+                                      <HStack>
+                                        <Avatar size="sm" name={liveClass.instructor.name} />
+                                        <VStack align="start" spacing={0}>
+                                          <Text fontSize="sm" fontWeight="semibold" color="gray.800">
+                                            {liveClass.instructor.name}
+                                          </Text>
+                                          <Text fontSize="xs" color="gray.500">
+                                            Instructor
+                                          </Text>
+                                        </VStack>
+                                      </HStack>
+                                      <HStack>
+                                        <Icon as={FaUsers} color="neon.blue" />
+                                        <Text fontSize="sm" color="gray.600">
+                                          {liveClass.attendanceCount || 0} attended
+                                        </Text>
+                                      </HStack>
+                                    </HStack>
+
+                                    {/* Schedule */}
+                                    <HStack justify="space-between" p={3} bg="gray.50" borderRadius="lg">
+                                      <HStack>
+                                        <Icon as={FaCalendar} color="neon.purple" />
+                                        <Text fontSize="sm" color="gray.700">
+                                          {formatDateTime(liveClass.scheduledAt)}
+                                        </Text>
+                                      </HStack>
+                                      {liveClass.isRecorded && (
+                                        <Tooltip label="Recording available">
+                                          <Icon as={FaEye} color="neon.green" />
+                                        </Tooltip>
+                                      )}
+                                    </HStack>
+                                  </VStack>
+
+                                  <Divider />
+
+                                  {/* Course Info */}
+                                  <HStack justify="space-between">
+                                    <Text fontSize="sm" fontWeight="medium" color="neon.blue">
+                                      {liveClass.course.title}
+                                    </Text>
+                                    {liveClass.isRecorded && (
+                                      <Badge variant="neon" colorScheme="purple" size="sm">
+                                        Recorded
+                                      </Badge>
+                                    )}
+                                  </HStack>
+
+                                  {/* Action Button */}
                                   <Button
                                     size="sm"
-                                    variant="outline"
+                                    variant="glass"
                                     onClick={() => navigate(`/live-class/${liveClass._id}`)}
-                                    flex={1}
                                   >
-                                    Manage
+                                    View Details
                                   </Button>
-                                </HStack>
-                              </VStack>
-                            </CardBody>
-                          </Card>
-                        </MotionBox>
-                      ))}
-                    </SimpleGrid>
+                                </VStack>
+                              </CardBody>
+                            </Card>
+                          </MotionBox>
+                        ))}
+                      </SimpleGrid>
+                    )}
+                  </TabPanel>
+
+                  {/* My Classes */}
+                  {user && (
+                    <TabPanel>
+                      {myClasses.length === 0 ? (
+                        <Center py={16}>
+                          <VStack spacing={6}>
+                            <Box
+                              w="120px"
+                              h="120px"
+                              bg="gradients.success"
+                              borderRadius="full"
+                              display="flex"
+                              alignItems="center"
+                              justifyContent="center"
+                              boxShadow="neon-green"
+                            >
+                              <Icon as={FaCrown} boxSize={12} color="white" />
+                            </Box>
+                            <VStack spacing={2}>
+                              <Text fontSize="2xl" fontWeight="bold" color="gray.700">
+                                No classes created yet
+                              </Text>
+                              <Text color="gray.500" textAlign="center">
+                                Create your first live class to get started
+                              </Text>
+                            </VStack>
+                            <Button
+                              variant="3d-primary"
+                              onClick={() => setShowCreateModal(true)}
+                              boxShadow="neon-green"
+                              _hover={{
+                                boxShadow: "neon-green",
+                                transform: "translateY(-2px)",
+                              }}
+                            >
+                              Create Live Class
+                            </Button>
+                          </VStack>
+                        </Center>
+                      ) : (
+                        <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={8} pt={6}>
+                          {myClasses.map((liveClass, index) => (
+                            <MotionBox
+                              key={liveClass._id}
+                              initial={{ opacity: 0, y: 50 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ duration: 0.6, delay: index * 0.1 }}
+                              whileHover={{ scale: 1.03 }}
+                            >
+                              <Card variant="gradient" h="full">
+                                {/* Status Header */}
+                                <Box
+                                  bg={getStatusGradient(liveClass.status)}
+                                  p={4}
+                                  position="relative"
+                                  overflow="hidden"
+                                >
+                                  <Box
+                                    position="absolute"
+                                    top="-50%"
+                                    right="-50%"
+                                    w="100px"
+                                    h="100px"
+                                    bg="white"
+                                    opacity="0.1"
+                                    borderRadius="full"
+                                  />
+                                  <HStack justify="space-between" align="center">
+                                    <Badge variant="neon" fontSize="sm">
+                                      {liveClass.status === 'live' && <Icon as={FaFire} mr={1} />}
+                                      {liveClass.status.toUpperCase()}
+                                    </Badge>
+                                    <HStack spacing={2}>
+                                      <Icon as={FaClock} color="white" />
+                                      <Text color="white" fontWeight="semibold">
+                                        {liveClass.duration} min
+                                      </Text>
+                                    </HStack>
+                                  </HStack>
+                                </Box>
+
+                                <CardBody p={6}>
+                                  <VStack spacing={4} align="stretch">
+                                    {/* Title and Description */}
+                                    <Box>
+                                      <Heading size="md" mb={2} noOfLines={2} color="white">
+                                        {liveClass.title}
+                                      </Heading>
+                                      <Text color="white" opacity={0.9} fontSize="sm" noOfLines={3}>
+                                        {liveClass.description}
+                                      </Text>
+                                    </Box>
+
+                                    <Divider borderColor="white" opacity={0.2} />
+
+                                    {/* Students and Schedule */}
+                                    <VStack spacing={3} align="stretch">
+                                      <HStack justify="space-between">
+                                        <HStack>
+                                          <Icon as={FaUsers} color="white" />
+                                          <Text fontSize="sm" color="white">
+                                            {liveClass.enrolledStudents.length} enrolled
+                                          </Text>
+                                        </HStack>
+                                        <HStack>
+                                          <Icon as={FaCalendar} color="white" />
+                                          <Text fontSize="sm" color="white">
+                                            {formatDateTime(liveClass.scheduledAt)}
+                                          </Text>
+                                        </HStack>
+                                      </HStack>
+                                    </VStack>
+
+                                    <Divider borderColor="white" opacity={0.2} />
+
+                                    {/* Course Info */}
+                                    <Text fontSize="sm" fontWeight="medium" color="white" opacity={0.9}>
+                                      {liveClass.course.title}
+                                    </Text>
+
+                                    {/* Action Buttons */}
+                                    <HStack spacing={3}>
+                                      {liveClass.status === 'scheduled' && (
+                                        <Button
+                                          size="sm"
+                                          variant="3d"
+                                          leftIcon={<FaPlay />}
+                                          onClick={() => handleStartClass(liveClass)}
+                                          flex={1}
+                                          bg="white"
+                                          color="gray.800"
+                                          _hover={{
+                                            transform: "translateY(-2px)",
+                                          }}
+                                        >
+                                          Start Class
+                                        </Button>
+                                      )}
+                                      {liveClass.status === 'live' && (
+                                        <Button
+                                          size="sm"
+                                          variant="3d"
+                                          leftIcon={<FaStop />}
+                                          onClick={() => handleEndClass(liveClass)}
+                                          flex={1}
+                                          bg="white"
+                                          color="red.600"
+                                          _hover={{
+                                            transform: "translateY(-2px)",
+                                          }}
+                                        >
+                                          End Class
+                                        </Button>
+                                      )}
+                                      <Button
+                                        size="sm"
+                                        variant="glass"
+                                        onClick={() => navigate(`/live-class/${liveClass._id}`)}
+                                        flex={1}
+                                        bg="white"
+                                        color="gray.800"
+                                      >
+                                        Manage
+                                      </Button>
+                                    </HStack>
+                                  </VStack>
+                                </CardBody>
+                              </Card>
+                            </MotionBox>
+                          ))}
+                        </SimpleGrid>
+                      )}
+                    </TabPanel>
                   )}
-                </TabPanel>
-              )}
-            </TabPanels>
-          </Tabs>
+                </TabPanels>
+              </Tabs>
+            </Card>
+          </MotionBox>
         </VStack>
       </Container>
       <Footer />

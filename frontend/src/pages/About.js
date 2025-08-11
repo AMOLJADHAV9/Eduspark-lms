@@ -12,9 +12,13 @@ import {
   Icon,
   useColorModeValue,
 } from '@chakra-ui/react';
-import { FaGraduationCap, FaUsers, FaBook, FaAward, FaGlobe, FaHeart } from 'react-icons/fa';
+import { motion } from 'framer-motion';
+import { FaGraduationCap, FaUsers, FaBook, FaAward, FaGlobe, FaHeart, FaRocket, FaStar } from 'react-icons/fa';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+
+const MotionBox = motion(Box);
+const MotionCard = motion(Card);
 
 const About = () => {
   const bg = useColorModeValue('gray.50', 'gray.900');
@@ -25,150 +29,307 @@ const About = () => {
       icon: FaGraduationCap,
       title: 'Quality Education',
       description: 'Access to high-quality educational content from expert instructors.',
+      color: 'neon.blue',
     },
     {
       icon: FaUsers,
       title: 'Expert Faculty',
       description: 'Learn from experienced educators and industry professionals.',
+      color: 'neon.green',
     },
     {
       icon: FaBook,
       title: 'Comprehensive Courses',
       description: 'Wide range of courses covering various subjects and skill levels.',
+      color: 'neon.purple',
     },
     {
       icon: FaAward,
       title: 'Proven Results',
       description: 'Track record of helping students achieve their educational goals.',
+      color: 'neon.yellow',
     },
     {
       icon: FaGlobe,
       title: 'Accessible Learning',
       description: 'Learn anytime, anywhere with our flexible online platform.',
+      color: 'neon.pink',
     },
     {
       icon: FaHeart,
       title: 'Student-Centric',
       description: 'Focused on providing the best learning experience for students.',
+      color: 'neon.red',
     },
   ];
 
   return (
-    <Box bg={bg} minH="100vh">
+    <Box bg="gradients.primary" minH="100vh" position="relative" overflow="hidden">
+      {/* Animated background elements */}
+      <Box
+        position="absolute"
+        top="10%"
+        left="10%"
+        w="300px"
+        h="300px"
+        bg="neon.blue"
+        borderRadius="full"
+        opacity="0.1"
+        filter="blur(60px)"
+        animation="pulse 6s infinite"
+      />
+      <Box
+        position="absolute"
+        top="60%"
+        right="15%"
+        w="250px"
+        h="250px"
+        bg="neon.purple"
+        borderRadius="full"
+        opacity="0.1"
+        filter="blur(50px)"
+        animation="pulse 8s infinite"
+      />
+      <Box
+        position="absolute"
+        bottom="20%"
+        left="20%"
+        w="200px"
+        h="200px"
+        bg="neon.pink"
+        borderRadius="full"
+        opacity="0.1"
+        filter="blur(40px)"
+        animation="pulse 7s infinite"
+      />
+
       <Navbar />
       <Container maxW="6xl" py={12}>
         <VStack spacing={12} align="stretch">
           {/* Hero Section */}
-          <Box textAlign="center" py={12}>
-            <Heading size="2xl" mb={6} color="teal.600">
+          <MotionBox
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            textAlign="center" 
+            py={12}
+          >
+            <Heading 
+              size="2xl" 
+              mb={6} 
+              color="white" 
+              className="gradient-text"
+              textShadow="0 4px 8px rgba(0,0,0,0.5), 0 0 20px rgba(255,255,255,0.3)"
+              fontWeight="extrabold"
+              letterSpacing="wide"
+            >
               About LMS
             </Heading>
-            <Text fontSize="xl" color="gray.600" maxW="3xl" mx="auto">
+            <Text 
+              fontSize="xl" 
+              color="white" 
+              opacity="0.95" 
+              maxW="3xl" 
+              mx="auto"
+              textShadow="0 2px 4px rgba(0,0,0,0.3)"
+              fontWeight="medium"
+            >
               We are dedicated to providing high-quality, affordable education to students across India. 
               Our mission is to make learning accessible to everyone through our innovative online platform.
             </Text>
-          </Box>
+          </MotionBox>
 
           {/* Mission & Vision */}
           <SimpleGrid columns={{ base: 1, md: 2 }} spacing={8}>
-            <Card bg={cardBg} shadow="lg">
+            <MotionCard
+              variant="glass"
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+              whileHover={{ scale: 1.02, rotateY: 3 }}
+            >
               <CardBody>
                 <VStack spacing={4} align="start">
-                  <Heading size="lg" color="teal.600">Our Mission</Heading>
-                  <Text color="gray.600">
+                  <HStack spacing={3}>
+                    <Box
+                      p={3}
+                      bg="neon.blue"
+                      rounded="full"
+                      color="white"
+                      boxShadow="0 0 15px rgba(59, 130, 246, 0.5)"
+                    >
+                      <Icon as={FaRocket} boxSize={6} />
+                    </Box>
+                    <Heading size="lg" color="white">Our Mission</Heading>
+                  </HStack>
+                  <Text color="white" opacity="0.9">
                     To democratize education by providing affordable, high-quality learning resources 
                     to students across India. We believe that every student deserves access to 
                     excellent educational content regardless of their location or financial background.
                   </Text>
                 </VStack>
               </CardBody>
-            </Card>
+            </MotionCard>
 
-            <Card bg={cardBg} shadow="lg">
+            <MotionCard
+              variant="glass"
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+              whileHover={{ scale: 1.02, rotateY: -3 }}
+            >
               <CardBody>
                 <VStack spacing={4} align="start">
-                  <Heading size="lg" color="teal.600">Our Vision</Heading>
-                  <Text color="gray.600">
+                  <HStack spacing={3}>
+                    <Box
+                      p={3}
+                      bg="neon.green"
+                      rounded="full"
+                      color="white"
+                      boxShadow="0 0 15px rgba(34, 197, 94, 0.5)"
+                    >
+                      <Icon as={FaStar} boxSize={6} />
+                    </Box>
+                    <Heading size="lg" color="white">Our Vision</Heading>
+                  </HStack>
+                  <Text color="white" opacity="0.9">
                     To become India's leading online learning platform, empowering millions of students 
                     to achieve their educational and career goals through innovative technology and 
                     expert-led instruction.
                   </Text>
                 </VStack>
               </CardBody>
-            </Card>
+            </MotionCard>
           </SimpleGrid>
 
-          {/* Features Grid */}
-          <Box>
-            <Heading size="lg" textAlign="center" mb={8} color="teal.600">
-              Why Choose Our Platform
+          {/* Features */}
+          <MotionBox
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+          >
+            <Heading 
+              size="lg" 
+              textAlign="center" 
+              color="white" 
+              mb={8} 
+              className="gradient-text"
+              textShadow="0 4px 8px rgba(0,0,0,0.5), 0 0 20px rgba(255,255,255,0.3)"
+              fontWeight="extrabold"
+              letterSpacing="wide"
+            >
+              Why Choose Us?
             </Heading>
-            <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6}>
-              {features.map((feature, index) => (
-                <Card key={index} bg={cardBg} shadow="md" _hover={{ shadow: 'lg' }}>
-                  <CardBody>
-                    <VStack spacing={4} align="center" textAlign="center">
-                      <Icon as={feature.icon} boxSize={8} color="teal.500" />
-                      <Heading size="md">{feature.title}</Heading>
-                      <Text color="gray.600" fontSize="sm">
-                        {feature.description}
-                      </Text>
-                    </VStack>
-                  </CardBody>
-                </Card>
-              ))}
-            </SimpleGrid>
-          </Box>
+          </MotionBox>
 
-          {/* Story Section */}
-          <Card bg={cardBg} shadow="lg">
-            <CardBody>
-              <VStack spacing={6} align="start">
-                <Heading size="lg" color="teal.600">Our Story</Heading>
-                <Text color="gray.600" lineHeight="tall">
-                  Founded with a vision to bridge the educational gap in India, our LMS platform 
-                  was created by a team of educators and technologists who understood the challenges 
-                  faced by students in accessing quality education. We recognized that traditional 
-                  education models often left many students behind due to geographical, financial, 
-                  or time constraints.
-                </Text>
-                <Text color="gray.600" lineHeight="tall">
-                  Today, we serve thousands of students across India, providing them with access 
-                  to expert-led courses, interactive learning materials, and a supportive community 
-                  of learners. Our platform continues to evolve, incorporating the latest educational 
-                  technologies and methodologies to ensure the best learning experience for our students.
-                </Text>
-                <Text color="gray.600" lineHeight="tall">
-                  We are committed to maintaining the highest standards of educational quality while 
-                  keeping our courses affordable and accessible. Our success is measured by the success 
-                  of our students, and we take pride in the achievements of every learner who uses 
-                  our platform.
-                </Text>
-              </VStack>
-            </CardBody>
-          </Card>
+          <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6}>
+            {features.map((feature, index) => (
+              <MotionCard
+                key={index}
+                variant="3d"
+                className="feature-card"
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                whileHover={{ 
+                  scale: 1.05,
+                  rotateY: 5,
+                  boxShadow: "0 25px 50px rgba(0,0,0,0.3)"
+                }}
+                transition={{ 
+                  duration: 0.6,
+                  delay: index * 0.1,
+                  type: 'spring', 
+                  stiffness: 300 
+                }}
+                viewport={{ once: true }}
+              >
+                <CardBody textAlign="center" p={6}>
+                  <Box
+                    p={4}
+                    bg={feature.color}
+                    rounded="full"
+                    color="white"
+                    boxShadow={`0 0 20px ${feature.color === 'neon.blue' ? 'rgba(59, 130, 246, 0.5)' : 
+                                   feature.color === 'neon.green' ? 'rgba(34, 197, 94, 0.5)' :
+                                   feature.color === 'neon.purple' ? 'rgba(147, 51, 234, 0.5)' :
+                                   feature.color === 'neon.yellow' ? 'rgba(234, 179, 8, 0.5)' :
+                                   feature.color === 'neon.pink' ? 'rgba(236, 72, 153, 0.5)' :
+                                   'rgba(239, 68, 68, 0.5)'}`}
+                    display="inline-block"
+                    mb={4}
+                  >
+                    <Icon as={feature.icon} boxSize={8} />
+                  </Box>
+                  <Heading 
+                    size="md" 
+                    color="white" 
+                    mb={3}
+                    textShadow="0 2px 4px rgba(0,0,0,0.8), 0 0 10px rgba(255,255,255,0.3)"
+                    fontWeight="bold"
+                    letterSpacing="wide"
+                  >
+                    {feature.title}
+                  </Heading>
+                  <Text 
+                    color="white" 
+                    opacity={0.95}
+                    fontSize="sm"
+                    textShadow="0 1px 3px rgba(0,0,0,0.7)"
+                    fontWeight="medium"
+                  >
+                    {feature.description}
+                  </Text>
+                </CardBody>
+              </MotionCard>
+            ))}
+          </SimpleGrid>
 
           {/* Stats Section */}
-          <Box textAlign="center" py={8}>
-            <SimpleGrid columns={{ base: 2, md: 4 }} spacing={8}>
-              <VStack>
-                <Heading size="2xl" color="teal.500">1000+</Heading>
-                <Text color="gray.600">Students Enrolled</Text>
-              </VStack>
-              <VStack>
-                <Heading size="2xl" color="teal.500">50+</Heading>
-                <Text color="gray.600">Expert Instructors</Text>
-              </VStack>
-              <VStack>
-                <Heading size="2xl" color="teal.500">100+</Heading>
-                <Text color="gray.600">Courses Available</Text>
-              </VStack>
-              <VStack>
-                <Heading size="2xl" color="teal.500">95%</Heading>
-                <Text color="gray.600">Success Rate</Text>
-              </VStack>
-            </SimpleGrid>
-          </Box>
+          <MotionBox
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+          >
+            <Card variant="glass" p={8}>
+              <CardBody>
+                <VStack spacing={8}>
+                  <Heading 
+                    size="lg" 
+                    color="white" 
+                    textAlign="center" 
+                    className="gradient-text"
+                    textShadow="0 4px 8px rgba(0,0,0,0.5), 0 0 20px rgba(255,255,255,0.3)"
+                    fontWeight="extrabold"
+                    letterSpacing="wide"
+                  >
+                    Our Impact
+                  </Heading>
+                  <SimpleGrid columns={{ base: 2, md: 4 }} spacing={8} w="full">
+                    <VStack spacing={2}>
+                      <Heading size="2xl" color="neon.blue">10K+</Heading>
+                      <Text color="white" opacity="0.8" textAlign="center">Students Enrolled</Text>
+                    </VStack>
+                    <VStack spacing={2}>
+                      <Heading size="2xl" color="neon.green">500+</Heading>
+                      <Text color="white" opacity="0.8" textAlign="center">Courses Available</Text>
+                    </VStack>
+                    <VStack spacing={2}>
+                      <Heading size="2xl" color="neon.purple">50+</Heading>
+                      <Text color="white" opacity="0.8" textAlign="center">Expert Instructors</Text>
+                    </VStack>
+                    <VStack spacing={2}>
+                      <Heading size="2xl" color="neon.yellow">95%</Heading>
+                      <Text color="white" opacity="0.8" textAlign="center">Success Rate</Text>
+                    </VStack>
+                  </SimpleGrid>
+                </VStack>
+              </CardBody>
+            </Card>
+          </MotionBox>
         </VStack>
       </Container>
       <Footer />

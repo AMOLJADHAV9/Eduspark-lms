@@ -20,8 +20,14 @@ import {
   Flex,
   Divider,
   SimpleGrid,
+  Card,
+  CardBody,
 } from '@chakra-ui/react';
-import { FaSearch, FaFilter, FaTimes } from 'react-icons/fa';
+import { motion } from 'framer-motion';
+import { FaSearch, FaFilter, FaTimes, FaSlidersH } from 'react-icons/fa';
+
+const MotionBox = motion(Box);
+const MotionCard = motion(Card);
 
 const CourseSearch = ({ onSearch, courses = [] }) => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -96,156 +102,252 @@ const CourseSearch = ({ onSearch, courses = [] }) => {
   };
 
   return (
-    <Box bg={bg} p={6} rounded="lg" shadow="md" border="1px" borderColor={borderColor}>
-      <VStack spacing={4} align="stretch">
-        {/* Search Bar */}
-        <HStack spacing={4}>
-          <InputGroup>
-            <InputLeftElement pointerEvents="none">
-              <Icon as={FaSearch} color="gray.400" />
-            </InputLeftElement>
-            <Input
-              placeholder="Search courses by title, description, or instructor..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-            />
-          </InputGroup>
-          <Button
-            leftIcon={<FaFilter />}
-            variant={showFilters ? "solid" : "outline"}
-            colorScheme="teal"
-            onClick={() => setShowFilters(!showFilters)}
-          >
-            Filters
-          </Button>
-          <Button
-            leftIcon={<FaTimes />}
-            variant="outline"
-            onClick={clearFilters}
-            isDisabled={!searchTerm && activeFilters.length === 0}
-          >
-            Clear
-          </Button>
-        </HStack>
+    <MotionCard
+      variant="glass"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6 }}
+      mb={8}
+    >
+      <CardBody p={6}>
+        <VStack spacing={6} align="stretch">
+          {/* Search Bar */}
+          <HStack spacing={4}>
+            <InputGroup size="lg">
+              <InputLeftElement pointerEvents="none">
+                <Icon as={FaSearch} color="gray.400" />
+              </InputLeftElement>
+              <Input
+                placeholder="Search for courses..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                variant="glass"
+                bg="glass.200"
+                border="1px solid"
+                borderColor="glass.300"
+                _focus={{
+                  borderColor: "neon.blue",
+                  boxShadow: "0 0 0 1px var(--chakra-colors-neon-blue)",
+                }}
+                _placeholder={{ color: "gray.400" }}
+              />
+            </InputGroup>
+            <Button
+              variant="3d"
+              leftIcon={<FaFilter />}
+              onClick={() => setShowFilters(!showFilters)}
+              size="lg"
+              minW="120px"
+            >
+              Filters
+            </Button>
+            <Button
+              variant="3d-primary"
+              onClick={handleSearch}
+              size="lg"
+              minW="120px"
+            >
+              Search
+            </Button>
+          </HStack>
 
-        {/* Active Filters */}
-        {activeFilters.length > 0 && (
-          <Box>
-            <Text fontSize="sm" fontWeight="medium" mb={2}>Active Filters:</Text>
-            <HStack spacing={2} flexWrap="wrap">
-              {activeFilters.map((filter, index) => (
-                <Badge
-                  key={index}
-                  colorScheme="teal"
-                  variant="subtle"
-                  px={3}
-                  py={1}
-                  borderRadius="full"
-                >
-                  {filter}
-                </Badge>
-              ))}
-            </HStack>
-          </Box>
-        )}
+          {/* Active Filters */}
+          {activeFilters.length > 0 && (
+            <MotionBox
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              transition={{ duration: 0.3 }}
+            >
+              <VStack spacing={3} align="stretch">
+                <HStack justify="space-between">
+                  <Text color="white" fontWeight="medium">Active Filters:</Text>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    color="white"
+                    onClick={clearFilters}
+                    _hover={{ bg: "rgba(255,255,255,0.1)" }}
+                  >
+                    Clear All
+                  </Button>
+                </HStack>
+                <Flex wrap="wrap" gap={2}>
+                  {activeFilters.map((filter, index) => (
+                    <Badge
+                      key={index}
+                      variant="neon"
+                      colorScheme="teal"
+                      px={3}
+                      py={1}
+                      borderRadius="full"
+                    >
+                      {filter}
+                    </Badge>
+                  ))}
+                </Flex>
+              </VStack>
+            </MotionBox>
+          )}
 
-        {/* Filter Panel */}
-        {showFilters && (
-          <Box borderTop="1px" borderColor={borderColor} pt={4}>
-            <VStack spacing={4} align="stretch">
-              <Text fontWeight="bold" fontSize="lg">Filters</Text>
+          {/* Filter Panel */}
+          <MotionBox
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ 
+              opacity: showFilters ? 1 : 0, 
+              height: showFilters ? "auto" : 0 
+            }}
+            transition={{ duration: 0.3 }}
+            overflow="hidden"
+          >
+            <VStack spacing={6} align="stretch" pt={4}>
+              <Divider borderColor="glass.300" />
               
-              <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
+              <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6}>
                 {/* Category Filter */}
-                <Box>
-                  <Text fontSize="sm" fontWeight="medium" mb={2}>Category</Text>
+                <VStack align="stretch" spacing={2}>
+                  <Text color="white" fontWeight="medium">Category</Text>
                   <Select
                     value={filters.category}
                     onChange={(e) => handleFilterChange('category', e.target.value)}
-                    placeholder="All Categories"
+                    variant="glass"
+                    bg="glass.200"
+                    border="1px solid"
+                    borderColor="glass.300"
+                    _focus={{
+                      borderColor: "neon.blue",
+                      boxShadow: "0 0 0 1px var(--chakra-colors-neon-blue)",
+                    }}
                   >
+                    <option value="">All Categories</option>
                     {categories.map(category => (
                       <option key={category} value={category}>{category}</option>
                     ))}
                   </Select>
-                </Box>
+                </VStack>
 
                 {/* Level Filter */}
-                <Box>
-                  <Text fontSize="sm" fontWeight="medium" mb={2}>Level</Text>
+                <VStack align="stretch" spacing={2}>
+                  <Text color="white" fontWeight="medium">Level</Text>
                   <Select
                     value={filters.level}
                     onChange={(e) => handleFilterChange('level', e.target.value)}
-                    placeholder="All Levels"
+                    variant="glass"
+                    bg="glass.200"
+                    border="1px solid"
+                    borderColor="glass.300"
+                    _focus={{
+                      borderColor: "neon.blue",
+                      boxShadow: "0 0 0 1px var(--chakra-colors-neon-blue)",
+                    }}
                   >
+                    <option value="">All Levels</option>
                     {levels.map(level => (
                       <option key={level} value={level}>{level}</option>
                     ))}
                   </Select>
-                </Box>
+                </VStack>
 
                 {/* Duration Filter */}
-                <Box>
-                  <Text fontSize="sm" fontWeight="medium" mb={2}>Duration</Text>
+                <VStack align="stretch" spacing={2}>
+                  <Text color="white" fontWeight="medium">Duration</Text>
                   <Select
                     value={filters.duration}
                     onChange={(e) => handleFilterChange('duration', e.target.value)}
-                    placeholder="Any Duration"
+                    variant="glass"
+                    bg="glass.200"
+                    border="1px solid"
+                    borderColor="glass.300"
+                    _focus={{
+                      borderColor: "neon.blue",
+                      boxShadow: "0 0 0 1px var(--chakra-colors-neon-blue)",
+                    }}
                   >
+                    <option value="">Any Duration</option>
                     {durationOptions.map(option => (
                       <option key={option.value} value={option.value}>{option.label}</option>
                     ))}
                   </Select>
-                </Box>
+                </VStack>
 
                 {/* Instructor Filter */}
-                <Box>
-                  <Text fontSize="sm" fontWeight="medium" mb={2}>Instructor</Text>
+                <VStack align="stretch" spacing={2}>
+                  <Text color="white" fontWeight="medium">Instructor</Text>
                   <Select
                     value={filters.instructor}
                     onChange={(e) => handleFilterChange('instructor', e.target.value)}
-                    placeholder="All Instructors"
+                    variant="glass"
+                    bg="glass.200"
+                    border="1px solid"
+                    borderColor="glass.300"
+                    _focus={{
+                      borderColor: "neon.blue",
+                      boxShadow: "0 0 0 1px var(--chakra-colors-neon-blue)",
+                    }}
                   >
+                    <option value="">All Instructors</option>
                     {instructors.map(instructor => (
                       <option key={instructor} value={instructor}>{instructor}</option>
                     ))}
                   </Select>
-                </Box>
+                </VStack>
+
+                {/* Price Range Filter */}
+                <VStack align="stretch" spacing={2} gridColumn={{ base: 1, md: 2, lg: 1 }}>
+                  <Text color="white" fontWeight="medium">
+                    Price Range: ₹0 - ₹{filters.priceRange[1]}
+                  </Text>
+                  <Box px={2}>
+                    <Slider
+                      value={filters.priceRange}
+                      onChange={(value) => handleFilterChange('priceRange', value)}
+                      min={0}
+                      max={10000}
+                      step={100}
+                      size="lg"
+                    >
+                      <SliderMark value={0} mt={4} fontSize="sm" color="white">
+                        ₹0
+                      </SliderMark>
+                      <SliderMark value={5000} mt={4} fontSize="sm" color="white">
+                        ₹5k
+                      </SliderMark>
+                      <SliderMark value={10000} mt={4} fontSize="sm" color="white">
+                        ₹10k
+                      </SliderMark>
+                      <SliderTrack bg="glass.300">
+                        <SliderFilledTrack bg="neon.blue" />
+                      </SliderTrack>
+                      <SliderThumb 
+                        bg="neon.blue" 
+                        boxShadow="0 0 10px rgba(59, 130, 246, 0.5)"
+                      />
+                    </Slider>
+                  </Box>
+                </VStack>
               </SimpleGrid>
 
-              {/* Price Range Filter */}
-              <Box>
-                <Text fontSize="sm" fontWeight="medium" mb={2}>
-                  Price Range: ₹{filters.priceRange[0]} - ₹{filters.priceRange[1]}
-                </Text>
-                <Slider
-                  value={filters.priceRange}
-                  onChange={(value) => handleFilterChange('priceRange', value)}
-                  min={0}
-                  max={10000}
-                  step={500}
+              {/* Filter Actions */}
+              <HStack justify="center" spacing={4} pt={4}>
+                <Button
+                  variant="3d"
+                  onClick={clearFilters}
+                  leftIcon={<FaTimes />}
                 >
-                  <SliderMark value={0} mt={2} fontSize="sm">₹0</SliderMark>
-                  <SliderMark value={5000} mt={2} fontSize="sm">₹5k</SliderMark>
-                  <SliderMark value={10000} mt={2} fontSize="sm">₹10k</SliderMark>
-                  <SliderTrack>
-                    <SliderFilledTrack />
-                  </SliderTrack>
-                  <SliderThumb boxSize={6} />
-                  <SliderThumb boxSize={6} />
-                </Slider>
-              </Box>
-
-              {/* Apply Filters Button */}
-              <Button colorScheme="teal" onClick={handleSearch}>
-                Apply Filters
-              </Button>
+                  Clear Filters
+                </Button>
+                <Button
+                  variant="3d-primary"
+                  onClick={handleSearch}
+                  leftIcon={<FaSearch />}
+                >
+                  Apply Filters
+                </Button>
+              </HStack>
             </VStack>
-          </Box>
-        )}
-      </VStack>
-    </Box>
+          </MotionBox>
+        </VStack>
+      </CardBody>
+    </MotionCard>
   );
 };
 

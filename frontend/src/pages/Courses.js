@@ -16,9 +16,13 @@ import {
   AlertIcon,
   AlertTitle,
   AlertDescription,
+  Card,
+  CardBody,
+  Image,
+  Icon,
 } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
-import { FaEye, FaClock, FaUser, FaStar } from 'react-icons/fa';
+import { FaEye, FaClock, FaUser, FaStar, FaPlay, FaGraduationCap } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -26,6 +30,7 @@ import CourseSearch from '../components/CourseSearch';
 import { courseApi, api } from '../utils/api';
 
 const MotionBox = motion(Box);
+const MotionCard = motion(Card);
 
 const Courses = () => {
   const [courses, setCourses] = useState([]);
@@ -98,174 +103,249 @@ const Courses = () => {
   };
 
   const getCourseDuration = (course) => {
-    if (course.duration) {
-      if (course.duration < 1) return `${Math.round(course.duration * 60)} minutes`;
-      if (course.duration < 2) return `${course.duration} hour`;
-      return `${course.duration} hours`;
-    }
-    return '2-5 hours';
+    // This is a placeholder - you'd need to add duration field to your course model
+    return course.duration || '3 hours';
   };
 
   if (loading) {
     return (
-      <Box bg={bg} minH="100vh">
+      <Box bg="gradients.primary" minH="100vh">
         <Navbar />
-        <Center h="50vh">
-          <Spinner size="xl" />
+        <Center h="60vh">
+          <VStack spacing={6}>
+            <Spinner size="xl" color="white" thickness="4px" />
+            <Text color="white" fontSize="lg">Loading courses...</Text>
+          </VStack>
         </Center>
+        <Footer />
       </Box>
     );
   }
 
   return (
-    <Box bg={bg} minH="100vh">
+    <Box bg="gradients.primary" minH="100vh" position="relative" overflow="hidden">
+      {/* Animated background elements */}
+      <Box
+        position="absolute"
+        top="10%"
+        left="10%"
+        w="300px"
+        h="300px"
+        bg="neon.blue"
+        borderRadius="full"
+        opacity="0.1"
+        filter="blur(60px)"
+        animation="pulse 6s infinite"
+      />
+      <Box
+        position="absolute"
+        top="60%"
+        right="15%"
+        w="250px"
+        h="250px"
+        bg="neon.purple"
+        borderRadius="full"
+        opacity="0.1"
+        filter="blur(50px)"
+        animation="pulse 8s infinite"
+      />
+      <Box
+        position="absolute"
+        bottom="20%"
+        left="20%"
+        w="200px"
+        h="200px"
+        bg="neon.pink"
+        borderRadius="full"
+        opacity="0.1"
+        filter="blur(40px)"
+        animation="pulse 7s infinite"
+      />
+
       <Navbar />
+      
       <Container maxW="7xl" py={8}>
-        <VStack spacing={8} align="stretch">
-          {/* Header */}
-          <Box textAlign="center">
-            <Heading size="2xl" mb={4} color="teal.600">
-              Browse Courses
-            </Heading>
-            <Text fontSize="lg" color="gray.600">
-              Discover the perfect course for your learning journey
-            </Text>
-          </Box>
+        <MotionBox
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          <Heading 
+            mb={6} 
+            textAlign="center" 
+            color="white" 
+            className="gradient-text"
+            fontSize={{ base: '3xl', md: '4xl' }}
+            textShadow="0 4px 8px rgba(0,0,0,0.5), 0 0 20px rgba(255,255,255,0.3)"
+            fontWeight="extrabold"
+            letterSpacing="wide"
+          >
+            Explore Our Courses
+          </Heading>
+          <Text 
+            textAlign="center" 
+            color="white" 
+            opacity="0.95" 
+            fontSize="lg" 
+            mb={8}
+            textShadow="0 2px 4px rgba(0,0,0,0.3)"
+            fontWeight="medium"
+          >
+            Discover high-quality courses designed to help you succeed
+          </Text>
+        </MotionBox>
 
-          {/* Search Component */}
-          <CourseSearch onSearch={handleSearch} courses={courses} />
+        <CourseSearch onSearch={handleSearch} />
 
-          {/* Search Results Summary */}
-          {searchResults && (
-            <Alert status="info" borderRadius="md">
+        {searchResults && (
+          <MotionBox
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            mb={6}
+          >
+            <Alert status="info" variant="glass" rounded="lg">
               <AlertIcon />
               <Box>
                 <AlertTitle>Search Results</AlertTitle>
                 <AlertDescription>
-                  Found {searchResults.count} course{searchResults.count !== 1 ? 's' : ''}
-                  {searchResults.searchTerm && ` for "${searchResults.searchTerm}"`}
+                  Found {searchResults.count} courses matching your criteria
                 </AlertDescription>
               </Box>
             </Alert>
-          )}
+          </MotionBox>
+        )}
 
-          {/* Courses Grid */}
-          {filteredCourses.length === 0 ? (
-            <Center py={12}>
-              <VStack spacing={4}>
-                <Text fontSize="xl" color="gray.500">No courses found</Text>
-                <Text color="gray.400">Try adjusting your search criteria</Text>
-                <Button colorScheme="teal" onClick={() => {
-                  setFilteredCourses(courses);
-                  setSearchResults(null);
-                }}>
-                  Show All Courses
-                </Button>
-              </VStack>
-            </Center>
-          ) : (
-            <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6}>
-              {filteredCourses.map(course => (
-                <MotionBox
-                  key={course._id}
-                  whileHover={{ scale: 1.02 }}
-                  transition={{ type: 'spring', stiffness: 300 }}
-                  bg={cardBg}
-                  rounded="xl"
-                  shadow="lg"
-                  overflow="hidden"
-                  cursor="pointer"
-                  onClick={() => navigate(`/course/${course._id}`)}
-                  _hover={{ shadow: 'xl' }}
-                >
-                  {/* Course Image */}
-                  <Box
-                    h="200px"
-                    bg="gray.200"
-                    bgImage={course.thumbnail ? `url(${course.thumbnail})` : 'none'}
-                    bgSize="cover"
-                    bgPosition="center"
-                    position="relative"
+        <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={8}>
+          {filteredCourses.map((course, index) => (
+            <MotionCard
+              key={course._id}
+              variant="3d"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              whileHover={{ 
+                scale: 1.05,
+                rotateY: 5,
+                boxShadow: "0 25px 50px rgba(0,0,0,0.3)"
+              }}
+              transition={{ 
+                duration: 0.6,
+                delay: index * 0.1,
+                type: 'spring', 
+                stiffness: 300 
+              }}
+              viewport={{ once: true }}
+              cursor="pointer"
+              onClick={() => navigate(`/course/${course._id}`)}
+            >
+              <CardBody p={0}>
+                <Box position="relative">
+                  <Image 
+                    src={course.thumbnail || 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=300&h=180&fit=crop'} 
+                    alt={course.title} 
+                    w="full" 
+                    h="200px" 
+                    objectFit="cover"
+                    roundedTop="lg"
+                  />
+                  <Badge
+                    position="absolute"
+                    top={3}
+                    left={3}
+                    variant="neon"
+                    colorScheme="teal"
                   >
-                    {!course.thumbnail && (
-                      <Center h="full">
-                        <Text color="gray.500">No Image</Text>
-                      </Center>
-                    )}
-                    <Badge
-                      position="absolute"
-                      top={3}
-                      right={3}
-                      colorScheme="teal"
-                      variant="solid"
-                    >
-                      {course.price ? `₹${course.price}` : 'Free'}
-                    </Badge>
-                  </Box>
-
-                  {/* Course Content */}
-                  <Box p={6}>
-                    <VStack spacing={4} align="stretch">
-                      <Box>
-                        <Heading size="md" mb={2} noOfLines={2}>
-                          {course.title}
-                        </Heading>
-                        <Text color="gray.600" fontSize="sm" noOfLines={3}>
-                          {course.description}
-                        </Text>
-                      </Box>
-
-                      <HStack spacing={4} fontSize="sm" color="gray.500">
-                        <HStack>
-                          <FaUser />
-                          <Text>{course.createdBy?.name || 'Admin'}</Text>
-                        </HStack>
-                        <HStack>
-                          <FaClock />
-                          <Text>{getCourseDuration(course)}</Text>
-                        </HStack>
+                    {course.price ? `₹${course.price}` : 'Free'}
+                  </Badge>
+                  <Badge
+                    position="absolute"
+                    top={3}
+                    right={3}
+                    variant="3d"
+                    colorScheme="purple"
+                  >
+                    {getCourseLevel(course)}
+                  </Badge>
+                </Box>
+                
+                <Box p={6}>
+                  <Heading fontSize="xl" mb={3} color="gray.800" noOfLines={2}>
+                    {course.title}
+                  </Heading>
+                  <Text mb={4} color="gray.600" fontSize="sm" noOfLines={3}>
+                    {course.description}
+                  </Text>
+                  
+                  <VStack spacing={3} mb={4} align="stretch">
+                    <HStack justify="space-between" color="gray.500" fontSize="sm">
+                      <HStack spacing={2}>
+                        <Icon as={FaClock} />
+                        <Text>{getCourseDuration(course)}</Text>
                       </HStack>
-
-                      <HStack justify="space-between">
-                        <Badge colorScheme="blue" variant="subtle">
-                          {getCourseLevel(course)}
-                        </Badge>
-                        <Button
-                          size="sm"
-                          colorScheme="teal"
-                          leftIcon={<FaEye />}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            navigate(`/course/${course._id}`);
-                          }}
-                        >
-                          View Course
-                        </Button>
+                      <HStack spacing={2}>
+                        <Icon as={FaUser} />
+                        <Text>{course.enrolledStudents || 0} students</Text>
                       </HStack>
-                    </VStack>
-                  </Box>
-                </MotionBox>
-              ))}
-            </SimpleGrid>
-          )}
+                    </HStack>
+                    
+                    <HStack justify="space-between" color="gray.500" fontSize="sm">
+                      <HStack spacing={2}>
+                        <Icon as={FaGraduationCap} />
+                        <Text>{course.lectures?.length || 0} lectures</Text>
+                      </HStack>
+                      <HStack spacing={2}>
+                        <Icon as={FaStar} color="yellow.400" />
+                        <Text>{course.rating || 4.5}</Text>
+                      </HStack>
+                    </HStack>
+                  </VStack>
+                  
+                  <Button
+                    variant="3d"
+                    leftIcon={<FaEye />}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(`/course/${course._id}`);
+                    }}
+                    w="full"
+                    size="md"
+                  >
+                    View Course
+                  </Button>
+                </Box>
+              </CardBody>
+            </MotionCard>
+          ))}
+        </SimpleGrid>
 
-          {/* Load More Button (if needed) */}
-          {filteredCourses.length > 0 && filteredCourses.length < courses.length && (
-            <Center>
+        {filteredCourses.length === 0 && !loading && (
+          <MotionBox
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            textAlign="center"
+            py={20}
+          >
+            <VStack spacing={6}>
+              <Icon as={FaPlay} boxSize={16} color="gray.400" />
+              <Heading color="white" size="lg">No courses found</Heading>
+              <Text color="white" opacity="0.8">
+                Try adjusting your search criteria or browse all courses
+              </Text>
               <Button
-                colorScheme="teal"
-                variant="outline"
+                variant="3d-primary"
                 onClick={() => {
-                  setFilteredCourses(courses);
                   setSearchResults(null);
+                  setFilteredCourses(courses);
                 }}
               >
-                Show All Courses
+                View All Courses
               </Button>
-            </Center>
-          )}
-        </VStack>
+            </VStack>
+          </MotionBox>
+        )}
       </Container>
+
       <Footer />
     </Box>
   );

@@ -1,6 +1,8 @@
 import React from 'react';
 import { ChakraProvider } from '@chakra-ui/react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { customTheme } from './theme';
+import ErrorBoundary from './components/ErrorBoundary';
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 import AdminLogin from './pages/auth/AdminLogin';
@@ -53,9 +55,10 @@ import StudentProfile from './pages/Profile';
 
 function App() {
   return (
-    <ChakraProvider>
-      <AuthProvider>
-        <Router>
+    <ErrorBoundary>
+      <ChakraProvider theme={customTheme}>
+        <AuthProvider>
+          <Router>
           <Routes>
             <Route path="/" element={<Landing />} />
             <Route path="/login" element={<Login />} />
@@ -110,6 +113,7 @@ function App() {
         </Router>
       </AuthProvider>
     </ChakraProvider>
+    </ErrorBoundary>
   );
 }
 

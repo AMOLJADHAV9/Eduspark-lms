@@ -42,13 +42,14 @@ const Navbar = () => {
       as="nav"
       px={8}
       py={4}
-      bg={glassBg}
-      shadow="lg"
+      bg="glass.200"
+      backdropFilter="blur(20px)"
+      borderBottom="1px solid"
+      borderColor="glass.300"
+      boxShadow="glass"
       position="sticky"
       top={0}
       zIndex={10}
-      borderBottom={glassBorder}
-      style={{ backdropFilter: 'blur(16px)' }}
       initial={{ y: -60, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5 }}
@@ -56,11 +57,15 @@ const Navbar = () => {
       <Flex align="center">
         <MotionText
           fontSize="2xl"
-          fontWeight="bold"
-          color="teal.500"
+          fontWeight="extrabold"
+          className="gradient-text"
           cursor="pointer"
           onClick={() => navigate('/')}
-          whileHover={{ scale: 1.12, color: '#38B2AC', textShadow: '0 2px 16px rgba(56,178,172,0.25)' }}
+          whileHover={{ 
+            scale: 1.12, 
+            textShadow: '0 0 20px rgba(102, 126, 234, 0.5)',
+            filter: 'brightness(1.2)'
+          }}
           transition={{ type: 'spring', stiffness: 300 }}
         >
           LMS
@@ -88,7 +93,7 @@ const Navbar = () => {
               fontWeight="medium"
               color="gray.700"
               variants={menuItemVariants}
-              initial="initial"
+              initial={menuItemVariants.initial}
               whileHover="hover"
               transition={{ type: 'spring', stiffness: 400 }}
               onClick={() => navigate(item.to)}
