@@ -11,6 +11,7 @@ const links = [
   { to: '/admin/assignments', label: 'Assignments' },
   { to: '/admin/certificates', label: 'Certificates' },
   { to: '/admin/enrollments', label: 'Enrollments' },
+  { to: '/admin/payments', label: 'Payments' },
   { to: '/admin/teacher-applications', label: 'Teacher Applications' },
   { to: '/analytics', label: 'Analytics' }, // Added analytics link for admin only
 ];

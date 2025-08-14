@@ -14,8 +14,43 @@ exports.enroll = async (req, res) => {
 
 exports.getUserEnrollments = async (req, res) => {
   try {
-    const enrollments = await Enrollment.find({ user: req.user.id }).populate('course');
+    const enrollments = await Enrollment.find({ user: req.user.id })
+      .populate('course')
+      .sort({ createdAt: -1 });
     res.json(enrollments);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+// Admin: get purchased courses (enrollments) across users
+exports.getAllEnrollments = async (req, res) => {
+  try {
+    const { userId, courseId, page = 1, limit = 20 } = req.query;
+    const filter = {};
+    if (userId) filter.user = userId;
+    if (courseId) filter.course = courseId;
+
+    const skip = (page - 1) * limit;
+
+    const enrollments = await Enrollment.find(filter)
+      .populate('user', 'name email')
+      .populate('course', 'title price')
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(parseInt(limit));
+
+    const total = await Enrollment.countDocuments(filter);
+
+    res.json({
+      enrollments,
+      pagination: {
+        page: parseInt(page),
+        limit: parseInt(limit),
+        total,
+        pages: Math.ceil(total / limit)
+      }
+    });
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
   }

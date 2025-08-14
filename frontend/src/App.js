@@ -11,6 +11,7 @@ import AdminUsers from './pages/admin/Users';
 import AdminCourses from './pages/admin/Courses';
 import AdminLectures from './pages/admin/Lectures';
 import AdminEnrollments from './pages/admin/Enrollments';
+import AdminPayments from './pages/admin/Payments';
 import UserDashboard from './pages/UserDashboard';
 import Landing from './pages/Landing';
 import CourseDetail from './pages/CourseDetail';
@@ -69,6 +70,7 @@ function App() {
             <Route path="/admin/courses" element={<AdminCourses />} />
             <Route path="/admin/lectures" element={<AdminLectures />} />
             <Route path="/admin/enrollments" element={<AdminEnrollments />} />
+            <Route path="/admin/payments" element={<AdminPayments />} />
             <Route path="/user/dashboard" element={<UserDashboard />} />
             <Route path="/course/:id" element={<CourseDetail />} />
             <Route path="/course/:id/learn" element={<CourseLearning />} />

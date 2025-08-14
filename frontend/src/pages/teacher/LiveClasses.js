@@ -211,12 +211,17 @@ const TeacherLiveClasses = () => {
   };
 
   const getCourseName = (courseId) => {
-    const course = courses.find(c => c._id === courseId);
+    // Handle case where courseId might be an object
+    const actualCourseId = typeof courseId === 'object' ? courseId._id : courseId;
+    const course = courses.find(c => c._id === actualCourseId);
     return course ? course.title : 'Unknown Course';
   };
 
   const getStatusColor = (status) => {
-    switch (status) {
+    // Handle case where status might be an object
+    const actualStatus = typeof status === 'object' && status !== null ? status.toString() : status;
+    
+    switch (actualStatus) {
       case 'scheduled': return 'blue';
       case 'live': return 'green';
       case 'completed': return 'gray';
@@ -227,9 +232,20 @@ const TeacherLiveClasses = () => {
 
   const formatDateTime = (date, time) => {
     if (!date) return 'Not scheduled';
-    const dateObj = new Date(date);
-    const formattedDate = dateObj.toLocaleDateString();
-    return time ? `${formattedDate} at ${time}` : formattedDate;
+    
+    // Handle case where date might be an object
+    const actualDate = typeof date === 'object' && date !== null ? date.toString() : date;
+    const actualTime = typeof time === 'object' && time !== null ? time.toString() : time;
+    
+    try {
+      const dateObj = new Date(actualDate);
+      if (isNaN(dateObj.getTime())) return 'Invalid date';
+      
+      const formattedDate = dateObj.toLocaleDateString();
+      return actualTime ? `${formattedDate} at ${actualTime}` : formattedDate;
+    } catch (error) {
+      return 'Invalid date';
+    }
   };
 
   if (loading) {
@@ -325,12 +341,12 @@ const TeacherLiveClasses = () => {
                         <HStack justify="space-between" w="full">
                           <Icon as={FaVideo} color="teal.300" boxSize={6} />
                           <Badge colorScheme={getStatusColor(liveClass.status)} variant="solid">
-                            {liveClass.status}
+                            {typeof liveClass.status === 'string' ? liveClass.status : 'unknown'}
                           </Badge>
                         </HStack>
                         <VStack align="start" spacing={1}>
                           <Heading size="md" color="white">
-                            {liveClass.title}
+                            {liveClass.title || 'Untitled Class'}
                           </Heading>
                           <Text color="gray.300" fontSize="sm">
                             {getCourseName(liveClass.courseId)}
@@ -344,17 +360,17 @@ const TeacherLiveClasses = () => {
                     <CardBody>
                       <VStack spacing={4} align="stretch">
                         <Text color="gray.200" fontSize="sm" noOfLines={3}>
-                          {liveClass.description}
+                          {typeof liveClass.description === 'string' ? liveClass.description : 'No description available'}
                         </Text>
                         
                         <HStack justify="space-between" fontSize="sm" color="gray.400">
                           <HStack spacing={1}>
                             <Icon as={FaClock} boxSize={3} />
-                            <Text>{liveClass.duration} min</Text>
+                            <Text>{typeof liveClass.duration === 'number' ? liveClass.duration : 0} min</Text>
                           </HStack>
                           <HStack spacing={1}>
                             <Icon as={FaUsers} boxSize={3} />
-                            <Text>{liveClass.enrolledStudents || 0}/{liveClass.maxStudents} students</Text>
+                            <Text>{typeof liveClass.enrolledStudents === 'number' ? liveClass.enrolledStudents : 0}/{typeof liveClass.maxStudents === 'number' ? liveClass.maxStudents : 0} students</Text>
                           </HStack>
                         </HStack>
                         

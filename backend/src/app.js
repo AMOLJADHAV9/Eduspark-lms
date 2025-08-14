@@ -19,7 +19,10 @@ const certificateRoutes = require('./routes/certificate');
 const forumRoutes = require('./routes/forum');
 const gamificationRoutes = require('./routes/gamification');
 const personalizationRoutes = require('./routes/personalization');
+// Existing routes
 const paymentRoutes = require('./routes/payment');
+// Add unified payments routes mounting
+const paymentsRoutes = require('./routes/payments.routes');
 const analyticsRoutes = require('./routes/analytics');
 const profileRoutes = require('./routes/profile');
 
@@ -67,6 +70,8 @@ app.use('/api', forumRoutes);
 app.use('/api/gamification', gamificationRoutes);
 app.use('/api/personalization', personalizationRoutes);
 app.use('/api/payment', paymentRoutes);
+// Mount new payments routes under /api/payments to support the new integration
+app.use('/api/payments', paymentsRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/profile', profileRoutes);
 

@@ -226,55 +226,12 @@ const LiveClasses = () => {
 
   if (loading) {
     return (
-      <Box 
-        bg="gradients.primary" 
-        minH="100vh"
-        position="relative"
-        overflow="hidden"
-      >
-        {/* Animated background elements */}
-        <Box
-          position="absolute"
-          top="10%"
-          left="10%"
-          w="200px"
-          h="200px"
-          bg="neon.blue"
-          borderRadius="full"
-          opacity="0.1"
-          filter="blur(40px)"
-          animation="pulse 3s infinite"
-        />
-        <Box
-          position="absolute"
-          top="60%"
-          right="15%"
-          w="150px"
-          h="150px"
-          bg="neon.purple"
-          borderRadius="full"
-          opacity="0.1"
-          filter="blur(30px)"
-          animation="pulse 4s infinite"
-        />
-        
+      <Box bg="white" minH="100vh">
         <Navbar />
         <Center h="50vh">
           <VStack spacing={6}>
-            <Box
-              w="80px"
-              h="80px"
-              bg="gradients.success"
-              borderRadius="full"
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-              boxShadow="neon-green"
-              animation="spin 2s linear infinite"
-            >
-              <Icon as={FaSpinner} boxSize={8} color="white" />
-            </Box>
-            <Text fontSize="xl" fontWeight="bold" color="white">
+            <Spinner size="xl" color="teal.500" thickness="4px" />
+            <Text fontSize="xl" fontWeight="bold" color="brand.text">
               Loading Live Classes...
             </Text>
           </VStack>
@@ -284,50 +241,7 @@ const LiveClasses = () => {
   }
 
   return (
-    <Box 
-      bg="gradients.primary" 
-      minH="100vh"
-      position="relative"
-      overflow="hidden"
-    >
-      {/* Animated background elements */}
-      <Box
-        position="absolute"
-        top="10%"
-        left="10%"
-        w="300px"
-        h="300px"
-        bg="neon.blue"
-        borderRadius="full"
-        opacity="0.05"
-        filter="blur(60px)"
-        animation="pulse 6s infinite"
-      />
-      <Box
-        position="absolute"
-        top="60%"
-        right="15%"
-        w="250px"
-        h="250px"
-        bg="neon.purple"
-        borderRadius="full"
-        opacity="0.05"
-        filter="blur(50px)"
-        animation="pulse 8s infinite"
-      />
-      <Box
-        position="absolute"
-        bottom="20%"
-        left="20%"
-        w="200px"
-        h="200px"
-        bg="neon.pink"
-        borderRadius="full"
-        opacity="0.05"
-        filter="blur(40px)"
-        animation="pulse 7s infinite"
-      />
-
+    <Box bg="white" minH="100vh" position="relative" overflow="hidden">
       <Navbar />
       <Container maxW="7xl" py={8} position="relative" zIndex={1}>
         <VStack spacing={12} align="stretch">
@@ -343,38 +257,25 @@ const LiveClasses = () => {
                   <Box
                     w="60px"
                     h="60px"
-                    bg="gradients.success"
+                    bg="teal.500"
                     borderRadius="xl"
                     display="flex"
                     alignItems="center"
                     justifyContent="center"
-                    boxShadow="neon-green"
+                    boxShadow="neon-blue"
                   >
                     <Icon as={FaVideo} boxSize={6} color="white" />
                   </Box>
                   <Box>
-                    <Heading 
-                      size="3xl" 
-                      color="white" 
-                      fontWeight="extrabold"
-                      className="gradient-text"
-                      textShadow="0 4px 8px rgba(0,0,0,0.5), 0 0 20px rgba(255,255,255,0.3)"
-                      letterSpacing="wide"
-                    >
+                    <Heading size="3xl" color="brand.text" fontWeight="extrabold" letterSpacing="wide">
                       Live Classes
                     </Heading>
-                    <Text 
-                      fontSize="xl" 
-                      color="white" 
-                      opacity={0.95}
-                      textShadow="0 2px 4px rgba(0,0,0,0.3)"
-                      fontWeight="medium"
-                    >
+                    <Text fontSize="xl" color="gray.700" opacity={1} fontWeight="medium">
                       Join real-time learning sessions with expert instructors
                     </Text>
                   </Box>
                 </HStack>
-                <HStack spacing={6} color="white" opacity={0.8}>
+                <HStack spacing={6} color="gray.600">
                   <HStack>
                     <Icon as={FaRocket} />
                     <Text>Interactive Learning</Text>
@@ -392,14 +293,9 @@ const LiveClasses = () => {
               {user && user.role === 'teacher' && (
                 <Button
                   leftIcon={<FaPlus />}
-                  variant="3d-primary"
+                  colorScheme="teal"
                   size="lg"
                   onClick={() => setShowCreateModal(true)}
-                  boxShadow="neon-blue"
-                  _hover={{
-                    boxShadow: "neon-blue",
-                    transform: "translateY(-3px) scale(1.05)",
-                  }}
                 >
                   Create Live Class
                 </Button>
@@ -413,14 +309,13 @@ const LiveClasses = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
-            <Card variant="glass" p={6}>
+            <Card p={6}>
               <Tabs value={activeTab} onChange={setActiveTab} colorScheme="teal">
                 <TabList bg="transparent" border="none">
                   <Tab 
                     _selected={{ 
-                      bg: "gradients.primary", 
+                      bg: "teal.500", 
                       color: "white",
-                      boxShadow: "neon-blue",
                       transform: "translateY(-2px)"
                     }}
                     borderRadius="xl"
@@ -434,9 +329,8 @@ const LiveClasses = () => {
                   </Tab>
                   <Tab 
                     _selected={{ 
-                      bg: "gradients.dark", 
+                      bg: "gray.800", 
                       color: "white",
-                      boxShadow: "neon-purple",
                       transform: "translateY(-2px)"
                     }}
                     borderRadius="xl"
@@ -451,9 +345,8 @@ const LiveClasses = () => {
                   {user && (
                     <Tab 
                       _selected={{ 
-                        bg: "gradients.success", 
+                        bg: "green.500", 
                         color: "white",
-                        boxShadow: "neon-green",
                         transform: "translateY(-2px)"
                       }}
                       borderRadius="xl"
@@ -474,18 +367,6 @@ const LiveClasses = () => {
                     {upcomingClasses.length === 0 ? (
                       <Center py={16}>
                         <VStack spacing={6}>
-                          <Box
-                            w="120px"
-                            h="120px"
-                            bg="gradients.secondary"
-                            borderRadius="full"
-                            display="flex"
-                            alignItems="center"
-                            justifyContent="center"
-                            boxShadow="neon-pink"
-                          >
-                            <Icon as={FaVideo} boxSize={12} color="white" />
-                          </Box>
                           <VStack spacing={2}>
                             <Text fontSize="2xl" fontWeight="bold" color="gray.700">
                               No upcoming live classes
@@ -619,15 +500,10 @@ const LiveClasses = () => {
                                         {liveClass.status === 'scheduled' && (
                                           <Button
                                             size="sm"
-                                            variant="3d-primary"
+                                            colorScheme="teal"
                                             leftIcon={<FaPlay />}
                                             onClick={() => handleStartClass(liveClass)}
                                             flex={1}
-                                            boxShadow="neon-green"
-                                            _hover={{
-                                              boxShadow: "neon-green",
-                                              transform: "translateY(-2px)",
-                                            }}
                                           >
                                             Start Class
                                           </Button>
@@ -635,21 +511,18 @@ const LiveClasses = () => {
                                         {liveClass.status === 'live' && (
                                           <Button
                                             size="sm"
-                                            variant="3d"
+                                            colorScheme="red"
                                             leftIcon={<FaStop />}
                                             onClick={() => handleEndClass(liveClass)}
                                             flex={1}
-                                            colorScheme="red"
-                                            _hover={{
-                                              transform: "translateY(-2px)",
-                                            }}
                                           >
                                             End Class
                                           </Button>
                                         )}
                                         <Button
                                           size="sm"
-                                          variant="glass"
+                                          variant="outline"
+                                          colorScheme="teal"
                                           onClick={() => navigate(`/live-class/${liveClass._id}`)}
                                           flex={1}
                                         >
@@ -660,23 +533,19 @@ const LiveClasses = () => {
                                       <HStack spacing={3} w="full">
                                         <Button
                                           size="sm"
-                                          variant="3d-primary"
+                                          colorScheme="teal"
                                           leftIcon={<FaVideo />}
                                           onClick={() => handleJoinClass(liveClass)}
                                           flex={1}
                                           isDisabled={!user}
-                                          boxShadow="neon-blue"
-                                          _hover={{
-                                            boxShadow: "neon-blue",
-                                            transform: "translateY(-2px)",
-                                          }}
                                         >
                                           {isEnrolled(liveClass) ? 'Join Class' : 'Enroll'}
                                         </Button>
                                         {liveClass.status === 'live' && (
                                           <Button
                                             size="sm"
-                                            variant="glass"
+                                            variant="outline"
+                                            colorScheme="teal"
                                             onClick={() => navigate(`/live-class/${liveClass._id}`)}
                                             flex={1}
                                           >

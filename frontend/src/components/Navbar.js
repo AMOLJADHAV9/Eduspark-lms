@@ -17,7 +17,7 @@ const MotionMenuList = motion(MenuList);
 
 const menuItemVariants = {
   initial: { y: 0, scale: 1, color: '#4A5568' },
-  hover: { scale: 1.08, color: '#319795', textShadow: '0 2px 8px rgba(49,151,149,0.15)' },
+  hover: { scale: 1.08, color: '#5A4BDA', textShadow: '0 2px 8px rgba(90,75,218,0.15)' },
 };
 
 const Navbar = () => {
@@ -98,12 +98,12 @@ const Navbar = () => {
               transition={{ type: 'spring', stiffness: 400 }}
               onClick={() => navigate(item.to)}
               position="relative"
-              _after={{
+               _after={{
                 content: '""',
                 display: 'block',
                 width: '0%',
                 height: '2px',
-                bg: 'teal.400',
+                bg: 'teal.500',
                 transition: 'width 0.3s',
                 position: 'absolute',
                 bottom: -1,
@@ -157,8 +157,8 @@ const Navbar = () => {
           </HStack>
         ) : (
           <>
-            <Button as={RouterLink} to="/login" colorScheme="teal" variant="outline" mr={3} _hover={{ bg: 'teal.50', color: 'teal.500' }}>Login</Button>
-            <Button as={RouterLink} to="/register" colorScheme="teal" _hover={{ bg: 'teal.400', color: 'white' }}>Register</Button>
+            <Button as={RouterLink} to="/login" colorScheme="teal" variant="outline" mr={3} _hover={{ bg: 'teal.50', color: 'teal.600' }}>Login</Button>
+            <Button as={RouterLink} to="/register" colorScheme="teal" _hover={{ bg: 'teal.500', color: 'white' }}>Register</Button>
           </>
         )}
       </Flex>

@@ -312,16 +312,16 @@ const TeacherQuizzes = () => {
                       <VStack spacing={3} align="start">
                         <HStack justify="space-between" w="full">
                           <Icon as={FaComments} color="teal.300" boxSize={6} />
-                          <Badge colorScheme={quiz.isActive ? "green" : "gray"} variant="solid">
-                            {quiz.isActive ? 'Active' : 'Inactive'}
+                          <Badge colorScheme={typeof quiz.isActive === 'boolean' && quiz.isActive ? "green" : "gray"} variant="solid">
+                            {typeof quiz.isActive === 'boolean' && quiz.isActive ? 'Active' : 'Inactive'}
                           </Badge>
                         </HStack>
                         <VStack align="start" spacing={1}>
                           <Heading size="md" color="white">
-                            {quiz.title}
+                            {typeof quiz.title === 'string' ? quiz.title : 'Untitled Quiz'}
                           </Heading>
                           <Text color="gray.300" fontSize="sm">
-                            {quiz.course?.title || 'Unknown Course'}
+                            {typeof quiz.course === 'object' && quiz.course?.title ? quiz.course.title : 'Unknown Course'}
                           </Text>
                         </VStack>
                       </VStack>
@@ -329,15 +329,15 @@ const TeacherQuizzes = () => {
                     <CardBody>
                       <VStack spacing={4} align="stretch">
                         <Text color="gray.200" fontSize="sm" noOfLines={3}>
-                          {quiz.description}
+                          {typeof quiz.description === 'string' ? quiz.description : 'No description available'}
                         </Text>
                         
                         <HStack justify="space-between" fontSize="sm" color="gray.400">
                           <HStack spacing={1}>
                             <Icon as={FaClock} boxSize={3} />
-                            <Text>{quiz.duration} min</Text>
+                            <Text>{typeof quiz.duration === 'number' ? quiz.duration : 0} min</Text>
                           </HStack>
-                          <Text>Pass: {quiz.passingScore}%</Text>
+                          <Text>Pass: {typeof quiz.passingScore === 'number' ? quiz.passingScore : 0}%</Text>
                         </HStack>
 
                         <HStack spacing={2}>

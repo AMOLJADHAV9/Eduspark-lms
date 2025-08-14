@@ -323,10 +323,10 @@ const TeacherCourses = () => {
                     <VStack spacing={4} align="stretch">
                       <HStack justify="space-between">
                                                  <Badge
-                           colorScheme={course.status === 'published' ? 'green' : 'yellow'}
+                           colorScheme={typeof course.status === 'string' && course.status === 'published' ? 'green' : 'yellow'}
                            variant="solid"
                          >
-                           {course.status || 'draft'}
+                           {typeof course.status === 'string' ? course.status : 'draft'}
                          </Badge>
                         <Menu>
                           <MenuButton
@@ -350,13 +350,13 @@ const TeacherCourses = () => {
 
                       <VStack align="start" spacing={2}>
                         <Heading size="md" color="white">
-                          {course.title}
+                          {typeof course.title === 'string' ? course.title : 'Untitled Course'}
                         </Heading>
                         <Text color="gray.300" fontSize="sm" noOfLines={2}>
-                          {course.description}
+                          {typeof course.description === 'string' ? course.description : 'No description available'}
                         </Text>
                         <Text color="teal.300" fontWeight="bold" fontSize="lg">
-                          ${course.price}
+                          ${typeof course.price === 'number' ? course.price : 0}
                         </Text>
                       </VStack>
 
@@ -365,13 +365,13 @@ const TeacherCourses = () => {
                            <HStack spacing={2}>
                              <Icon as={FaUsers} color="gray.400" boxSize={4} />
                              <Text color="gray.300" fontSize="sm">
-                               {course.students || 0} students
+                               {typeof course.students === 'number' ? course.students : 0} students
                              </Text>
                            </HStack>
                            <HStack spacing={2}>
                              <Icon as={FaStar} color="yellow.400" boxSize={4} />
                              <Text color="gray.300" fontSize="sm">
-                               {course.rating || 'N/A'}
+                               {typeof course.rating === 'number' ? course.rating : 'N/A'}
                              </Text>
                            </HStack>
                          </HStack>
@@ -379,21 +379,21 @@ const TeacherCourses = () => {
                          <HStack justify="space-between" fontSize="sm" color="gray.400">
                            <HStack spacing={1}>
                              <Icon as={FaVideo} boxSize={3} />
-                             <Text>{course.lectures || 0} lectures</Text>
+                             <Text>{typeof course.lectures === 'number' ? course.lectures : 0} lectures</Text>
                            </HStack>
                            <HStack spacing={1}>
                              <Icon as={FaFileAlt} boxSize={3} />
-                             <Text>{course.assignments || 0} assignments</Text>
+                             <Text>{typeof course.assignments === 'number' ? course.assignments : 0} assignments</Text>
                            </HStack>
                            <HStack spacing={1}>
                              <Icon as={FaComments} boxSize={3} />
-                             <Text>{course.quizzes || 0} quizzes</Text>
+                             <Text>{typeof course.quizzes === 'number' ? course.quizzes : 0} quizzes</Text>
                            </HStack>
                          </HStack>
 
-                         <Progress value={course.progress || 0} colorScheme="teal" size="sm" />
+                         <Progress value={typeof course.progress === 'number' ? course.progress : 0} colorScheme="teal" size="sm" />
                          <Text color="gray.300" fontSize="xs" textAlign="center">
-                           {course.progress || 0}% complete
+                           {typeof course.progress === 'number' ? course.progress : 0}% complete
                          </Text>
                        </VStack>
                     </VStack>

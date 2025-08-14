@@ -109,12 +109,12 @@ const Courses = () => {
 
   if (loading) {
     return (
-      <Box bg="gradients.primary" minH="100vh">
+      <Box bg="white" minH="100vh">
         <Navbar />
         <Center h="60vh">
           <VStack spacing={6}>
-            <Spinner size="xl" color="white" thickness="4px" />
-            <Text color="white" fontSize="lg">Loading courses...</Text>
+            <Spinner size="xl" color="teal.500" thickness="4px" />
+            <Text color="brand.text" fontSize="lg">Loading courses...</Text>
           </VStack>
         </Center>
         <Footer />
@@ -123,45 +123,7 @@ const Courses = () => {
   }
 
   return (
-    <Box bg="gradients.primary" minH="100vh" position="relative" overflow="hidden">
-      {/* Animated background elements */}
-      <Box
-        position="absolute"
-        top="10%"
-        left="10%"
-        w="300px"
-        h="300px"
-        bg="neon.blue"
-        borderRadius="full"
-        opacity="0.1"
-        filter="blur(60px)"
-        animation="pulse 6s infinite"
-      />
-      <Box
-        position="absolute"
-        top="60%"
-        right="15%"
-        w="250px"
-        h="250px"
-        bg="neon.purple"
-        borderRadius="full"
-        opacity="0.1"
-        filter="blur(50px)"
-        animation="pulse 8s infinite"
-      />
-      <Box
-        position="absolute"
-        bottom="20%"
-        left="20%"
-        w="200px"
-        h="200px"
-        bg="neon.pink"
-        borderRadius="full"
-        opacity="0.1"
-        filter="blur(40px)"
-        animation="pulse 7s infinite"
-      />
-
+    <Box bg="white" minH="100vh" position="relative" overflow="hidden">
       <Navbar />
       
       <Container maxW="7xl" py={8}>
@@ -173,10 +135,9 @@ const Courses = () => {
           <Heading 
             mb={6} 
             textAlign="center" 
-            color="white" 
+            color="brand.text" 
             className="gradient-text"
             fontSize={{ base: '3xl', md: '4xl' }}
-            textShadow="0 4px 8px rgba(0,0,0,0.5), 0 0 20px rgba(255,255,255,0.3)"
             fontWeight="extrabold"
             letterSpacing="wide"
           >
@@ -184,11 +145,10 @@ const Courses = () => {
           </Heading>
           <Text 
             textAlign="center" 
-            color="white" 
-            opacity="0.95" 
+            color="gray.700" 
+            opacity="1" 
             fontSize="lg" 
             mb={8}
-            textShadow="0 2px 4px rgba(0,0,0,0.3)"
             fontWeight="medium"
           >
             Discover high-quality courses designed to help you succeed
@@ -204,7 +164,7 @@ const Courses = () => {
             transition={{ duration: 0.6 }}
             mb={6}
           >
-            <Alert status="info" variant="glass" rounded="lg">
+            <Alert status="info" rounded="lg">
               <AlertIcon />
               <Box>
                 <AlertTitle>Search Results</AlertTitle>
@@ -269,33 +229,33 @@ const Courses = () => {
                 </Box>
                 
                 <Box p={6}>
-                  <Heading fontSize="xl" mb={3} color="gray.800" noOfLines={2}>
+                  <Heading fontSize="xl" mb={3} color="gray.800" noOfLines={2} fontWeight="bold">
                     {course.title}
                   </Heading>
-                  <Text mb={4} color="gray.600" fontSize="sm" noOfLines={3}>
+                  <Text mb={4} color="gray.700" fontSize="sm" noOfLines={3} fontWeight="medium">
                     {course.description}
                   </Text>
                   
                   <VStack spacing={3} mb={4} align="stretch">
-                    <HStack justify="space-between" color="gray.500" fontSize="sm">
+                    <HStack justify="space-between" color="gray.600" fontSize="sm">
                       <HStack spacing={2}>
-                        <Icon as={FaClock} />
-                        <Text>{getCourseDuration(course)}</Text>
+                        <Icon as={FaClock} color="gray.500" />
+                        <Text color="gray.600" fontWeight="medium">{getCourseDuration(course)}</Text>
                       </HStack>
                       <HStack spacing={2}>
-                        <Icon as={FaUser} />
-                        <Text>{course.enrolledStudents || 0} students</Text>
+                        <Icon as={FaUser} color="gray.500" />
+                        <Text color="gray.600" fontWeight="medium">{course.enrolledStudents || 0} students</Text>
                       </HStack>
                     </HStack>
                     
-                    <HStack justify="space-between" color="gray.500" fontSize="sm">
+                    <HStack justify="space-between" color="gray.600" fontSize="sm">
                       <HStack spacing={2}>
-                        <Icon as={FaGraduationCap} />
-                        <Text>{course.lectures?.length || 0} lectures</Text>
+                        <Icon as={FaGraduationCap} color="gray.500" />
+                        <Text color="gray.600" fontWeight="medium">{course.lectures?.length || 0} lectures</Text>
                       </HStack>
                       <HStack spacing={2}>
                         <Icon as={FaStar} color="yellow.400" />
-                        <Text>{course.rating || 4.5}</Text>
+                        <Text color="gray.600" fontWeight="medium">{course.rating || 4.5}</Text>
                       </HStack>
                     </HStack>
                   </VStack>
@@ -328,12 +288,12 @@ const Courses = () => {
           >
             <VStack spacing={6}>
               <Icon as={FaPlay} boxSize={16} color="gray.400" />
-              <Heading color="white" size="lg">No courses found</Heading>
-              <Text color="white" opacity="0.8">
+              <Heading color="brand.text" size="lg">No courses found</Heading>
+              <Text color="gray.700" opacity="1">
                 Try adjusting your search criteria or browse all courses
               </Text>
               <Button
-                variant="3d-primary"
+                colorScheme="teal"
                 onClick={() => {
                   setSearchResults(null);
                   setFilteredCourses(courses);

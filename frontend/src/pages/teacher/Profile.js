@@ -225,8 +225,8 @@ const TeacherProfile = () => {
                 <VStack spacing={4}>
                   <Avatar
                     size="2xl"
-                    name={profile?.fullName}
-                    src={profile?.profilePicture}
+                    name={typeof profile?.fullName === 'string' ? profile.fullName : 'Teacher'}
+                    src={typeof profile?.profilePicture === 'string' ? profile.profilePicture : undefined}
                     border="4px solid"
                     borderColor="teal.200"
                   />

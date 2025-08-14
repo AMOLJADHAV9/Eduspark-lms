@@ -64,45 +64,7 @@ const About = () => {
   ];
 
   return (
-    <Box bg="gradients.primary" minH="100vh" position="relative" overflow="hidden">
-      {/* Animated background elements */}
-      <Box
-        position="absolute"
-        top="10%"
-        left="10%"
-        w="300px"
-        h="300px"
-        bg="neon.blue"
-        borderRadius="full"
-        opacity="0.1"
-        filter="blur(60px)"
-        animation="pulse 6s infinite"
-      />
-      <Box
-        position="absolute"
-        top="60%"
-        right="15%"
-        w="250px"
-        h="250px"
-        bg="neon.purple"
-        borderRadius="full"
-        opacity="0.1"
-        filter="blur(50px)"
-        animation="pulse 8s infinite"
-      />
-      <Box
-        position="absolute"
-        bottom="20%"
-        left="20%"
-        w="200px"
-        h="200px"
-        bg="neon.pink"
-        borderRadius="full"
-        opacity="0.1"
-        filter="blur(40px)"
-        animation="pulse 7s infinite"
-      />
-
+    <Box bg="white" minH="100vh" position="relative" overflow="hidden">
       <Navbar />
       <Container maxW="6xl" py={12}>
         <VStack spacing={12} align="stretch">
@@ -117,9 +79,7 @@ const About = () => {
             <Heading 
               size="2xl" 
               mb={6} 
-              color="white" 
-              className="gradient-text"
-              textShadow="0 4px 8px rgba(0,0,0,0.5), 0 0 20px rgba(255,255,255,0.3)"
+              color="brand.text" 
               fontWeight="extrabold"
               letterSpacing="wide"
             >
@@ -127,11 +87,10 @@ const About = () => {
             </Heading>
             <Text 
               fontSize="xl" 
-              color="white" 
-              opacity="0.95" 
+              color="gray.700" 
+              opacity="1" 
               maxW="3xl" 
               mx="auto"
-              textShadow="0 2px 4px rgba(0,0,0,0.3)"
               fontWeight="medium"
             >
               We are dedicated to providing high-quality, affordable education to students across India. 
@@ -161,9 +120,9 @@ const About = () => {
                     >
                       <Icon as={FaRocket} boxSize={6} />
                     </Box>
-                    <Heading size="lg" color="white">Our Mission</Heading>
+                    <Heading size="lg" color="brand.text">Our Mission</Heading>
                   </HStack>
-                  <Text color="white" opacity="0.9">
+                  <Text color="gray.700" opacity="1">
                     To democratize education by providing affordable, high-quality learning resources 
                     to students across India. We believe that every student deserves access to 
                     excellent educational content regardless of their location or financial background.
@@ -192,9 +151,9 @@ const About = () => {
                     >
                       <Icon as={FaStar} boxSize={6} />
                     </Box>
-                    <Heading size="lg" color="white">Our Vision</Heading>
+                    <Heading size="lg" color="brand.text">Our Vision</Heading>
                   </HStack>
-                  <Text color="white" opacity="0.9">
+                  <Text color="gray.700" opacity="1">
                     To become India's leading online learning platform, empowering millions of students 
                     to achieve their educational and career goals through innovative technology and 
                     expert-led instruction.
@@ -214,10 +173,8 @@ const About = () => {
             <Heading 
               size="lg" 
               textAlign="center" 
-              color="white" 
+              color="brand.text" 
               mb={8} 
-              className="gradient-text"
-              textShadow="0 4px 8px rgba(0,0,0,0.5), 0 0 20px rgba(255,255,255,0.3)"
               fontWeight="extrabold"
               letterSpacing="wide"
             >
@@ -265,19 +222,17 @@ const About = () => {
                   </Box>
                   <Heading 
                     size="md" 
-                    color="white" 
+                    color="brand.text" 
                     mb={3}
-                    textShadow="0 2px 4px rgba(0,0,0,0.8), 0 0 10px rgba(255,255,255,0.3)"
                     fontWeight="bold"
                     letterSpacing="wide"
                   >
                     {feature.title}
                   </Heading>
                   <Text 
-                    color="white" 
-                    opacity={0.95}
+                    color="gray.700" 
+                    opacity={1}
                     fontSize="sm"
-                    textShadow="0 1px 3px rgba(0,0,0,0.7)"
                     fontWeight="medium"
                   >
                     {feature.description}
@@ -294,15 +249,13 @@ const About = () => {
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
           >
-            <Card variant="glass" p={8}>
+            <Card p={8}>
               <CardBody>
                 <VStack spacing={8}>
                   <Heading 
                     size="lg" 
-                    color="white" 
+                    color="brand.text" 
                     textAlign="center" 
-                    className="gradient-text"
-                    textShadow="0 4px 8px rgba(0,0,0,0.5), 0 0 20px rgba(255,255,255,0.3)"
                     fontWeight="extrabold"
                     letterSpacing="wide"
                   >
@@ -310,20 +263,20 @@ const About = () => {
                   </Heading>
                   <SimpleGrid columns={{ base: 2, md: 4 }} spacing={8} w="full">
                     <VStack spacing={2}>
-                      <Heading size="2xl" color="neon.blue">10K+</Heading>
-                      <Text color="white" opacity="0.8" textAlign="center">Students Enrolled</Text>
+                      <Heading size="2xl" color="teal.500">10K+</Heading>
+                      <Text color="gray.700" opacity="1" textAlign="center">Students Enrolled</Text>
                     </VStack>
                     <VStack spacing={2}>
-                      <Heading size="2xl" color="neon.green">500+</Heading>
-                      <Text color="white" opacity="0.8" textAlign="center">Courses Available</Text>
+                      <Heading size="2xl" color="green.500">500+</Heading>
+                      <Text color="gray.700" opacity="1" textAlign="center">Courses Available</Text>
                     </VStack>
                     <VStack spacing={2}>
-                      <Heading size="2xl" color="neon.purple">50+</Heading>
-                      <Text color="white" opacity="0.8" textAlign="center">Expert Instructors</Text>
+                      <Heading size="2xl" color="purple.500">50+</Heading>
+                      <Text color="gray.700" opacity="1" textAlign="center">Expert Instructors</Text>
                     </VStack>
                     <VStack spacing={2}>
-                      <Heading size="2xl" color="neon.yellow">95%</Heading>
-                      <Text color="white" opacity="0.8" textAlign="center">Success Rate</Text>
+                      <Heading size="2xl" color="yellow.500">95%</Heading>
+                      <Text color="gray.700" opacity="1" textAlign="center">Success Rate</Text>
                     </VStack>
                   </SimpleGrid>
                 </VStack>

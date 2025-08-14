@@ -1,3 +1,4 @@
+"use client";
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
@@ -28,6 +29,111 @@ import Navbar from '../components/Navbar';
 import { api } from '../utils/api';
 
 const CourseDetail = () => {
+
+const loadScript = (src) => {
+  return new Promise((resolve, reject) => {
+    const script = document.createElement("script");
+    script.src = src;
+    script.onload = () => {
+      resolve(true);
+    }
+    script.onerror = () =>{
+      reject(false);
+    }
+    document.head.appendChild(script);
+  });
+}
+
+const onPayment = async (price, itemName) => {
+  try {
+    const options = {
+      courseId: id,
+      price: price * 100, // Convert to paise
+    }
+    
+    const data = await api.post("/api/payments/create-order", options);
+    console.log(data);
+
+    if (!data.success) {
+      toast({ title: 'Error', description: 'Failed to create order', status: 'error' });
+      return;
+    }
+
+    const paymentObject = new window.Razorpay({
+      key: "rzp_test_EoPLr7rKx3ViOB",
+      order_id: data.order.id,
+      amount: data.order.amount,
+      currency: data.order.currency,
+      name: "LMS Platform",
+      description: `Payment for ${itemName}`,
+      handler: function(response){
+        console.log(response);
+        
+        const options2 = {
+          order_id: response.razorpay_order_id,
+          payment_id: response.razorpay_payment_id,
+          signature: response.razorpay_signature,
+        }
+
+        api.post('/api/payments/verify-payment', options2).then(async (res) => {
+          console.log(res);
+          if(res.success){
+            toast({ title: 'Success', description: 'Payment Successful!', status: 'success' });
+            // Record payment and enroll user as paid
+            try {
+              // Save payment record to MongoDB
+              await api.post('/api/payment/payments', {
+                type: 'one_time',
+                amount: data.order.amount,
+                currency: data.order.currency,
+                description: `Course purchase: ${itemName}`,
+                paymentMethod: 'razorpay',
+                status: 'completed',
+                metadata: {
+                  razorpay_order_id: response.razorpay_order_id,
+                  razorpay_payment_id: response.razorpay_payment_id,
+                  courseId: id,
+                  courseTitle: itemName
+                }
+              });
+              
+              // Enroll user in course as paid
+              await handleEnroll(true);
+              
+              toast({ title: 'Success', description: 'Payment recorded and enrollment completed!', status: 'success' });
+            } catch (e) {
+              console.error('Failed to save payment/enrollment', e);
+              toast({ title: 'Warning', description: 'Payment successful but failed to save record. Please contact support.', status: 'warning' });
+            }
+          } else {
+            toast({ title: 'Error', description: 'Payment verification failed', status: 'error' });
+          }
+        }).catch((err)=>{
+          console.log(err);
+          toast({ title: 'Error', description: 'Payment verification failed', status: 'error' });
+        })
+      },
+      prefill: {
+        name: user?.name || '',
+        email: user?.email || '',
+      },
+      theme: {
+        color: "#10B981"
+      }
+    });
+    
+    paymentObject.open();
+    
+  } catch (error){
+    console.log(error);
+    toast({ title: 'Error', description: 'Failed to create payment order', status: 'error' });
+  }
+}
+
+useEffect(()=>{
+  loadScript("https://checkout.razorpay.com/v1/checkout.js");
+},[]);
+
   const { id } = useParams();
   const navigate = useNavigate();
   const { user, token } = useAuth();
@@ -67,14 +173,14 @@ const CourseDetail = () => {
     }
   };
 
-  const handleEnroll = async () => {
+  const handleEnroll = async (isPaid = false) => {
     if (!user) {
       navigate('/login');
       return;
     }
     setEnrolling(true);
     try {
-      await api.post('/api/enrollments', { courseId: id });
+      await api.post('/api/enrollments', { courseId: id, isPaid });
       setEnrolled(true);
       toast({ title: 'Success', description: 'Successfully enrolled in course!', status: 'success' });
     } catch (error) {
@@ -162,7 +268,7 @@ const CourseDetail = () => {
                       size="lg"
                       colorScheme="teal"
                       leftIcon={enrolled ? <FaPlay /> : <FaBook />}
-                      onClick={handleStartLearning}
+                      onClick={enrolled ? handleStartLearning : () => onPayment(course.price, course.title)}
                       isLoading={enrolling}
                       loadingText={enrolled ? "Starting..." : "Enrolling..."}
                       w="200px"

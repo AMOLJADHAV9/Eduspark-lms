@@ -4,6 +4,7 @@ const courseSchema = new mongoose.Schema({
   title: { type: String, required: true, trim: true },
   description: { type: String, required: true },
   thumbnail: { type: String },
+  isPaid: { type: Boolean, default: false },
   price: { type: Number, default: 0 },
   syllabus: { type: String },
   category: { type: String, required: true, enum: [

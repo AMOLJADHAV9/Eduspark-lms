@@ -51,20 +51,22 @@
 
 .feature-card:hover h3,
 .feature-card:hover p {
-  color: white !important;
+  color: #1a202c !important;
   text-shadow: 
-    0 2px 4px rgba(0, 0, 0, 0.9),
-    0 0 15px rgba(255, 255, 255, 0.5) !important;
+    0 1px 2px rgba(255, 255, 255, 0.8),
+    0 0 10px rgba(255, 255, 255, 0.3) !important;
   opacity: 1 !important;
+  font-weight: 600 !important;
 }
 
 /* Why Choose Us Section Text Visibility */
 .why-choose-item:hover p {
-  color: white !important;
+  color: #1a202c !important;
   text-shadow: 
-    0 2px 4px rgba(0, 0, 0, 0.9),
-    0 0 15px rgba(255, 255, 255, 0.5) !important;
+    0 1px 2px rgba(255, 255, 255, 0.8),
+    0 0 10px rgba(255, 255, 255, 0.3) !important;
   opacity: 1 !important;
+  font-weight: 500 !important;
 }
 
 /* Glassmorphism Effect */
@@ -375,6 +377,55 @@
     background: rgba(0, 0, 0, 0.3);
     border: 1px solid rgba(255, 255, 255, 0.05);
   }
+}
+
+/* General Text Visibility Improvements */
+.card-body h1,
+.card-body h2,
+.card-body h3,
+.card-body h4,
+.card-body h5,
+.card-body h6 {
+  color: #1a202c !important;
+  font-weight: 600 !important;
+}
+
+.card-body p,
+.card-body span,
+.card-body div {
+  color: #2d3748 !important;
+  font-weight: 400 !important;
+}
+
+/* Ensure text is visible on light backgrounds */
+.bg-white h1,
+.bg-white h2,
+.bg-white h3,
+.bg-white h4,
+.bg-white h5,
+.bg-white h6,
+.bg-white p,
+.bg-white span,
+.bg-white div {
+  color: #1a202c !important;
+}
+
+/* Ensure text is visible on card backgrounds */
+[class*="card"] h1,
+[class*="card"] h2,
+[class*="card"] h3,
+[class*="card"] h4,
+[class*="card"] h5,
+[class*="card"] h6 {
+  color: #1a202c !important;
+  font-weight: 600 !important;
+}
+
+[class*="card"] p,
+[class*="card"] span,
+[class*="card"] div {
+  color: #2d3748 !important;
+  font-weight: 400 !important;
 }
 
 /* Mobile Optimizations */

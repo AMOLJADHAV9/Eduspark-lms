@@ -6,18 +6,62 @@ export const customTheme = extendTheme({
     useSystemColorMode: false,
   },
   colors: {
-    // Modern gradient-friendly color palette
+    // Referenced palette
+    // Primary Accent: #5A4BDA (Royal Blue)
+    // Neutral Text: #1A1A1A (Almost Black)
+    // Background: #FFFFFF (White)
+    // Secondary Accent: #F0F0F0 (Mid Gray)
+    // Highlight: #D0CFFF (Light Blue)
     brand: {
-      50: "#f0f9ff",
-      100: "#e0f2fe",
-      200: "#bae6fd",
-      300: "#7dd3fc",
-      400: "#38bdf8",
-      500: "#0ea5e9",
-      600: "#0284c7",
-      700: "#0369a1",
-      800: "#075985",
-      900: "#0c4a6e",
+      primary: "#5A4BDA",
+      accent: "#5A4BDA",
+      background: "#FFFFFF",
+      text: "#1A1A1A",
+      surface: "#F0F0F0",
+      highlight: "#D0CFFF",
+      success: "#27AE60",
+    },
+
+    // Neutral (black) scale for secondary/alternate buttons
+    neutral: {
+      50: "#F5F5F5",
+      100: "#EAEAEA",
+      200: "#D5D5D5",
+      300: "#BFBFBF",
+      400: "#8C8C8C",
+      500: "#1A1A1A", // Almost Black
+      600: "#161616",
+      700: "#121212",
+      800: "#0E0E0E",
+      900: "#0A0A0A",
+    },
+
+    // Remap Chakra 'teal' to our Primary Accent so existing colorScheme="teal" adopts the new accent
+    teal: {
+      50: "#EFECFF",
+      100: "#E1DDFF",
+      200: "#C7C2FF",
+      300: "#ADA7FF",
+      400: "#8F87F5",
+      500: "#5A4BDA", // Primary Accent
+      600: "#4E41C3",
+      700: "#4439AC",
+      800: "#383090",
+      900: "#2C2675",
+    },
+
+    // Tune green to requested success color
+    green: {
+      50: "#E9F7EF",
+      100: "#D4EFDF",
+      200: "#A9DFBF",
+      300: "#7DCEA0",
+      400: "#52BE80",
+      500: "#27AE60", // Success/Highlight
+      600: "#219653",
+      700: "#1E8449",
+      800: "#196F3D",
+      900: "#145A32",
     },
     // Fallback colors in case custom colors fail
     fallback: {
@@ -64,12 +108,12 @@ export const customTheme = extendTheme({
     },
     // Gradient backgrounds
     gradients: {
-      primary: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-      secondary: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
-      success: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
+      primary: "linear-gradient(135deg, #D0CFFF 0%, #5A4BDA 100%)",
+      secondary: "linear-gradient(135deg, #F0F0F0 0%, #D0D0D0 100%)",
+      success: "linear-gradient(135deg, #27AE60 0%, #219653 100%)",
       warning: "linear-gradient(135deg, #fa709a 0%, #fee140 100%)",
       danger: "linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)",
-      dark: "linear-gradient(135deg, #2c3e50 0%, #34495e 100%)",
+      dark: "linear-gradient(135deg, #1A1A1A 0%, #2C3E50 100%)",
       glass: "linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)",
       glassDark: "linear-gradient(135deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.05) 100%)",
     }
@@ -200,6 +244,19 @@ export const customTheme = extendTheme({
         },
       },
       variants: {
+          solid: {
+            bg: "teal.500",
+            color: "white",
+            _hover: { bg: "teal.600" },
+            _active: { bg: "teal.700" },
+          },
+          // Solid black button using neutral scale
+          solidBlack: {
+            bg: "neutral.500",
+            color: "white",
+            _hover: { bg: "neutral.600" },
+            _active: { bg: "neutral.700" },
+          },
         // 3D Button variants
         "3d": {
           bg: "white",
@@ -244,11 +301,11 @@ export const customTheme = extendTheme({
         "neon": {
           bg: "transparent",
           border: "2px solid",
-          borderColor: "neon.blue",
-          color: "neon.blue",
-          boxShadow: "neon-blue",
+            borderColor: "teal.500",
+            color: "teal.500",
+            boxShadow: "neon-blue",
           _hover: {
-            bg: "neon.blue",
+              bg: "teal.500",
             color: "white",
             boxShadow: "neon-blue",
             transform: "scale(1.05)",
@@ -256,7 +313,8 @@ export const customTheme = extendTheme({
         },
       },
       defaultProps: {
-        variant: "3d",
+          variant: "solid",
+          colorScheme: "teal", // Default to Royal Blue
       },
     },
     Card: {
@@ -320,8 +378,8 @@ export const customTheme = extendTheme({
           border: "2px solid",
           borderColor: "gray.200",
           _focus: {
-            borderColor: "brand.500",
-            boxShadow: "0 0 0 1px var(--chakra-colors-brand-500)",
+            borderColor: "teal.500",
+            boxShadow: "0 0 0 1px var(--chakra-colors-teal-500)",
           },
         },
       },
@@ -367,8 +425,8 @@ export const customTheme = extendTheme({
   styles: {
     global: {
       body: {
-        bg: "gray.50",
-        color: "gray.800",
+        bg: "#FFFFFF", // Background
+        color: "#1A1A1A", // Text
         fontFamily: "body",
         lineHeight: "base",
       },

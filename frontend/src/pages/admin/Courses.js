@@ -15,6 +15,7 @@ const Courses = () => {
     title: '', 
     description: '', 
     thumbnail: '', 
+    isPaid: false,
     price: '', 
     syllabus: '',
     category: 'Technology',
@@ -47,6 +48,7 @@ const Courses = () => {
       title: '', 
       description: '', 
       thumbnail: '', 
+      isPaid: false,
       price: '', 
       syllabus: '',
       category: 'Technology',
@@ -64,6 +66,7 @@ const Courses = () => {
       title: course.title,
       description: course.description,
       thumbnail: course.thumbnail || '',
+      isPaid: !!course.isPaid,
       price: course.price || '',
       syllabus: course.syllabus || '',
       category: course.category || 'Technology',
@@ -84,8 +87,9 @@ const Courses = () => {
       // Process form data
       const courseData = {
         ...form,
-        price: form.price ? Number(form.price) : 0,
+        price: form.isPaid ? (form.price ? Number(form.price) : 0) : 0,
         duration: form.duration ? Number(form.duration) : 0,
+        level: String(form.level || '').toLowerCase(),
         tags: form.tags ? form.tags.split(',').map(tag => tag.trim()).filter(tag => tag) : [],
       };
       
@@ -142,6 +146,7 @@ const Courses = () => {
                 <Tr>
                   <Th>Title</Th>
                   <Th>Description</Th>
+                  <Th>Type</Th>
                   <Th>Price</Th>
                   <Th>Actions</Th>
                 </Tr>
@@ -151,7 +156,8 @@ const Courses = () => {
                   <Tr key={course._id}>
                     <Td>{course.title}</Td>
                     <Td>{course.description.slice(0, 40)}...</Td>
-                    <Td>{course.price ? `₹${course.price}` : 'Free'}</Td>
+                    <Td>{course.isPaid ? 'Paid' : 'Free'}</Td>
+                    <Td>{course.isPaid ? `₹${course.price}` : '-'}</Td>
                     <Td>
                       <IconButton icon={<EditIcon />} colorScheme="blue" size="sm" mr={2} onClick={() => handleOpenEdit(course)} aria-label="Edit course" />
                       <IconButton icon={<DeleteIcon />} colorScheme="red" size="sm" onClick={() => handleDelete(course._id)} aria-label="Delete course" />
@@ -182,9 +188,18 @@ const Courses = () => {
                   <Input name="thumbnail" value={form.thumbnail} onChange={handleChange} />
                 </FormControl>
                 <FormControl mb={3}>
-                  <FormLabel>Price (₹)</FormLabel>
-                  <Input name="price" type="number" value={form.price} onChange={handleChange} />
+                  <FormLabel>Course Type</FormLabel>
+                  <Select name="isPaid" value={String(form.isPaid)} onChange={e => setForm(f => ({ ...f, isPaid: e.target.value === 'true' }))}>
+                    <option value="false">Free</option>
+                    <option value="true">Paid</option>
+                  </Select>
                 </FormControl>
+                {form.isPaid && (
+                  <FormControl mb={3}>
+                    <FormLabel>Price (₹)</FormLabel>
+                    <Input name="price" type="number" value={form.price} onChange={handleChange} />
+                  </FormControl>
+                )}
                 <FormControl mb={3}>
                   <FormLabel>Syllabus</FormLabel>
                   <Textarea name="syllabus" value={form.syllabus} onChange={handleChange} />

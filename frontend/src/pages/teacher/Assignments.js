@@ -158,15 +158,15 @@ const TeacherAssignments = () => {
                         <HStack justify="space-between" w="full">
                           <Icon as={FaFileAlt} color="teal.300" boxSize={6} />
                           <Badge colorScheme="teal" variant="solid">
-                            {assignment.status}
+                            {typeof assignment.status === 'string' ? assignment.status : 'Unknown'}
                           </Badge>
                         </HStack>
                         <VStack align="start" spacing={1}>
                           <Heading size="md" color="white">
-                            {assignment.title}
+                            {typeof assignment.title === 'string' ? assignment.title : 'Untitled Assignment'}
                           </Heading>
                           <Text color="gray.300" fontSize="sm">
-                            {assignment.course?.title || 'Unknown Course'}
+                            {typeof assignment.course === 'object' && assignment.course?.title ? assignment.course.title : 'Unknown Course'}
                           </Text>
                         </VStack>
                       </VStack>
@@ -174,17 +174,17 @@ const TeacherAssignments = () => {
                     <CardBody>
                       <VStack spacing={4} align="stretch">
                         <Text color="gray.200" fontSize="sm" noOfLines={3}>
-                          {assignment.description}
+                          {typeof assignment.description === 'string' ? assignment.description : 'No description available'}
                         </Text>
                         
                         <HStack justify="space-between" fontSize="sm" color="gray.400">
                           <HStack spacing={1}>
                             <Icon as={FaUsers} boxSize={3} />
-                            <Text>{assignment.submissions?.length || 0} submissions</Text>
+                            <Text>{Array.isArray(assignment.submissions) ? assignment.submissions.length : 0} submissions</Text>
                           </HStack>
                           <HStack spacing={1}>
                             <Icon as={FaClock} boxSize={3} />
-                            <Text>Due: {new Date(assignment.dueDate).toLocaleDateString()}</Text>
+                            <Text>Due: {assignment.dueDate ? new Date(assignment.dueDate).toLocaleDateString() : 'No due date'}</Text>
                           </HStack>
                         </HStack>
                       </VStack>

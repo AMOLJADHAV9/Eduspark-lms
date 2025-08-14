@@ -1,5 +1,7 @@
 // API utility for handling all API calls
-const API_BASE_URL = 'https://lms-yoh3.onrender.com';
+const API_BASE_URL = (typeof window !== 'undefined' && window.location.hostname === 'localhost')
+  ? 'http://localhost:5000'
+  : 'https://lms-yoh3.onrender.com';
 
 // Helper function to get full API URL
 export const getApiUrl = (endpoint) => {
@@ -89,7 +91,7 @@ export const liveClassApi = {
   getAll: () => api.get('/api/live-classes'),
   getById: (id) => api.get(`/api/live-classes/${id}`),
   create: (liveClassData) => api.post('/api/live-classes', liveClassData),
-  update: (id, liveClassData) => api.put(`/api/live-classes/${id}`, liveClassData),
+  update: (id, liveClassData) => api.put(`/api/live-classes/${id}`),
   delete: (id) => api.delete(`/api/live-classes/${id}`),
   join: (id) => api.post(`/api/live-classes/${id}/join`),
   start: (id) => api.post(`/api/live-classes/${id}/start`),
@@ -110,7 +112,7 @@ export const assignmentApi = {
   getAll: () => api.get('/api/assignments'),
   getById: (id) => api.get(`/api/assignments/${id}`),
   create: (assignmentData) => api.post('/api/assignments', assignmentData),
-  update: (id, assignmentData) => api.put(`/api/assignments/${id}`, assignmentData),
+  update: (id, assignmentData) => api.put(`/api/assignments/${id}`),
   delete: (id) => api.delete(`/api/assignments/${id}`),
 };
 

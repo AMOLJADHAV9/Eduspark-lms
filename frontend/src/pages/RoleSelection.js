@@ -64,7 +64,7 @@ const RoleSelection = () => {
   const handleStudentRole = async () => {
     try {
       setLoading(true);
-      const res = await fetch('/api/auth/update-role', {
+      const res = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/auth/update-role`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -99,7 +99,7 @@ const RoleSelection = () => {
     e.preventDefault();
     try {
       setLoading(true);
-      const res = await fetch('/api/auth/teacher-application', {
+      const res = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/auth/teacher-application`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

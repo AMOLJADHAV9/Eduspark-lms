@@ -40,32 +40,41 @@ import { useAuth } from '../../context/AuthContext';
 import TeacherSidebar from '../../components/teacher/TeacherSidebar';
 import Navbar from '../../components/Navbar';
 
-const StatCard = ({ label, value, icon: IconComponent, color, helpText }) => (
-  <Card
-    bg="rgba(255, 255, 255, 0.15)"
-    backdropFilter="blur(8px)"
-    borderRadius="xl"
-    border="1px solid rgba(255, 255, 255, 0.18)"
-  >
-    <CardBody>
-      <HStack spacing={4}>
-        <Box
-          p={3}
-          bg={`${color}.500`}
-          borderRadius="lg"
-          color="white"
-        >
-          <IconComponent size={24} />
-        </Box>
-        <VStack align="start" spacing={1}>
-          <StatLabel color="gray.300" fontSize="sm">{label}</StatLabel>
-          <StatNumber color="white" fontSize="2xl" fontWeight="bold">{value}</StatNumber>
-          {helpText && <StatHelpText color="gray.400" fontSize="xs">{helpText}</StatHelpText>}
-        </VStack>
-      </HStack>
-    </CardBody>
-  </Card>
-);
+const StatCard = ({ label, value, icon: IconComponent, color, helpText }) => {
+  // Safety check to ensure all props are valid
+  if (!label || !IconComponent || !color) {
+    return null;
+  }
+
+  return (
+    <Card
+      bg="rgba(255, 255, 255, 0.15)"
+      backdropFilter="blur(8px)"
+      borderRadius="xl"
+      border="1px solid rgba(255, 255, 255, 0.18)"
+    >
+      <CardBody>
+        <HStack spacing={4}>
+          <Box
+            p={3}
+            bg={`${color}.500`}
+            borderRadius="lg"
+            color="white"
+          >
+            <IconComponent size={24} />
+          </Box>
+          <VStack align="start" spacing={1}>
+            <Stat>
+              <StatLabel color="gray.300" fontSize="sm">{label}</StatLabel>
+              <StatNumber color="white" fontSize="2xl" fontWeight="bold">{value || 0}</StatNumber>
+              {helpText && <StatHelpText color="gray.400" fontSize="xs">{helpText}</StatHelpText>}
+            </Stat>
+          </VStack>
+        </HStack>
+      </CardBody>
+    </Card>
+  );
+};
 
 const TeacherDashboard = () => {
   const { user, token, apiBaseUrl } = useAuth();
@@ -180,36 +189,38 @@ const TeacherDashboard = () => {
             </Box>
 
             {/* Stats Grid */}
-            <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={6}>
-              <StatCard
-                label="Total Courses"
-                value={dashboardData?.stats?.totalCourses || 0}
-                icon={FaBook}
-                color="blue"
-                helpText="Active courses"
-              />
-              <StatCard
-                label="Total Students"
-                value={dashboardData?.stats?.totalStudents || 0}
-                icon={FaUsers}
-                color="green"
-                helpText="Enrolled students"
-              />
-              <StatCard
-                label="Total Earnings"
-                value={`$${dashboardData?.stats?.totalEarnings || 0}`}
-                icon={FaDollarSign}
-                color="purple"
-                helpText="This month"
-              />
-              <StatCard
-                label="Average Rating"
-                value={dashboardData?.stats?.averageRating || 0}
-                icon={FaStar}
-                color="yellow"
-                helpText="Student feedback"
-              />
-            </SimpleGrid>
+            {dashboardData && (
+              <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={6}>
+                <StatCard
+                  label="Total Courses"
+                  value={dashboardData?.stats?.totalCourses || 0}
+                  icon={FaBook}
+                  color="blue"
+                  helpText="Active courses"
+                />
+                <StatCard
+                  label="Total Students"
+                  value={dashboardData?.stats?.totalStudents || 0}
+                  icon={FaUsers}
+                  color="green"
+                  helpText="Enrolled students"
+                />
+                <StatCard
+                  label="Total Earnings"
+                  value={`$${dashboardData?.stats?.totalEarnings || 0}`}
+                  icon={FaDollarSign}
+                  color="purple"
+                  helpText="This month"
+                />
+                <StatCard
+                  label="Average Rating"
+                  value={dashboardData?.stats?.averageRating || 0}
+                  icon={FaStar}
+                  color="yellow"
+                  helpText="Student feedback"
+                />
+              </SimpleGrid>
+            )}
 
             {/* Recent Courses */}
             <Card bg="rgba(255, 255, 255, 0.15)" backdropFilter="blur(8px)" borderRadius="xl">

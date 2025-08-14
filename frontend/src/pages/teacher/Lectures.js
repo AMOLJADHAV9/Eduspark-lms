@@ -198,8 +198,10 @@ const TeacherLectures = () => {
   };
 
   const getCourseName = (courseId) => {
-    const course = courses.find(c => c._id === courseId);
-    return course ? course.title : 'Unknown Course';
+    // Handle case where courseId might be an object
+    const actualCourseId = typeof courseId === 'object' ? courseId._id : courseId;
+    const course = courses.find(c => c._id === actualCourseId);
+    return course && typeof course.title === 'string' ? course.title : 'Unknown Course';
   };
 
   if (loading) {
@@ -295,18 +297,18 @@ const TeacherLectures = () => {
                         <HStack justify="space-between" w="full">
                           <Icon as={FaVideo} color="teal.300" boxSize={6} />
                           <Badge colorScheme="teal" variant="solid">
-                            Lecture {lecture.order}
+                            Lecture {typeof lecture.order === 'number' ? lecture.order : 0}
                           </Badge>
                         </HStack>
                         <VStack align="start" spacing={1}>
                           <Heading size="md" color="white">
-                            {lecture.title}
+                            {typeof lecture.title === 'string' ? lecture.title : 'Untitled Lecture'}
                           </Heading>
                           <Text color="gray.300" fontSize="sm">
                             {getCourseName(lecture.courseId)}
                           </Text>
                           <Text color="gray.400" fontSize="xs">
-                            Duration: {lecture.duration} min
+                            Duration: {typeof lecture.duration === 'number' ? lecture.duration : 0} min
                           </Text>
                         </VStack>
                       </VStack>
@@ -314,7 +316,7 @@ const TeacherLectures = () => {
                     <CardBody>
                       <VStack spacing={4} align="stretch">
                         <Text color="gray.200" fontSize="sm" noOfLines={3}>
-                          {lecture.description}
+                          {typeof lecture.description === 'string' ? lecture.description : 'No description available'}
                         </Text>
                         
                         <HStack spacing={2}>

@@ -219,6 +219,103 @@ exports.getUserPayments = async (req, res) => {
     const skip = (page - 1) * limit;
 
     const payments = await Payment.find(filter)
+      .populate('user', 'name email')
+      .populate('subscription')
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(parseInt(limit));
+
+    const total = await Payment.countDocuments(filter);
+
+    res.json({
+      success: true,
+      payments,
+      pagination: {
+        page: parseInt(page),
+        limit: parseInt(limit),
+        total,
+        pages: Math.ceil(total / limit)
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching user payments:', error);
+    res.status(500).json({ 
+      success: false,
+      message: 'Failed to fetch payments', 
+      error: error.message 
+    });
+  }
+};
+
+// Create a payment record (for one-time course purchases)
+exports.createPaymentRecord = async (req, res) => {
+  try {
+    const {
+      type = 'one_time',
+      amount,
+      currency = 'INR',
+      description,
+      paymentMethod = 'razorpay',
+      status = 'completed',
+      metadata = {}
+    } = req.body;
+
+    if (!amount || !description) {
+      return res.status(400).json({ message: 'amount and description are required' });
+    }
+
+    // Create payment record with enhanced metadata
+    const payment = await Payment.create({
+      user: req.user.id,
+      type,
+      status,
+      amount: Number(amount),
+      currency: currency.toUpperCase(),
+      description,
+      paymentMethod,
+      metadata: {
+        ...metadata,
+        source: 'web',
+        timestamp: new Date().toISOString()
+      },
+      timeline: [{
+        event: 'payment_created',
+        description: 'Payment record created',
+        timestamp: new Date()
+      }]
+    });
+
+    // Populate user details for response
+    await payment.populate('user', 'name email');
+
+    res.status(201).json({
+      success: true,
+      message: 'Payment record created successfully',
+      payment
+    });
+  } catch (error) {
+    console.error('Error creating payment record:', error);
+    if (error.name === 'ValidationError') {
+      return res.status(400).json({ message: 'Validation error', error: error.message });
+    }
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+// Admin: get all payments
+exports.getAllPayments = async (req, res) => {
+  try {
+    const { status, type, page = 1, limit = 20, userId } = req.query;
+
+    const filter = {};
+    if (status) filter.status = status;
+    if (type) filter.type = type;
+    if (userId) filter.user = userId;
+
+    const skip = (page - 1) * limit;
+
+    const payments = await Payment.find(filter)
+      .populate('user', 'name email')
       .populate('subscription')
       .sort({ createdAt: -1 })
       .skip(skip)

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Heading, Text, Button, SimpleGrid, Image, VStack, HStack, Icon, Flex, useColorModeValue, Card, CardBody, Badge } from '@chakra-ui/react';
+import { Box, Heading, Text, Button, SimpleGrid, Image, VStack, HStack, Stack, Icon, Flex, useColorModeValue, Card, CardBody, Badge } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FaStar, FaCheckCircle, FaRocket, FaUserGraduate, FaEye, FaPlay, FaUsers, FaClock } from 'react-icons/fa';
@@ -48,45 +48,38 @@ const Landing = () => {
       .catch(() => setCourses([]));
   }, []);
 
+  // Subtle animated background bubbles
+  const bubbles = [
+    { size: 140, top: '10%', left: '8%', delay: 0 },
+    { size: 100, top: '20%', right: '12%', delay: 0.8 },
+    { size: 160, bottom: '18%', left: '15%', delay: 0.4 },
+    { size: 90, bottom: '10%', right: '20%', delay: 1.2 },
+  ];
+
   return (
-    <Box bg="gradients.primary" minH="100vh" position="relative" overflow="hidden">
-      {/* Animated background elements */}
-      <Box
-        position="absolute"
-        top="10%"
-        left="10%"
-        w="300px"
-        h="300px"
-        bg="neon.blue"
-        borderRadius="full"
-        opacity="0.1"
-        filter="blur(60px)"
-        animation="pulse 6s infinite"
-      />
-      <Box
-        position="absolute"
-        top="60%"
-        right="15%"
-        w="250px"
-        h="250px"
-        bg="neon.purple"
-        borderRadius="full"
-        opacity="0.1"
-        filter="blur(50px)"
-        animation="pulse 8s infinite"
-      />
-      <Box
-        position="absolute"
-        bottom="20%"
-        left="20%"
-        w="200px"
-        h="200px"
-        bg="neon.pink"
-        borderRadius="full"
-        opacity="0.1"
-        filter="blur(40px)"
-        animation="pulse 7s infinite"
-      />
+    <Box bg="white" minH="100vh" position="relative" overflow="hidden">
+      {/* Animated bubbles background */}
+      <Box position="absolute" inset={0} zIndex={0} pointerEvents="none">
+        {bubbles.map((b, i) => (
+          <MotionBox
+            key={i}
+            position="absolute"
+            top={b.top}
+            bottom={b.bottom}
+            left={b.left}
+            right={b.right}
+            w={`${b.size}px`}
+            h={`${b.size}px`}
+            borderRadius="full"
+            bg="brand.highlight"
+            opacity={0.35}
+            filter="blur(20px)"
+            initial={{ y: 0, scale: 1 }}
+            animate={{ y: [-12, 12, -12], scale: [1, 1.05, 1] }}
+            transition={{ duration: 10 + i * 2, repeat: Infinity, ease: 'easeInOut', delay: b.delay }}
+          />
+        ))}
+      </Box>
 
       <Navbar />
       {/* Hero Section */}
@@ -97,59 +90,63 @@ const Landing = () => {
         as="section"
         py={24}
         textAlign="center"
-        color="white"
+        color="brand.text"
         position="relative"
         zIndex={1}
       >
         <Heading fontSize={{ base: '3xl', md: '5xl' }} mb={4} fontWeight="bold" className="gradient-text">
-          Unlock Your Potential with <Text as="span" color="yellow.300">LMS</Text>
+          Unlock Your Potential with <Text as="span" color="teal.500">LMS</Text>
         </Heading>
-        <Text fontSize={{ base: 'lg', md: '2xl' }} mb={8} opacity="0.9">
+        <Text fontSize={{ base: 'lg', md: '2xl' }} mb={8} opacity="1" color="gray.700">
           India's most affordable, high-quality learning platform for NEET, JEE, and more.
         </Text>
         {!user ? (
           <Button 
             size="lg" 
-            variant="3d-primary"
+            colorScheme="teal"
             px={10} 
             py={6} 
             fontWeight="bold" 
             fontSize="xl" 
             onClick={() => window.location.href = '/register'}
             whileHover={{ scale: 1.05 }}
+            _hover={{ boxShadow: '0 10px 20px rgba(90,75,218,0.15)' }}
             transition={{ type: 'spring', stiffness: 400 }}
           >
             Get Started
           </Button>
         ) : (
-          <HStack spacing={4}>
+          <Stack direction={{ base: 'column', sm: 'row' }} spacing={4} justify="center" align="center" mx="auto" mt={2}>
             <Button 
               size="lg" 
-              variant="3d-primary"
+              colorScheme="teal"
               px={8} 
               py={6} 
               fontWeight="bold" 
               fontSize="xl" 
               onClick={() => navigate('/user/dashboard')}
               whileHover={{ scale: 1.05 }}
+              _hover={{ boxShadow: '0 10px 20px rgba(90,75,218,0.15)' }}
               transition={{ type: 'spring', stiffness: 400 }}
             >
               Go to Dashboard
             </Button>
             <Button 
               size="lg" 
-              variant="glass"
+              variant="outline"
+              colorScheme="teal"
               px={8} 
               py={6} 
               fontWeight="bold" 
               fontSize="xl" 
               onClick={() => navigate('/')}
               whileHover={{ scale: 1.05 }}
+              _hover={{ boxShadow: '0 10px 20px rgba(90,75,218,0.12)' }}
               transition={{ type: 'spring', stiffness: 400 }}
             >
               Browse Courses
             </Button>
-          </HStack>
+          </Stack>
         )}
       </MotionBox>
 
@@ -163,10 +160,9 @@ const Landing = () => {
           <Heading 
             mb={6} 
             textAlign="center" 
-            color="white" 
+            color="brand.text" 
             className="gradient-text"
             fontSize={{ base: '3xl', md: '4xl' }}
-            textShadow="0 4px 8px rgba(0,0,0,0.5), 0 0 20px rgba(255,255,255,0.3)"
             fontWeight="extrabold"
             letterSpacing="wide"
           >
@@ -174,11 +170,10 @@ const Landing = () => {
           </Heading>
           <Text 
             textAlign="center" 
-            color="white" 
-            opacity="0.95" 
+            color="gray.700" 
+            opacity="1" 
             fontSize="lg" 
             mb={8}
-            textShadow="0 2px 4px rgba(0,0,0,0.3)"
             fontWeight="medium"
           >
             Discover high-quality courses designed to help you succeed
@@ -258,7 +253,7 @@ const Landing = () => {
       </Box>
 
       {/* Testimonials */}
-      <Box as="section" id="testimonials" py={20} bg="glass.100" backdropFilter="blur(10px)">
+      <Box as="section" id="testimonials" py={20} bg="brand.surface">
         <MotionBox
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -268,9 +263,8 @@ const Landing = () => {
           <Heading 
             mb={8} 
             textAlign="center" 
-            color="white" 
+            color="brand.text" 
             className="gradient-text"
-            textShadow="0 4px 8px rgba(0,0,0,0.5), 0 0 20px rgba(255,255,255,0.3)"
             fontWeight="extrabold"
             letterSpacing="wide"
           >
@@ -341,9 +335,8 @@ const Landing = () => {
           <Heading 
             mb={8} 
             textAlign="center" 
-            color="white" 
+            color="brand.text" 
             className="gradient-text"
-            textShadow="0 4px 8px rgba(0,0,0,0.5), 0 0 20px rgba(255,255,255,0.3)"
             fontWeight="extrabold"
             letterSpacing="wide"
           >
@@ -366,7 +359,7 @@ const Landing = () => {
               }}
               viewport={{ once: true }}
             >
-              <VStack spacing={4} p={6} bg="glass.200" rounded="xl" backdropFilter="blur(10px)">
+              <VStack spacing={4} p={6} bg="brand.surface" rounded="xl">
                 <Box
                   p={4}
                   bg="neon.blue"
@@ -379,8 +372,7 @@ const Landing = () => {
                 <Text 
                   fontWeight="bold" 
                   fontSize="lg" 
-                  color="white"
-                  textShadow="0 2px 4px rgba(0,0,0,0.8), 0 0 10px rgba(255,255,255,0.3)"
+                  color="brand.text"
                   letterSpacing="wide"
                 >
                   {item.label}
