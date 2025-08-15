@@ -18,7 +18,20 @@ const liveClassSchema = new mongoose.Schema({
     default: 'scheduled' 
   },
   
-  // Meeting details
+  // Streaming Platform
+  streamingPlatform: {
+    type: String,
+    enum: ['youtube', 'zoom', 'google_meet', 'custom'],
+    default: 'youtube'
+  },
+  
+  // YouTube Live Streaming
+  youtubeStreamUrl: { type: String },
+  youtubeVideoId: { type: String },
+  youtubeChannelId: { type: String }, // Optional - for future features
+  youtubeLiveChatId: { type: String },
+  
+  // Meeting details (for other platforms)
   meetingId: { type: String, unique: true },
   meetingUrl: { type: String },
   meetingPassword: { type: String },

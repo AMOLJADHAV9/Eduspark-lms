@@ -53,6 +53,7 @@ import RoleSelection from './pages/RoleSelection';
 import TeacherApplications from './pages/admin/TeacherApplications';
 import TeacherProfile from './pages/teacher/Profile';
 import StudentProfile from './pages/Profile';
+import Notifications from './pages/Notifications';
 
 function App() {
   return (
@@ -78,7 +79,7 @@ function App() {
             <Route path="/contact" element={<Contact />} />
             <Route path="/courses" element={<Courses />} />
                       <Route path="/live-classes" element={<LiveClasses />} />
-          <Route path="/live-class/:classId" element={<LiveClassRoom />} />
+          <Route path="/live-class/:id" element={<LiveClassRoom />} />
           <Route path="/quiz/create" element={<QuizCreate />} />
           <Route path="/quiz/:id" element={<QuizTake />} />
           <Route path="/course/:courseId/quizzes" element={<CourseQuizzes />} />
@@ -110,6 +111,7 @@ function App() {
             <Route path="/admin/teacher-applications" element={<TeacherApplications />} />
             <Route path="/teacher/profile" element={<TeacherProfile />} />
             <Route path="/profile" element={<StudentProfile />} />
+            <Route path="/notifications" element={<Notifications />} />
             <Route path="*" element={<Navigate to="/login" />} />
           </Routes>
         </Router>

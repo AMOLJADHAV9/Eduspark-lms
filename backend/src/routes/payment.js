@@ -16,6 +16,7 @@ router.put('/subscriptions/:subscriptionId/cancel', auth, paymentController.canc
 // Payment routes
 router.get('/payments', auth, paymentController.getUserPayments);
 router.post('/payments', auth, paymentController.createPaymentRecord);
+router.get('/test-model', auth, paymentController.testPaymentModel);
 router.get('/users/:userId/payments', paymentController.getUserPayments);
 router.get('/all/payments', adminAuth, paymentController.getAllPayments);
 

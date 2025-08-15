@@ -37,7 +37,8 @@ import {
   FaPlay,
   FaEdit,
   FaTrash,
-  FaPlus
+  FaPlus,
+  FaPause
 } from 'react-icons/fa';
 import { useAuth } from '../../context/AuthContext';
 import TeacherSidebar from '../../components/teacher/TeacherSidebar';
@@ -59,7 +60,8 @@ const TeacherLiveClasses = () => {
     scheduledTime: '',
     duration: '',
     maxStudents: '',
-    meetingLink: ''
+    streamingPlatform: 'youtube',
+    youtubeStreamUrl: ''
   });
   const toast = useToast();
   const navigate = useNavigate();
@@ -148,7 +150,8 @@ const TeacherLiveClasses = () => {
         scheduledTime: '',
         duration: '',
         maxStudents: '',
-        meetingLink: ''
+        streamingPlatform: 'youtube',
+        youtubeStreamUrl: ''
       });
       fetchLiveClasses();
     } catch (error) {
@@ -170,7 +173,8 @@ const TeacherLiveClasses = () => {
       scheduledTime: liveClass.scheduledTime || '',
       duration: liveClass.duration,
       maxStudents: liveClass.maxStudents,
-      meetingLink: liveClass.meetingLink
+      streamingPlatform: liveClass.streamingPlatform || 'youtube',
+      youtubeStreamUrl: liveClass.youtubeStreamUrl || ''
     });
     setIsModalOpen(true);
   };
@@ -208,6 +212,66 @@ const TeacherLiveClasses = () => {
 
   const handleJoinLive = (liveClass) => {
     navigate(`/live-class/${liveClass._id}`);
+  };
+
+  const handleStartLiveStream = async (liveClass) => {
+    try {
+      const res = await fetch(`${apiBaseUrl}/api/live-classes/${liveClass._id}/start`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      if (!res.ok) {
+        throw new Error('Failed to start live stream');
+      }
+
+      toast({
+        title: 'Live Stream Started!',
+        description: 'Your live class is now live and students can join.',
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+      });
+
+      // Refresh the live classes list
+      fetchLiveClasses();
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: error.message,
+        status: 'error'
+      });
+    }
+  };
+
+  const handleEndLiveStream = async (liveClass) => {
+    try {
+      const res = await fetch(`${apiBaseUrl}/api/live-classes/${liveClass._id}/end`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      if (!res.ok) {
+        throw new Error('Failed to end live stream');
+      }
+
+      toast({
+        title: 'Live Stream Ended',
+        description: 'Your live class has been ended.',
+        status: 'info',
+        duration: 3000,
+        isClosable: true,
+      });
+
+      // Refresh the live classes list
+      fetchLiveClasses();
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: error.message,
+        status: 'error'
+      });
+    }
   };
 
   const getCourseName = (courseId) => {
@@ -252,11 +316,11 @@ const TeacherLiveClasses = () => {
     return (
       <>
         <Navbar />
-        <Flex minH="100vh" bgGradient="linear(to-br, gray.900, teal.700)">
+        <Flex minH="100vh" bg="gray.50">
           <TeacherSidebar />
           <Box flex={1} p={8}>
             <Center h="50vh">
-              <Spinner size="xl" color="teal.300" />
+              <Spinner size="xl" color="green.500" />
             </Center>
           </Box>
         </Flex>
@@ -267,32 +331,34 @@ const TeacherLiveClasses = () => {
   return (
     <>
       <Navbar />
-      <Flex minH="100vh" bgGradient="linear(to-br, gray.900, teal.700)">
+      <Flex minH="100vh" bg="gray.50">
         <TeacherSidebar />
         <Box flex={1} p={8}>
           <VStack spacing={8} align="stretch">
             {/* Header */}
             <Box
-              bg="rgba(255, 255, 255, 0.15)"
-              boxShadow="0 8px 32px 0 rgba(31, 38, 135, 0.37)"
-              backdropFilter="blur(8px)"
+              bg="white"
+              boxShadow="0 4px 20px rgba(0, 0, 0, 0.1)"
               borderRadius="2xl"
-              border="1px solid rgba(255, 255, 255, 0.18)"
+              border="1px solid"
+              borderColor="gray.200"
               p={8}
             >
               <HStack justify="space-between">
                 <VStack align="start" spacing={2}>
-                  <Heading color="teal.300" fontSize="3xl" fontWeight="extrabold">
+                  <Heading color="green.600" fontSize="3xl" fontWeight="extrabold">
                     Live Classes
                   </Heading>
-                  <Text color="gray.100" fontSize="lg">
+                  <Text color="gray.600" fontSize="lg">
                     Schedule and manage your live teaching sessions
                   </Text>
                 </VStack>
                 <Button
-                  colorScheme="teal"
+                  colorScheme="green"
                   leftIcon={<FaPlus />}
                   onClick={() => setIsModalOpen(true)}
+                  _hover={{ transform: 'translateY(-2px)', boxShadow: '0 4px 12px rgba(34, 197, 94, 0.4)' }}
+                  transition="all 0.2s ease"
                 >
                   Schedule Class
                 </Button>
@@ -302,25 +368,28 @@ const TeacherLiveClasses = () => {
             {/* Live Classes Grid */}
             {liveClasses.length === 0 ? (
               <Box
-                bg="rgba(255, 255, 255, 0.15)"
-                backdropFilter="blur(8px)"
+                bg="white"
+                boxShadow="0 4px 20px rgba(0, 0, 0, 0.1)"
                 borderRadius="2xl"
-                border="1px solid rgba(255, 255, 255, 0.18)"
+                border="1px solid"
+                borderColor="gray.200"
                 p={8}
                 textAlign="center"
               >
                 <VStack spacing={4}>
                   <Icon as={FaVideo} boxSize={12} color="gray.400" />
-                  <Heading size="md" color="gray.200">
+                  <Heading size="md" color="gray.800">
                     No Live Classes Yet
                   </Heading>
-                  <Text color="gray.300">
+                  <Text color="gray.600">
                     Start by scheduling your first live class to interact with students.
                   </Text>
                   <Button
-                    colorScheme="teal"
+                    colorScheme="green"
                     leftIcon={<FaPlus />}
                     onClick={() => setIsModalOpen(true)}
+                    _hover={{ transform: 'translateY(-2px)', boxShadow: '0 4px 12px rgba(34, 197, 94, 0.4)' }}
+                    transition="all 0.2s ease"
                   >
                     Schedule First Class
                   </Button>
@@ -331,9 +400,13 @@ const TeacherLiveClasses = () => {
                 {liveClasses.map((liveClass) => (
                   <Card
                     key={liveClass._id}
-                    bg="rgba(255, 255, 255, 0.15)"
-                    backdropFilter="blur(8px)"
+                    bg="white"
+                    boxShadow="0 4px 20px rgba(0, 0, 0, 0.1)"
                     borderRadius="xl"
+                    border="1px solid"
+                    borderColor="gray.200"
+                    _hover={{ transform: 'translateY(-2px)', boxShadow: '0 8px 25px rgba(0, 0, 0, 0.15)' }}
+                    transition="all 0.3s ease"
                     border="1px solid rgba(255, 255, 255, 0.18)"
                   >
                     <CardHeader>
@@ -375,15 +448,36 @@ const TeacherLiveClasses = () => {
                         </HStack>
                         
                         <HStack spacing={2}>
-                          {liveClass.status === 'live' && (
+                          {liveClass.status === 'scheduled' && (
                             <Button
                               size="sm"
                               colorScheme="green"
                               leftIcon={<FaPlay />}
-                              onClick={() => handleJoinLive(liveClass)}
+                              onClick={() => handleStartLiveStream(liveClass)}
                             >
-                              Join Live
+                              Start Live
                             </Button>
+                          )}
+                          {liveClass.status === 'live' && (
+                            <>
+                              <Button
+                                size="sm"
+                                colorScheme="blue"
+                                leftIcon={<FaPlay />}
+                                onClick={() => handleJoinLive(liveClass)}
+                              >
+                                Join Live
+                              </Button>
+                              <Button
+                                size="sm"
+                                colorScheme="red"
+                                variant="outline"
+                                leftIcon={<FaPause />}
+                                onClick={() => handleEndLiveStream(liveClass)}
+                              >
+                                End Live
+                              </Button>
+                            </>
                           )}
                           <Button
                             size="sm"
@@ -426,7 +520,8 @@ const TeacherLiveClasses = () => {
           scheduledTime: '',
           duration: '',
           maxStudents: '',
-          meetingLink: ''
+          streamingPlatform: 'youtube',
+          youtubeStreamUrl: ''
         });
       }} size="xl">
         <ModalOverlay />
@@ -501,13 +596,58 @@ const TeacherLiveClasses = () => {
                 </FormControl>
 
                 <FormControl>
-                  <FormLabel>Meeting Link</FormLabel>
-                  <Input
-                    value={formData.meetingLink}
-                    onChange={(e) => setFormData({ ...formData, meetingLink: e.target.value })}
-                    placeholder="Enter meeting link (Zoom, Google Meet, etc.)"
-                  />
+                  <FormLabel>Streaming Platform</FormLabel>
+                  <Select
+                    value={formData.streamingPlatform}
+                    onChange={(e) => setFormData({ ...formData, streamingPlatform: e.target.value })}
+                    placeholder="Select streaming platform"
+                  >
+                    <option value="youtube">YouTube</option>
+                    {/* Add other platforms here as needed */}
+                  </Select>
                 </FormControl>
+
+                {formData.streamingPlatform === 'youtube' && (
+                  <>
+                    <FormControl>
+                      <FormLabel>YouTube Stream URL</FormLabel>
+                      <Input
+                        value={formData.youtubeStreamUrl}
+                        onChange={(e) => setFormData({ ...formData, youtubeStreamUrl: e.target.value })}
+                        placeholder="https://www.youtube.com/watch?v=YOUR_STREAM_KEY"
+                      />
+                      <Text fontSize="xs" color="gray.500" mt={1}>
+                        Paste the YouTube live stream URL here. This is the URL you get when you start a live stream on YouTube.
+                      </Text>
+                    </FormControl>
+                    
+                    <Box p={4} bg="blue.50" borderRadius="md" border="1px" borderColor="blue.200">
+                      <Text fontSize="sm" fontWeight="semibold" color="blue.800" mb={2}>
+                        How to get your YouTube Stream URL:
+                      </Text>
+                      <VStack align="start" spacing={1} fontSize="xs" color="blue.700">
+                        <Text>1. Go to YouTube Studio</Text>
+                        <Text>2. Click "Go Live" or "Create" → "Go Live"</Text>
+                        <Text>3. Set up your stream details</Text>
+                        <Text>4. Copy the stream URL (looks like: https://www.youtube.com/watch?v=STREAM_KEY)</Text>
+                        <Text>5. Paste it in the field above</Text>
+                      </VStack>
+                    </Box>
+                    
+                    <Box p={4} bg="green.50" borderRadius="md" border="1px" borderColor="green.200">
+                      <Text fontSize="sm" fontWeight="semibold" color="green.800" mb={2}>
+                        How to start your live class:
+                      </Text>
+                      <VStack align="start" spacing={1} fontSize="xs" color="green.700">
+                        <Text>1. Start your YouTube live stream first</Text>
+                        <Text>2. Copy the public YouTube URL</Text>
+                        <Text>3. Paste it in the field above</Text>
+                        <Text>4. Save the live class</Text>
+                        <Text>5. Click "Start Live" button when ready to let students join</Text>
+                      </VStack>
+                    </Box>
+                  </>
+                )}
 
                 <FormControl>
                   <FormLabel>Description</FormLabel>
@@ -534,7 +674,8 @@ const TeacherLiveClasses = () => {
                       scheduledTime: '',
                       duration: '',
                       maxStudents: '',
-                      meetingLink: ''
+                      streamingPlatform: 'youtube',
+                      youtubeStreamUrl: ''
                     });
                   }} flex={1}>
                     Cancel

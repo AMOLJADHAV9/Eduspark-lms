@@ -250,6 +250,9 @@ exports.getUserPayments = async (req, res) => {
 // Create a payment record (for one-time course purchases)
 exports.createPaymentRecord = async (req, res) => {
   try {
+    console.log('Creating payment record with data:', req.body);
+    console.log('User ID:', req.user.id);
+    
     const {
       type = 'one_time',
       amount,
@@ -264,12 +267,24 @@ exports.createPaymentRecord = async (req, res) => {
       return res.status(400).json({ message: 'amount and description are required' });
     }
 
+    // Validate amount is a positive number
+    const numericAmount = Number(amount);
+    if (isNaN(numericAmount) || numericAmount <= 0) {
+      return res.status(400).json({ message: 'amount must be a positive number' });
+    }
+
+    // Validate payment method
+    const validPaymentMethods = ['stripe', 'paypal', 'razorpay', 'bank_transfer', 'cash', 'credit_card', 'debit_card'];
+    if (!validPaymentMethods.includes(paymentMethod)) {
+      return res.status(400).json({ message: `Invalid payment method. Must be one of: ${validPaymentMethods.join(', ')}` });
+    }
+
     // Create payment record with enhanced metadata
-    const payment = await Payment.create({
+    const paymentData = {
       user: req.user.id,
       type,
       status,
-      amount: Number(amount),
+      amount: numericAmount,
       currency: currency.toUpperCase(),
       description,
       paymentMethod,
@@ -283,7 +298,12 @@ exports.createPaymentRecord = async (req, res) => {
         description: 'Payment record created',
         timestamp: new Date()
       }]
-    });
+    };
+
+    console.log('Payment data to create:', paymentData);
+
+    const payment = await Payment.create(paymentData);
+    console.log('Payment created successfully:', payment._id);
 
     // Populate user details for response
     await payment.populate('user', 'name email');
@@ -296,7 +316,16 @@ exports.createPaymentRecord = async (req, res) => {
   } catch (error) {
     console.error('Error creating payment record:', error);
     if (error.name === 'ValidationError') {
-      return res.status(400).json({ message: 'Validation error', error: error.message });
+      console.error('Validation error details:', error.errors);
+      return res.status(400).json({ 
+        message: 'Validation error', 
+        error: error.message,
+        details: Object.keys(error.errors).map(key => ({
+          field: key,
+          message: error.errors[key].message,
+          value: error.errors[key].value
+        }))
+      });
     }
     res.status(500).json({ message: 'Server error', error: error.message });
   }
@@ -554,5 +583,53 @@ exports.getPaymentAnalytics = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+}; 
+
+// Test endpoint to verify Payment model
+exports.testPaymentModel = async (req, res) => {
+  try {
+    // Test creating a minimal payment record
+    const testPayment = new Payment({
+      user: req.user.id,
+      type: 'one_time',
+      amount: 1000, // 10.00 in cents
+      currency: 'INR',
+      description: 'Test payment',
+      paymentMethod: 'razorpay',
+      status: 'completed'
+    });
+
+    // Validate without saving
+    const validationError = testPayment.validateSync();
+    if (validationError) {
+      console.error('Payment model validation error:', validationError);
+      return res.status(400).json({ 
+        message: 'Payment model validation failed', 
+        error: validationError.message,
+        details: Object.keys(validationError.errors).map(key => ({
+          field: key,
+          message: validationError.errors[key].message,
+          value: validationError.errors[key].value
+        }))
+      });
+    }
+
+    res.json({ 
+      success: true, 
+      message: 'Payment model validation successful',
+      testData: {
+        user: req.user.id,
+        type: 'one_time',
+        amount: 1000,
+        currency: 'INR',
+        description: 'Test payment',
+        paymentMethod: 'razorpay',
+        status: 'completed'
+      }
+    });
+  } catch (error) {
+    console.error('Test payment model error:', error);
+    res.status(500).json({ message: 'Test failed', error: error.message });
   }
 }; 

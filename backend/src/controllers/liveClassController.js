@@ -1,6 +1,7 @@
 const LiveClass = require('../models/LiveClass');
 const Course = require('../models/Course');
 const User = require('../models/User');
+const { createLiveClassNotification } = require('./notificationController');
 
 // Create a new live class
 exports.createLiveClass = async (req, res) => {
@@ -15,13 +16,27 @@ exports.createLiveClass = async (req, res) => {
       allowChat,
       allowScreenShare,
       allowWhiteboard,
-      requireApproval
+      requireApproval,
+      streamingPlatform = 'youtube',
+      youtubeStreamUrl
     } = req.body;
 
     // Validate course exists
     const course = await Course.findById(courseId);
     if (!course) {
       return res.status(404).json({ message: 'Course not found' });
+    }
+
+    // Validate YouTube URL if using YouTube platform
+    if (streamingPlatform === 'youtube' && !youtubeStreamUrl) {
+      return res.status(400).json({ message: 'YouTube stream URL is required for YouTube live streaming' });
+    }
+
+    // Extract video ID from YouTube URL if provided
+    let youtubeVideoId = null;
+    if (youtubeStreamUrl) {
+      const videoIdMatch = youtubeStreamUrl.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/);
+      youtubeVideoId = videoIdMatch ? videoIdMatch[1] : null;
     }
 
     const liveClass = await LiveClass.create({
@@ -35,12 +50,28 @@ exports.createLiveClass = async (req, res) => {
       allowChat: allowChat !== false,
       allowScreenShare: allowScreenShare !== false,
       allowWhiteboard: allowWhiteboard !== false,
-      requireApproval: requireApproval || false
+      requireApproval: requireApproval || false,
+      streamingPlatform,
+      youtubeStreamUrl,
+      youtubeVideoId
     });
 
     await liveClass.populate('course instructor');
+
+    // Create notifications for enrolled students
+    try {
+      const notificationTitle = `New Live Class: ${title}`;
+      const notificationMessage = `A new live class "${title}" has been scheduled for ${new Date(scheduledAt).toLocaleDateString()} at ${new Date(scheduledAt).toLocaleTimeString()}. Join us for an interactive learning session!`;
+      
+      await createLiveClassNotification(liveClass._id, notificationTitle, notificationMessage);
+    } catch (notificationError) {
+      console.error('Failed to create notifications:', notificationError);
+      // Don't fail the live class creation if notifications fail
+    }
+
     res.status(201).json(liveClass);
   } catch (error) {
+    console.error('Error creating live class:', error);
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
@@ -102,9 +133,33 @@ exports.updateLiveClass = async (req, res) => {
       return res.status(403).json({ message: 'Not authorized' });
     }
 
+    const updates = { ...req.body };
+
+    // If youtubeStreamUrl is provided, auto-extract the video ID
+    if (typeof updates.youtubeStreamUrl === 'string' && updates.youtubeStreamUrl.trim() !== '') {
+      const url = updates.youtubeStreamUrl.trim();
+      let videoId = null;
+
+      // Try to extract from common URL formats
+      const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/live\/)([^&\n?#]+)/);
+      if (match && match[1]) {
+        videoId = match[1];
+      } else {
+        // Fallback: if plain 11-char YouTube ID
+        const idCandidate = url.split('?')[0];
+        if (/^[a-zA-Z0-9_-]{11}$/.test(idCandidate)) {
+          videoId = idCandidate;
+        }
+      }
+
+      if (videoId) {
+        updates.youtubeVideoId = videoId;
+      }
+    }
+
     const updatedLiveClass = await LiveClass.findByIdAndUpdate(
       req.params.id,
-      req.body,
+      updates,
       { new: true }
     ).populate('course instructor');
 
@@ -178,15 +233,35 @@ exports.startLiveClass = async (req, res) => {
     }
 
     liveClass.status = 'live';
-    liveClass.meetingUrl = `https://meet.google.com/${liveClass.meetingId}`;
+    
+    // Set meeting URL based on streaming platform
+    if (liveClass.streamingPlatform === 'youtube' && liveClass.youtubeStreamUrl) {
+      liveClass.meetingUrl = liveClass.youtubeStreamUrl;
+    } else {
+      liveClass.meetingUrl = `https://meet.google.com/${liveClass.meetingId}`;
+    }
+    
     await liveClass.save();
+
+    // Send live notifications to enrolled students
+    try {
+      const notificationTitle = `Live Class Started: ${liveClass.title}`;
+      const notificationMessage = `The live class "${liveClass.title}" has started! Click to join the stream now.`;
+      
+      await createLiveClassNotification(liveClass._id, notificationTitle, notificationMessage);
+    } catch (notificationError) {
+      console.error('Failed to send live notifications:', notificationError);
+    }
 
     res.json({ 
       message: 'Live class started',
       meetingUrl: liveClass.meetingUrl,
-      meetingId: liveClass.meetingId
+      meetingId: liveClass.meetingId,
+      streamingPlatform: liveClass.streamingPlatform,
+      youtubeStreamUrl: liveClass.youtubeStreamUrl
     });
   } catch (error) {
+    console.error('Error starting live class:', error);
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };

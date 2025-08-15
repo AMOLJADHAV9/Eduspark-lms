@@ -226,11 +226,11 @@ const TeacherCourses = () => {
     return (
       <>
         <Navbar />
-        <Flex minH="100vh" bgGradient="linear(to-br, gray.900, teal.700)">
+        <Flex minH="100vh" bg="gray.50">
           <TeacherSidebar />
           <Box flex={1} p={8}>
             <Center h="50vh">
-              <Spinner size="xl" color="teal.300" />
+              <Spinner size="xl" color="blue.500" />
             </Center>
           </Box>
         </Flex>
@@ -241,33 +241,35 @@ const TeacherCourses = () => {
   return (
     <>
       <Navbar />
-      <Flex minH="100vh" bgGradient="linear(to-br, gray.900, teal.700)">
+      <Flex minH="100vh" bg="gray.50">
         <TeacherSidebar />
         <Box flex={1} p={8}>
           <VStack spacing={8} align="stretch">
             {/* Header */}
             <Box
-              bg="rgba(255, 255, 255, 0.15)"
-              boxShadow="0 8px 32px 0 rgba(31, 38, 135, 0.37)"
-              backdropFilter="blur(8px)"
+              bg="white"
+              boxShadow="0 4px 20px rgba(0, 0, 0, 0.1)"
               borderRadius="2xl"
-              border="1px solid rgba(255, 255, 255, 0.18)"
+              border="1px solid"
+              borderColor="gray.200"
               p={8}
             >
               <HStack justify="space-between">
                 <VStack align="start" spacing={2}>
-                  <Heading color="teal.300" fontSize="3xl" fontWeight="extrabold">
+                  <Heading color="blue.600" fontSize="3xl" fontWeight="extrabold">
                     My Courses
                   </Heading>
-                  <Text color="gray.100">
+                  <Text color="gray.600">
                     Manage your courses and content
                   </Text>
                 </VStack>
                 <Button
                   leftIcon={<FaPlus />}
-                  colorScheme="teal"
+                  colorScheme="blue"
                   size="lg"
                   onClick={openCreateModal}
+                  _hover={{ transform: 'translateY(-2px)', boxShadow: '0 4px 12px rgba(59, 130, 246, 0.4)' }}
+                  transition="all 0.2s ease"
                 >
                   Create Course
                 </Button>
@@ -277,25 +279,28 @@ const TeacherCourses = () => {
                          {/* Courses Grid */}
              {courses.length === 0 ? (
                <Box
-                 bg="rgba(255, 255, 255, 0.15)"
-                 backdropFilter="blur(8px)"
+                 bg="white"
+                 boxShadow="0 4px 20px rgba(0, 0, 0, 0.1)"
                  borderRadius="2xl"
-                 border="1px solid rgba(255, 255, 255, 0.18)"
+                 border="1px solid"
+                 borderColor="gray.200"
                  p={8}
                  textAlign="center"
                >
                  <VStack spacing={4}>
                    <Icon as={FaBook} boxSize={12} color="gray.400" />
-                   <Heading size="md" color="gray.200">
+                   <Heading size="md" color="gray.800">
                      No Courses Yet
                    </Heading>
-                   <Text color="gray.300">
+                   <Text color="gray.600">
                      Start by creating your first course to share with students.
                    </Text>
                    <Button
-                     colorScheme="teal"
+                     colorScheme="blue"
                      leftIcon={<FaPlus />}
                      onClick={openCreateModal}
+                     _hover={{ transform: 'translateY(-2px)', boxShadow: '0 4px 12px rgba(59, 130, 246, 0.4)' }}
+                     transition="all 0.2s ease"
                    >
                      Create First Course
                    </Button>
@@ -306,11 +311,14 @@ const TeacherCourses = () => {
                  {courses.map((course) => (
                  <Card
                    key={course._id}
-                   bg="rgba(255, 255, 255, 0.15)"
-                   backdropFilter="blur(8px)"
+                   bg="white"
+                   boxShadow="0 4px 20px rgba(0, 0, 0, 0.1)"
                    borderRadius="xl"
-                   border="1px solid rgba(255, 255, 255, 0.18)"
+                   border="1px solid"
+                   borderColor="gray.200"
                    overflow="hidden"
+                   _hover={{ transform: 'translateY(-2px)', boxShadow: '0 8px 25px rgba(0, 0, 0, 0.15)' }}
+                   transition="all 0.3s ease"
                  >
                                      <Image
                      src={course.thumbnail || 'https://via.placeholder.com/300x200?text=No+Image'}
@@ -333,29 +341,30 @@ const TeacherCourses = () => {
                             as={IconButton}
                             icon={<FaEllipsisV />}
                             variant="ghost"
-                            color="white"
+                            color="gray.600"
                             size="sm"
+                            _hover={{ bg: 'gray.100' }}
                           />
-                          <MenuList>
-                            <MenuItem icon={<FaEye />}>View</MenuItem>
-                            <MenuItem icon={<FaEdit />} onClick={() => handleEdit(course)}>
+                          <MenuList bg="white" border="1px solid" borderColor="gray.200">
+                            <MenuItem icon={<FaEye />} _hover={{ bg: 'blue.50' }}>View</MenuItem>
+                            <MenuItem icon={<FaEdit />} onClick={() => handleEdit(course)} _hover={{ bg: 'green.50' }}>
                               Edit
                             </MenuItem>
-                                                         <MenuItem icon={<FaTrash />} onClick={() => handleDelete(course._id)}>
-                               Delete
-                             </MenuItem>
+                            <MenuItem icon={<FaTrash />} onClick={() => handleDelete(course._id)} _hover={{ bg: 'red.50' }}>
+                              Delete
+                            </MenuItem>
                           </MenuList>
                         </Menu>
                       </HStack>
 
                       <VStack align="start" spacing={2}>
-                        <Heading size="md" color="white">
+                        <Heading size="md" color="gray.800">
                           {typeof course.title === 'string' ? course.title : 'Untitled Course'}
                         </Heading>
-                        <Text color="gray.300" fontSize="sm" noOfLines={2}>
+                        <Text color="gray.600" fontSize="sm" noOfLines={2}>
                           {typeof course.description === 'string' ? course.description : 'No description available'}
                         </Text>
-                        <Text color="teal.300" fontWeight="bold" fontSize="lg">
+                        <Text color="blue.600" fontWeight="bold" fontSize="lg">
                           ${typeof course.price === 'number' ? course.price : 0}
                         </Text>
                       </VStack>
@@ -363,20 +372,20 @@ const TeacherCourses = () => {
                                              <VStack spacing={3} align="stretch">
                          <HStack justify="space-between">
                            <HStack spacing={2}>
-                             <Icon as={FaUsers} color="gray.400" boxSize={4} />
-                             <Text color="gray.300" fontSize="sm">
+                             <Icon as={FaUsers} color="gray.500" boxSize={4} />
+                             <Text color="gray.600" fontSize="sm">
                                {typeof course.students === 'number' ? course.students : 0} students
                              </Text>
                            </HStack>
                            <HStack spacing={2}>
-                             <Icon as={FaStar} color="yellow.400" boxSize={4} />
-                             <Text color="gray.300" fontSize="sm">
+                             <Icon as={FaStar} color="yellow.500" boxSize={4} />
+                             <Text color="gray.600" fontSize="sm">
                                {typeof course.rating === 'number' ? course.rating : 'N/A'}
                              </Text>
                            </HStack>
                          </HStack>
 
-                         <HStack justify="space-between" fontSize="sm" color="gray.400">
+                         <HStack justify="space-between" fontSize="sm" color="gray.500">
                            <HStack spacing={1}>
                              <Icon as={FaVideo} boxSize={3} />
                              <Text>{typeof course.lectures === 'number' ? course.lectures : 0} lectures</Text>
@@ -391,8 +400,8 @@ const TeacherCourses = () => {
                            </HStack>
                          </HStack>
 
-                         <Progress value={typeof course.progress === 'number' ? course.progress : 0} colorScheme="teal" size="sm" />
-                         <Text color="gray.300" fontSize="xs" textAlign="center">
+                         <Progress value={typeof course.progress === 'number' ? course.progress : 0} colorScheme="blue" size="sm" />
+                         <Text color="gray.600" fontSize="xs" textAlign="center">
                            {typeof course.progress === 'number' ? course.progress : 0}% complete
                          </Text>
                        </VStack>

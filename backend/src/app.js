@@ -25,6 +25,7 @@ const paymentRoutes = require('./routes/payment');
 const paymentsRoutes = require('./routes/payments.routes');
 const analyticsRoutes = require('./routes/analytics');
 const profileRoutes = require('./routes/profile');
+const notificationRoutes = require('./routes/notification');
 
 app.use(cors({
   origin: [
@@ -74,6 +75,7 @@ app.use('/api/payment', paymentRoutes);
 app.use('/api/payments', paymentsRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/profile', profileRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 // Health check route
 app.get('/api/health', (req, res) => {

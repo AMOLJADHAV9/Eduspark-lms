@@ -22,6 +22,7 @@ import {
   Divider,
   Icon,
   useColorModeValue,
+  Stack,
 } from '@chakra-ui/react';
 import { FaPlay, FaBook, FaUser, FaClock, FaStar } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
@@ -68,7 +69,7 @@ const onPayment = async (price, itemName) => {
       description: `Payment for ${itemName}`,
       handler: function(response){
         console.log(response);
-        
+
         const options2 = {
           order_id: response.razorpay_order_id,
           payment_id: response.razorpay_payment_id,
@@ -82,10 +83,10 @@ const onPayment = async (price, itemName) => {
             // Record payment and enroll user as paid
             try {
               // Save payment record to MongoDB
-              await api.post('/api/payment/payments', {
+              const paymentData = {
                 type: 'one_time',
-                amount: data.order.amount,
-                currency: data.order.currency,
+                amount: parseInt(data.order.amount) || 0,
+                currency: data.order.currency || 'INR',
                 description: `Course purchase: ${itemName}`,
                 paymentMethod: 'razorpay',
                 status: 'completed',
@@ -93,9 +94,15 @@ const onPayment = async (price, itemName) => {
                   razorpay_order_id: response.razorpay_order_id,
                   razorpay_payment_id: response.razorpay_payment_id,
                   courseId: id,
-                  courseTitle: itemName
+                  courseTitle: itemName,
+                  source: 'web'
                 }
-              });
+              };
+              
+              console.log('Sending payment data:', paymentData);
+              
+              const paymentResponse = await api.post('/api/payment/payments', paymentData);
+              console.log('Payment saved successfully:', paymentResponse);
               
               // Enroll user in course as paid
               await handleEnroll(true);
@@ -103,6 +110,14 @@ const onPayment = async (price, itemName) => {
               toast({ title: 'Success', description: 'Payment recorded and enrollment completed!', status: 'success' });
             } catch (e) {
               console.error('Failed to save payment/enrollment', e);
+              console.error('Payment data that failed:', {
+                type: 'one_time',
+                amount: data.order.amount,
+                currency: data.order.currency || 'INR',
+                description: `Course purchase: ${itemName}`,
+                paymentMethod: 'razorpay',
+                status: 'completed'
+              });
               toast({ title: 'Warning', description: 'Payment successful but failed to save record. Please contact support.', status: 'warning' });
             }
           } else {
@@ -223,27 +238,27 @@ useEffect(()=>{
   return (
     <Box bg={bg} minH="100vh">
       <Navbar />
-      <Container maxW="6xl" py={8}>
+      <Container maxW="6xl" py={8} px={{ base: 4, md: 0 }}>
         <VStack spacing={8} align="stretch">
           {/* Course Header */}
           <Card bg={cardBg} shadow="lg">
             <CardBody>
-              <HStack spacing={8} align="start">
+              <Stack direction={{ base: 'column', md: 'row' }} spacing={{ base: 6, md: 8 }} align={{ base: 'stretch', md: 'start' }}>
                 <Image
                   src={course.thumbnail || 'https://via.placeholder.com/400x250'}
                   alt={course.title}
                   rounded="lg"
-                  w="400px"
-                  h="250px"
+                  w={{ base: '100%', md: '400px' }}
+                  h={{ base: 'auto', md: '250px' }}
                   objectFit="cover"
                 />
-                <VStack align="start" spacing={4} flex={1}>
-                  <Heading size="lg">{course.title}</Heading>
-                  <Text color="gray.600" fontSize="lg">
+                <VStack align="start" spacing={4} flex={1} w="full">
+                  <Heading size={{ base: 'md', md: 'lg' }} noOfLines={{ base: 2, md: 1 }}>{course.title}</Heading>
+                  <Text color="gray.600" fontSize={{ base: 'md', md: 'lg' }}>
                     {course.description}
                   </Text>
                   
-                  <HStack spacing={4}>
+                  <HStack spacing={4} wrap="wrap">
                     <Badge colorScheme="teal" fontSize="md" px={3} py={1}>
                       {course.price ? `₹${course.price}` : 'Free'}
                     </Badge>
@@ -252,7 +267,7 @@ useEffect(()=>{
                     </Badge>
                   </HStack>
 
-                  <HStack spacing={6} color="gray.500">
+                  <HStack spacing={6} color="gray.500" wrap="wrap">
                     <HStack>
                       <Icon as={FaUser} />
                       <Text>{course.createdBy?.name || 'Admin'}</Text>
@@ -263,7 +278,7 @@ useEffect(()=>{
                     </HStack>
                   </HStack>
 
-                  <HStack spacing={4}>
+                  <HStack spacing={4} wrap="wrap" w="full">
                     <Button
                       size="lg"
                       colorScheme="teal"
@@ -271,7 +286,7 @@ useEffect(()=>{
                       onClick={enrolled ? handleStartLearning : () => onPayment(course.price, course.title)}
                       isLoading={enrolling}
                       loadingText={enrolled ? "Starting..." : "Enrolling..."}
-                      w="200px"
+                      w={{ base: '100%', sm: 'auto' }}
                     >
                       {enrolled ? 'Start Learning' : 'Enroll Now'}
                     </Button>
@@ -281,6 +296,7 @@ useEffect(()=>{
                         colorScheme="blue"
                         variant="outline"
                         onClick={() => navigate(`/course/${id}/quizzes`)}
+                        w={{ base: '100%', sm: 'auto' }}
                       >
                         Quizzes
                       </Button>
@@ -291,6 +307,7 @@ useEffect(()=>{
                         colorScheme="purple"
                         variant="outline"
                         onClick={() => navigate(`/course/${id}/assignments`)}
+                        w={{ base: '100%', sm: 'auto' }}
                       >
                         Assignments
                       </Button>
@@ -301,13 +318,14 @@ useEffect(()=>{
                         colorScheme="orange"
                         variant="outline"
                         onClick={() => navigate(`/course/${id}/forums`)}
+                        w={{ base: '100%', sm: 'auto' }}
                       >
                         Forums
                       </Button>
                     )}
                   </HStack>
                 </VStack>
-              </HStack>
+              </Stack>
             </CardBody>
           </Card>
 

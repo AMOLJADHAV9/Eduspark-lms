@@ -19,7 +19,7 @@ const paymentSchema = new mongoose.Schema({
   description: { type: String, required: true },
   paymentMethod: { 
     type: String, 
-    enum: ['stripe', 'paypal', 'bank_transfer', 'cash', 'credit_card', 'debit_card'],
+    enum: ['stripe', 'paypal', 'razorpay', 'bank_transfer', 'cash', 'credit_card', 'debit_card'],
     required: true
   },
   paymentMethodDetails: {

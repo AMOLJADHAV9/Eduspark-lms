@@ -3,6 +3,7 @@ import { Box, Flex, Text, Button, Spacer, HStack, Menu, MenuButton, MenuList, Me
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
+import NotificationBell from './NotificationBell';
 
 const scrollToSection = (sectionId) => {
   const element = document.getElementById(sectionId);
@@ -75,14 +76,18 @@ const Navbar = () => {
           {[
             { label: 'Home', to: '/' },
             { label: 'Courses', to: '/courses' },
-            { label: 'Live Classes', to: '/live-classes' },
+            // Hide Live Classes for teachers
+            ...(user?.role !== 'teacher' ? [{ label: 'Live Classes', to: '/live-classes' }] : []),
             ...(user ? [
               { label: 'Certificates', to: '/certificates' },
-              { label: 'Achievements', to: '/achievements' },
-              { label: 'Personalized', to: '/personalized-dashboard' },
+              // Hide Achievements for teachers
+              ...(user.role !== 'teacher' ? [{ label: 'Achievements', to: '/achievements' }] : []),
+              // Hide Personalized for teachers
+              ...(user.role !== 'teacher' ? [{ label: 'Personalized', to: '/personalized-dashboard' }] : []),
               ...(user.role === 'teacher' ? [{ label: 'Teacher Dashboard', to: '/teacher/dashboard' }] : []),
             ] : []),
-            { label: 'Pricing', to: '/pricing' },
+            // Hide Pricing for teachers
+            ...(user?.role !== 'teacher' ? [{ label: 'Pricing', to: '/pricing' }] : []),
             { label: 'Verify Certificate', to: '/certificate/verify' },
             { label: 'About', to: '/about' },
             { label: 'Contact', to: '/contact' },
@@ -154,6 +159,7 @@ const Navbar = () => {
                 </MotionMenuList>
               </AnimatePresence>
             </Menu>
+            <NotificationBell />
           </HStack>
         ) : (
           <>
