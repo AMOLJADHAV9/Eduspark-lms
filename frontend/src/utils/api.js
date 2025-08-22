@@ -1,12 +1,11 @@
 // API utility for handling all API calls
-const API_BASE_URL = (typeof window !== 'undefined' && window.location.hostname === 'localhost')
-  ? 'http://localhost:5000'
-  : 'https://lms-yoh3.onrender.com';
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 // Helper function to get full API URL
 export const getApiUrl = (endpoint) => {
   return `${API_BASE_URL}${endpoint}`;
 };
+
 
 // Helper function to get auth headers
 export const getAuthHeaders = (token) => {
