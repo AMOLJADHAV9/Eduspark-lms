@@ -6,16 +6,11 @@ export const useAuth = () => useContext(AuthContext);
 
 // API base URL configuration
 // Priority: REACT_APP_API_URL env → same-host fallback (use current hostname with backend port)
-const inferSameHostBackend = () => {
-  try {
-    const { protocol, hostname } = window.location;
-    const backendPort = process.env.REACT_APP_API_PORT || '5000';
-    return `${protocol}//${hostname}:${backendPort}`;
-  } catch (e) {
-    return 'http://localhost:5000';
-  }
-};
-const API_BASE_URL = process.env.REACT_APP_API_URL || inferSameHostBackend();
+
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+
+export const getApiUrl = (endpoint) => `${API_BASE_URL}${endpoint}`;
+
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(() => {
