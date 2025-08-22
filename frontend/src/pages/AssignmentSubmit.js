@@ -89,12 +89,11 @@ const AssignmentSubmit = () => {
     setSubmitting(true);
     
     try {
+      // Send multipart form data to support file uploads
       const formData = new FormData();
       formData.append('comments', comments);
-      
-      // Add attachments
-      attachments.forEach((attachment, index) => {
-        formData.append(`attachments`, attachment.file);
+      attachments.forEach((a) => {
+        if (a.file) formData.append('attachments', a.file, a.originalName || a.filename);
       });
 
       const res = await fetch(`/api/assignments/${id}/submit`, {

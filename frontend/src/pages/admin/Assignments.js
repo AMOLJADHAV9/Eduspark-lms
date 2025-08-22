@@ -119,7 +119,7 @@ const AdminAssignments = () => {
     setForm({
       title: assignment.title,
       description: assignment.description,
-      course: assignment.course._id,
+      course: assignment.course?._id || '',
       dueDate: assignment.dueDate.split('T')[0] + 'T' + assignment.dueDate.split('T')[1].substring(0, 5),
       maxScore: assignment.maxScore,
       instructions: assignment.instructions || '',
@@ -245,16 +245,22 @@ const AdminAssignments = () => {
         <AdminSidebar />
         <Box flex={1} p={8}>
           <VStack spacing={8} align="stretch">
-            <HStack justify="space-between">
-              <Heading>Manage Assignments</Heading>
-              <Button
-                leftIcon={<FaPlus />}
-                colorScheme="blue"
-                onClick={openCreateModal}
-              >
-                Create Assignment
-              </Button>
-            </HStack>
+            <Box bg="white" p={6} rounded="2xl" shadow="0 4px 20px rgba(0, 0, 0, 0.1)" border="1px solid" borderColor="gray.200" mb={6}>
+              <HStack justify="space-between">
+                <Heading color="yellow.600" fontSize="3xl" fontWeight="extrabold">Assignment Management</Heading>
+                <Button
+                  leftIcon={<FaPlus />}
+                  colorScheme="yellow"
+                  size="lg"
+                  onClick={openCreateModal}
+                  _hover={{ transform: 'translateY(-2px)', boxShadow: '0 4px 12px rgba(234, 179, 8, 0.4)' }}
+                  transition="all 0.2s ease"
+                >
+                  Create Assignment
+                </Button>
+              </HStack>
+            </Box>
+            <Box bg="white" p={6} rounded="2xl" shadow="0 4px 20px rgba(0, 0, 0, 0.1)" border="1px solid" borderColor="gray.200">
 
             {assignments.length === 0 ? (
               <Alert status="info">
@@ -284,7 +290,7 @@ const AdminAssignments = () => {
                           </Text>
                         </VStack>
                       </Td>
-                      <Td>{assignment.course.title}</Td>
+                      <Td>{assignment.course?.title || 'N/A'}</Td>
                       <Td>{formatDate(assignment.dueDate)}</Td>
                       <Td>{assignment.maxScore} points</Td>
                       <Td>{getStatusBadge(assignment)}</Td>
@@ -294,8 +300,10 @@ const AdminAssignments = () => {
                             size="sm"
                             icon={<FaEdit />}
                             onClick={() => openEditModal(assignment)}
-                            colorScheme="blue"
+                            colorScheme="green"
                             variant="ghost"
+                            _hover={{ transform: 'translateY(-1px)', boxShadow: '0 4px 12px rgba(34, 197, 94, 0.4)' }}
+                            transition="all 0.2s ease"
                           />
                           <IconButton
                             size="sm"
@@ -303,6 +311,8 @@ const AdminAssignments = () => {
                             onClick={() => handleDelete(assignment._id)}
                             colorScheme="red"
                             variant="ghost"
+                            _hover={{ transform: 'translateY(-1px)', boxShadow: '0 4px 12px rgba(239, 68, 68, 0.4)' }}
+                            transition="all 0.2s ease"
                           />
                         </HStack>
                       </Td>
@@ -311,7 +321,8 @@ const AdminAssignments = () => {
                 </Tbody>
               </Table>
             )}
-          </VStack>
+          </Box>
+        </VStack>
         </Box>
       </HStack>
 
@@ -430,9 +441,11 @@ const AdminAssignments = () => {
                 <HStack justify="flex-end" pt={4}>
                   <Button
                     type="submit"
-                    colorScheme="blue"
+                    colorScheme="yellow"
                     isLoading={submitting}
                     loadingText={editingAssignment ? 'Updating' : 'Creating'}
+                    _hover={{ transform: 'translateY(-2px)', boxShadow: '0 4px 12px rgba(234, 179, 8, 0.4)' }}
+                    transition="all 0.2s ease"
                   >
                     {editingAssignment ? 'Update Assignment' : 'Create Assignment'}
                   </Button>

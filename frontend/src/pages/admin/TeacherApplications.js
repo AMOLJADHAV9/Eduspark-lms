@@ -159,24 +159,24 @@ const TeacherApplications = () => {
   return (
     <>
       <Navbar />
-      <Flex minH="100vh" bgGradient="linear(to-br, gray.900, teal.700)">
+      <Flex minH="100vh" bg="white">
         <AdminSidebar />
         <Box flex={1} p={8}>
           <VStack spacing={8} align="stretch">
             {/* Header */}
             <Box
-              bg="rgba(255, 255, 255, 0.15)"
-              boxShadow="0 8px 32px 0 rgba(31, 38, 135, 0.37)"
-              backdropFilter="blur(8px)"
+              bg="white"
+              boxShadow="0 4px 20px rgba(0, 0, 0, 0.1)"
               borderRadius="2xl"
-              border="1px solid rgba(255, 255, 255, 0.18)"
+              border="1px solid"
+              borderColor="gray.200"
               p={8}
             >
               <VStack spacing={4} align="start">
-                <Heading color="teal.300" fontSize="3xl" fontWeight="extrabold">
+                <Heading color="gray.800" fontSize="3xl" fontWeight="extrabold">
                   Teacher Applications
                 </Heading>
-                <Text color="gray.100" fontSize="lg">
+                <Text color="gray.600" fontSize="lg">
                   Review and manage teacher applications
                 </Text>
               </VStack>
@@ -184,20 +184,13 @@ const TeacherApplications = () => {
 
             {/* Applications Grid */}
             {applications.length === 0 ? (
-              <Box
-                bg="rgba(255, 255, 255, 0.15)"
-                backdropFilter="blur(8px)"
-                borderRadius="2xl"
-                border="1px solid rgba(255, 255, 255, 0.18)"
-                p={8}
-                textAlign="center"
-              >
+              <Box bg="white" borderRadius="2xl" border="1px solid" borderColor="gray.200" p={8} textAlign="center" boxShadow="sm">
                 <VStack spacing={4}>
                   <Icon as={FaUser} boxSize={12} color="gray.400" />
-                  <Heading size="md" color="gray.200">
+                  <Heading size="md" color="gray.700">
                     No Teacher Applications
                   </Heading>
-                  <Text color="gray.300">
+                  <Text color="gray.600">
                     There are currently no teacher applications to review.
                   </Text>
                 </VStack>
@@ -205,13 +198,7 @@ const TeacherApplications = () => {
             ) : (
               <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6}>
                 {applications.map((application) => (
-                                 <Card
-                   key={application._id}
-                  bg="rgba(255, 255, 255, 0.15)"
-                  backdropFilter="blur(8px)"
-                  borderRadius="xl"
-                  border="1px solid rgba(255, 255, 255, 0.18)"
-                >
+                  <Card key={application._id} bg="white" borderRadius="xl" border="1px solid" borderColor="gray.200" boxShadow="sm">
                   <CardHeader>
                     <VStack spacing={3} align="start">
                       <HStack justify="space-between" w="full">
@@ -224,13 +211,13 @@ const TeacherApplications = () => {
                         </Badge>
                       </HStack>
                       <VStack align="start" spacing={1}>
-                        <Heading size="md" color="white">
+                        <Heading size="md" color="gray.800">
                           {application.fullName}
                         </Heading>
-                        <Text color="gray.300" fontSize="sm">
+                        <Text color="gray.600" fontSize="sm">
                           {application.expertise}
                         </Text>
-                        <Text color="gray.400" fontSize="xs">
+                        <Text color="gray.500" fontSize="xs">
                           Applied {formatDate(application.createdAt)}
                         </Text>
                       </VStack>
@@ -238,11 +225,10 @@ const TeacherApplications = () => {
                   </CardHeader>
                   <CardBody>
                     <VStack spacing={4} align="stretch">
-                      <Text color="gray.200" fontSize="sm" noOfLines={3}>
+                      <Text color="gray.700" fontSize="sm" noOfLines={3}>
                         {application.bio}
                       </Text>
-                      
-                      <HStack justify="space-between" fontSize="sm" color="gray.400">
+                      <HStack justify="space-between" fontSize="sm" color="gray.600">
                         <HStack spacing={1}>
                           <Icon as={FaGraduationCap} boxSize={3} />
                           <Text>{application.experience} years</Text>

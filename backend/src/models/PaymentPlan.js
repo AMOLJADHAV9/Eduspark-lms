@@ -10,7 +10,7 @@ const paymentPlanSchema = new mongoose.Schema({
   },
   pricing: {
     amount: { type: Number, required: true }, // Amount in cents
-    currency: { type: String, default: 'USD' },
+    currency: { type: String, default: 'INR' },
     interval: { type: String, enum: ['monthly', 'quarterly', 'yearly', 'lifetime'], default: 'monthly' },
     trialDays: { type: Number, default: 0 },
     setupFee: { type: Number, default: 0 }, // One-time setup fee

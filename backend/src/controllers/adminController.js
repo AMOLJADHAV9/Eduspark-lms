@@ -1,6 +1,7 @@
 const User = require('../models/User');
 const Course = require('../models/Course');
 const Enrollment = require('../models/Enrollment');
+const Payment = require('../models/Payment');
 
 exports.getAllUsers = async (req, res) => {
   try {
@@ -40,7 +41,12 @@ exports.getStats = async (req, res) => {
     const userCount = await User.countDocuments();
     const courseCount = await Course.countDocuments();
     const enrollmentCount = await Enrollment.countDocuments();
-    res.json({ userCount, courseCount, enrollmentCount });
+    const payments = await Payment.aggregate([
+      { $match: { status: 'completed' } },
+      { $group: { _id: null, total: { $sum: '$amount' } } }
+    ]);
+    const totalRevenueINR = (payments[0]?.total || 0) / 100; // amounts stored in paise
+    res.json({ userCount, courseCount, enrollmentCount, totalRevenueINR });
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
   }

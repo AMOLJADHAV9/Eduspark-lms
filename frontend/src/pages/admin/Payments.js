@@ -33,10 +33,10 @@ const Payments = () => {
   useEffect(() => { fetchPayments(); }, []);
 
   return (
-    <Flex minH="100vh" bgGradient="linear(to-br, gray.900, teal.700)">
+    <Flex minH="100vh" bg="white">
       <AdminSidebar />
       <Box flex={1} p={8}>
-        <Heading color="white" mb={8} textAlign="center">Payments</Heading>
+        <Heading color="gray.800" mb={8} textAlign="center">Payments</Heading>
         <Box bg="white" p={6} rounded="lg" shadow="xl">
           <HStack mb={4} spacing={4}>
             <ChakraSelect placeholder="Status" value={status} onChange={e => setStatus(e.target.value)} maxW="xs">
@@ -73,7 +73,7 @@ const Payments = () => {
                   <Tr key={p._id}>
                     <Td>{p.user?.name} <br /> <Box as="span" color="gray.500" fontSize="sm">{p.user?.email}</Box></Td>
                     <Td>{p.description}</Td>
-                    <Td>{p.currency} {(p.amount / 100).toFixed(2)}</Td>
+                    <Td>{new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format((p.amount || 0) / 100)}</Td>
                     <Td><Badge colorScheme={p.status === 'completed' ? 'green' : p.status === 'failed' ? 'red' : 'yellow'}>{p.status}</Badge></Td>
                     <Td><Badge>{p.type}</Badge></Td>
                     <Td>{new Date(p.createdAt).toLocaleString()}</Td>

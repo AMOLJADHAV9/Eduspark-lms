@@ -49,11 +49,15 @@ import TeacherStudents from './pages/teacher/Students';
 import TeacherAnalytics from './pages/teacher/Analytics';
 import TeacherEarnings from './pages/teacher/Earnings';
 import TeacherSettings from './pages/teacher/Settings';
+import TeacherProfile from './pages/teacher/Profile';
+import TeacherStories from './pages/teacher/Stories';
 import RoleSelection from './pages/RoleSelection';
 import TeacherApplications from './pages/admin/TeacherApplications';
-import TeacherProfile from './pages/teacher/Profile';
 import StudentProfile from './pages/Profile';
 import Notifications from './pages/Notifications';
+import ResponsiveTest from './pages/ResponsiveTest';
+import Home from './pages/teacher/Home';
+import Room from './pages/teacher/Room';
 
 function App() {
   return (
@@ -78,7 +82,7 @@ function App() {
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/courses" element={<Courses />} />
-                      <Route path="/live-classes" element={<LiveClasses />} />
+          <Route path="/live-classes" element={<LiveClasses />} />
           <Route path="/live-class/:id" element={<LiveClassRoom />} />
           <Route path="/quiz/create" element={<QuizCreate />} />
           <Route path="/quiz/:id" element={<QuizTake />} />
@@ -101,17 +105,24 @@ function App() {
           <Route path="/teacher/courses" element={<TeacherCourses />} />
           <Route path="/teacher/lectures" element={<TeacherLectures />} />
           <Route path="/teacher/live-classes" element={<TeacherLiveClasses />} />
+          <Route path="/room/:id" element={<Room />} />
+          <Route path="/teacher/room/:id" element={<Room />} />
+          <Route path="/home" element={<Home />} />
+          <Route path="/teacher/home" element={<Home />} />
+
           <Route path="/teacher/assignments" element={<TeacherAssignments />} />
           <Route path="/teacher/quizzes" element={<TeacherQuizzes />} />
           <Route path="/teacher/students" element={<TeacherStudents />} />
           <Route path="/teacher/analytics" element={<TeacherAnalytics />} />
           <Route path="/teacher/earnings" element={<TeacherEarnings />} />
           <Route path="/teacher/settings" element={<TeacherSettings />} />
+          <Route path="/teacher/stories" element={<TeacherStories />} />
           <Route path="/role-selection" element={<RoleSelection />} />
             <Route path="/admin/teacher-applications" element={<TeacherApplications />} />
             <Route path="/teacher/profile" element={<TeacherProfile />} />
             <Route path="/profile" element={<StudentProfile />} />
             <Route path="/notifications" element={<Notifications />} />
+            <Route path="/responsive-test" element={<ResponsiveTest />} />
             <Route path="*" element={<Navigate to="/login" />} />
           </Routes>
         </Router>

@@ -51,7 +51,7 @@ const AssignmentCreate = () => {
   const [loading, setLoading] = useState(false);
   const [coursesLoading, setCoursesLoading] = useState(true);
   
-  const { token } = useAuth();
+  const { token, user, isTeacher, isAdmin, apiBaseUrl } = useAuth();
   const navigate = useNavigate();
   const toast = useToast();
 
@@ -112,44 +112,59 @@ const AssignmentCreate = () => {
     setLoading(true);
     
     try {
-      // Create FormData for file uploads
-      const formData = new FormData();
-      formData.append('title', form.title);
-      formData.append('description', form.description);
-      formData.append('course', form.course);
-      formData.append('dueDate', form.dueDate);
-      formData.append('maxScore', form.maxScore);
-      formData.append('instructions', form.instructions);
-      formData.append('allowLateSubmission', form.allowLateSubmission);
-      formData.append('latePenalty', form.latePenalty);
-      formData.append('isPublished', form.isPublished);
-      formData.append('rubric', JSON.stringify(rubric));
-      
-      // Add attachments
-      attachments.forEach((attachment, index) => {
-        formData.append(`attachments`, attachment.file);
+      let endpoint = '/api/assignments';
+      let method = 'POST';
+      let body;
+      let headers = { Authorization: `Bearer ${token}` };
+      if (isTeacher) {
+        endpoint = '/api/assignments/teacher';
+        // Teacher endpoint expects JSON, not FormData (unless backend expects files)
+        body = JSON.stringify({
+          courseId: form.course,
+          title: form.title,
+          description: form.description,
+          dueDate: form.dueDate,
+          maxScore: form.maxScore,
+          instructions: form.instructions,
+          // Add more fields if needed by backend
+        });
+        headers['Content-Type'] = 'application/json';
+      } else {
+        // Admin: keep using FormData for file uploads
+        body = new FormData();
+        body.append('title', form.title);
+        body.append('description', form.description);
+        body.append('course', form.course);
+        body.append('dueDate', form.dueDate);
+        body.append('maxScore', form.maxScore);
+        body.append('instructions', form.instructions);
+        body.append('allowLateSubmission', form.allowLateSubmission);
+        body.append('latePenalty', form.latePenalty);
+        body.append('isPublished', form.isPublished);
+        body.append('rubric', JSON.stringify(rubric));
+        attachments.forEach((attachment, index) => {
+          body.append(`attachments`, attachment.file);
+        });
+      }
+      const res = await fetch(endpoint, {
+        method,
+        headers,
+        body,
       });
-
-      const res = await fetch('/api/assignments', {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`
-        },
-        body: formData
-      });
-
       if (!res.ok) {
         const error = await res.json();
         throw new Error(error.message || 'Failed to create assignment');
       }
-
       toast({
         title: 'Assignment created successfully!',
         status: 'success',
         duration: 3000
       });
-
-      navigate('/admin/assignments');
+      if (isTeacher) {
+        navigate('/teacher/assignments');
+      } else {
+        navigate('/admin/assignments');
+      }
     } catch (error) {
       toast({
         title: 'Error creating assignment',

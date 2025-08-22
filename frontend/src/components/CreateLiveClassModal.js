@@ -42,7 +42,11 @@ const CreateLiveClassModal = ({ isOpen, onClose, onSuccess }) => {
     allowRecording: false,
     allowScreenShare: true,
     allowHandRaise: true,
-    isPublic: true
+    isPublic: true,
+    streamingPlatform: 'youtube',
+    youtubeStreamUrl: '',
+    zegoRoomId: '',
+    meetingUrl: ''
   });
   
   const [courses, setCourses] = useState([]);
@@ -153,7 +157,11 @@ const CreateLiveClassModal = ({ isOpen, onClose, onSuccess }) => {
       allowRecording: false,
       allowScreenShare: true,
       allowHandRaise: true,
-      isPublic: true
+      isPublic: true,
+      streamingPlatform: 'youtube',
+      youtubeStreamUrl: '',
+      zegoRoomId: '',
+      meetingUrl: ''
     });
   };
 
@@ -283,6 +291,37 @@ const CreateLiveClassModal = ({ isOpen, onClose, onSuccess }) => {
                   max={200}
                 />
               </FormControl>
+
+              <FormControl>
+                <FormLabel>Streaming Platform</FormLabel>
+                <Select name="streamingPlatform" value={form.streamingPlatform} onChange={handleChange}>
+                  <option value="youtube">YouTube</option>
+                  <option value="google_meet">Google Meet</option>
+                  <option value="zego">ZEGOCLOUD</option>
+                  <option value="custom">Custom URL</option>
+                </Select>
+              </FormControl>
+
+              {form.streamingPlatform === 'youtube' && (
+                <FormControl>
+                  <FormLabel>YouTube Stream URL</FormLabel>
+                  <Input name="youtubeStreamUrl" value={form.youtubeStreamUrl} onChange={handleChange} placeholder="https://www.youtube.com/watch?v=YOUR_STREAM_KEY" />
+                </FormControl>
+              )}
+
+              {form.streamingPlatform === 'zego' && (
+                <FormControl>
+                  <FormLabel>Zego Room ID</FormLabel>
+                  <Input name="zegoRoomId" value={form.zegoRoomId} onChange={handleChange} placeholder="Enter a unique room ID" />
+                </FormControl>
+              )}
+
+              {(form.streamingPlatform === 'google_meet' || form.streamingPlatform === 'custom') && (
+                <FormControl isRequired>
+                  <FormLabel>{form.streamingPlatform === 'google_meet' ? 'Google Meet Link' : 'Meeting URL'}</FormLabel>
+                  <Input name="meetingUrl" value={form.meetingUrl} onChange={handleChange} placeholder={form.streamingPlatform === 'google_meet' ? 'https://meet.google.com/abc-defg-hij' : 'https://your-stream-url.com/session'} />
+                </FormControl>
+              )}
 
               <VStack spacing={4} w="full" align="start">
                 <Text fontWeight="bold" fontSize="sm">Class Settings</Text>

@@ -1,9 +1,10 @@
-import React from 'react';
-import { Box, Flex, Text, Button, Spacer, HStack, Menu, MenuButton, MenuList, MenuItem, Avatar, useColorModeValue } from '@chakra-ui/react';
-import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Box, Flex, Text, Button, Spacer, HStack, Menu, MenuButton, MenuList, MenuItem, Avatar, useColorModeValue, IconButton, Drawer, DrawerBody, DrawerHeader, DrawerOverlay, DrawerContent, DrawerCloseButton, VStack, useDisclosure, useBreakpointValue } from '@chakra-ui/react';
+import { Link as RouterLink, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import NotificationBell from './NotificationBell';
+import { FaBars, FaTimes } from 'react-icons/fa';
 
 const scrollToSection = (sectionId) => {
   const element = document.getElementById(sectionId);
@@ -23,7 +24,11 @@ const menuItemVariants = {
 
 const Navbar = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user, logout, isAdmin } = useAuth();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const isMobile = useBreakpointValue({ base: true, md: false });
+  
   const glassBg = useColorModeValue(
     'rgba(255,255,255,0.7)',
     'rgba(26,32,44,0.7)'
@@ -38,10 +43,143 @@ const Navbar = () => {
     navigate('/');
   };
 
+  const getMenuItems = () => {
+    const baseItems = [
+      // Hide Home for admin users
+      ...(user?.role !== 'admin' ? [{ label: 'Home', to: '/' }] : []),
+      // Hide Courses for admin users
+      ...(user?.role !== 'admin' ? [{ label: 'Courses', to: '/courses' }] : []),
+      // Hide Live Classes for teachers and admin users
+      ...(user?.role !== 'teacher' && user?.role !== 'admin' ? [{ label: 'Live Classes', to: '/live-classes' }] : []),
+      ...(user ? [
+        // Hide Certificates for admin users
+        ...(user.role !== 'admin' ? [{ label: 'Certificates', to: '/certificates' }] : []),
+        // Hide Achievements for teachers and admin users
+        ...(user.role !== 'teacher' && user.role !== 'admin' ? [{ label: 'Achievements', to: '/achievements' }] : []),
+        // Hide Personalized for teachers and admin users
+        ...(user.role !== 'teacher' && user.role !== 'admin' ? [{ label: 'Personalized', to: '/personalized-dashboard' }] : []),
+        ...(user.role === 'teacher' ? [{ label: 'Teacher Dashboard', to: '/teacher/dashboard' }] : []),
+      ] : []),
+      // Hide Pricing for teachers and admin users
+      ...(user?.role !== 'teacher' && user?.role !== 'admin' ? [{ label: 'Pricing', to: '/pricing' }] : []),
+      { label: 'Verify Certificate', to: '/certificate/verify' },
+      { label: 'About', to: '/about' },
+      { label: 'Contact', to: '/contact' },
+      // Add responsive test link for development
+      { label: 'Responsive Test', to: '/responsive-test' },
+    ];
+
+    const isStudent = user?.role === 'student';
+    const path = location.pathname;
+    const onStudentLandingOrDashboard = (path === '/') || (isStudent && path === '/user/dashboard');
+
+    const filtered = onStudentLandingOrDashboard
+      ? baseItems.filter(i => !['Personalized', 'Pricing', 'Verify Certificate'].includes(i.label))
+      : baseItems;
+
+    return filtered;
+  };
+
+  const menuItems = getMenuItems();
+
+  const MobileMenu = () => (
+    <Drawer isOpen={isOpen} placement="top" onClose={onClose} size="full">
+      <DrawerOverlay />
+      <DrawerContent>
+        <DrawerCloseButton />
+        <DrawerHeader borderBottomWidth="1px" color="teal.500" fontWeight="bold">
+          Menu
+        </DrawerHeader>
+        <DrawerBody pt={6}>
+          <VStack spacing={4} align="stretch">
+            {menuItems.map((item) => (
+              <Button
+                key={item.label}
+                variant="ghost"
+                justifyContent="flex-start"
+                size="lg"
+                onClick={() => {
+                  navigate(item.to);
+                  onClose();
+                }}
+                _hover={{ bg: 'teal.50', color: 'teal.600' }}
+              >
+                {item.label}
+              </Button>
+            ))}
+            {user ? (
+              <VStack spacing={4} pt={4} borderTop="1px solid" borderColor="gray.200">
+                <Button
+                  variant="ghost"
+                  justifyContent="flex-start"
+                  size="lg"
+                  onClick={() => {
+                    navigate(isAdmin ? "/admin/dashboard" : "/user/dashboard");
+                    onClose();
+                  }}
+                >
+                  Dashboard
+                </Button>
+                {!isAdmin && (
+                  <Button
+                    variant="ghost"
+                    justifyContent="flex-start"
+                    size="lg"
+                    onClick={() => {
+                      navigate("/profile");
+                      onClose();
+                    }}
+                  >
+                    Profile
+                  </Button>
+                )}
+                <Button
+                  variant="ghost"
+                  justifyContent="flex-start"
+                  size="lg"
+                  onClick={() => {
+                    handleLogout();
+                    onClose();
+                  }}
+                >
+                  Logout
+                </Button>
+              </VStack>
+            ) : (
+              <VStack spacing={4} pt={4} borderTop="1px solid" borderColor="gray.200">
+                <Button
+                  as={RouterLink}
+                  to="/login"
+                  colorScheme="teal"
+                  variant="outline"
+                  size="lg"
+                  w="full"
+                  onClick={onClose}
+                >
+                  Login
+                </Button>
+                <Button
+                  as={RouterLink}
+                  to="/register"
+                  colorScheme="teal"
+                  size="lg"
+                  w="full"
+                  onClick={onClose}
+                >
+                  Register
+                </Button>
+              </VStack>
+            )}
+          </VStack>
+        </DrawerBody>
+      </DrawerContent>
+    </Drawer>
+  );
+
   return (
     <MotionBox
       as="nav"
-      px={8}
+      px={{ base: 4, md: 8 }}
       py={4}
       bg="glass.200"
       backdropFilter="blur(20px)"
@@ -57,7 +195,7 @@ const Navbar = () => {
     >
       <Flex align="center">
         <MotionText
-          fontSize="2xl"
+          fontSize={{ base: 'xl', md: '2xl' }}
           fontWeight="extrabold"
           className="gradient-text"
           cursor="pointer"
@@ -69,29 +207,24 @@ const Navbar = () => {
           }}
           transition={{ type: 'spring', stiffness: 300 }}
         >
-          LMS
+          SkillEdge
         </MotionText>
         <Spacer />
+        
+        {/* Mobile Menu Button */}
+        <IconButton
+          icon={<FaBars />}
+          onClick={onOpen}
+          variant="ghost"
+          colorScheme="teal"
+          size="lg"
+          display={{ base: 'flex', md: 'none' }}
+          mr={2}
+        />
+
+        {/* Desktop Menu */}
         <HStack spacing={6} display={{ base: 'none', md: 'flex' }}>
-          {[
-            { label: 'Home', to: '/' },
-            { label: 'Courses', to: '/courses' },
-            // Hide Live Classes for teachers
-            ...(user?.role !== 'teacher' ? [{ label: 'Live Classes', to: '/live-classes' }] : []),
-            ...(user ? [
-              { label: 'Certificates', to: '/certificates' },
-              // Hide Achievements for teachers
-              ...(user.role !== 'teacher' ? [{ label: 'Achievements', to: '/achievements' }] : []),
-              // Hide Personalized for teachers
-              ...(user.role !== 'teacher' ? [{ label: 'Personalized', to: '/personalized-dashboard' }] : []),
-              ...(user.role === 'teacher' ? [{ label: 'Teacher Dashboard', to: '/teacher/dashboard' }] : []),
-            ] : []),
-            // Hide Pricing for teachers
-            ...(user?.role !== 'teacher' ? [{ label: 'Pricing', to: '/pricing' }] : []),
-            { label: 'Verify Certificate', to: '/certificate/verify' },
-            { label: 'About', to: '/about' },
-            { label: 'Contact', to: '/contact' },
-          ].map((item) => (
+          {menuItems.map((item) => (
             <MotionText
               key={item.label}
               cursor="pointer"
@@ -125,8 +258,10 @@ const Navbar = () => {
           ))}
         </HStack>
         <Spacer />
+        
+        {/* User Menu - Desktop */}
         {user ? (
-          <HStack spacing={4}>
+          <HStack spacing={4} display={{ base: 'none', md: 'flex' }}>
             <Menu>
               <MenuButton as={Button} variant="ghost" rightIcon={<Avatar size="sm" name={user.name} />}
                 _hover={{ bg: 'teal.50', color: 'teal.500' }}
@@ -162,12 +297,15 @@ const Navbar = () => {
             <NotificationBell />
           </HStack>
         ) : (
-          <>
+          <HStack spacing={4} display={{ base: 'none', md: 'flex' }}>
             <Button as={RouterLink} to="/login" colorScheme="teal" variant="outline" mr={3} _hover={{ bg: 'teal.50', color: 'teal.600' }}>Login</Button>
             <Button as={RouterLink} to="/register" colorScheme="teal" _hover={{ bg: 'teal.500', color: 'white' }}>Register</Button>
-          </>
+          </HStack>
         )}
       </Flex>
+
+      {/* Mobile Menu */}
+      <MobileMenu />
     </MotionBox>
   );
 };

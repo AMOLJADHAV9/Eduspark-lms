@@ -33,16 +33,16 @@ const TeacherSettings = () => {
   return (
     <>
       <Navbar />
-      <Flex minH="100vh" bgGradient="linear(to-br, gray.900, teal.700)">
+      <Flex minH="100vh" bg="white">
         <TeacherSidebar />
         <Box flex={1} p={8}>
           <VStack spacing={8} align="stretch">
             <Box
-              bg="rgba(255, 255, 255, 0.15)"
-              boxShadow="0 8px 32px 0 rgba(31, 38, 135, 0.37)"
-              backdropFilter="blur(8px)"
+              bg="white"
+              boxShadow="0 4px 20px rgba(0, 0, 0, 0.1)"
               borderRadius="2xl"
-              border="1px solid rgba(255, 255, 255, 0.18)"
+              border="1px solid"
+              borderColor="gray.200"
               p={8}
             >
               <Tabs variant="enclosed" colorScheme="teal">

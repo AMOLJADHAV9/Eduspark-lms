@@ -1,1 +1,25 @@
-{}
+{
+  "name": "lms-main",
+  "version": "1.0.0",
+  "description": "A comprehensive Learning Management System built with React.js frontend and Node.js backend.",
+  "main": "index.js",
+  "type": "commonjs",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PRANAVBIRHADE/LMS.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/PRANAVBIRHADE/LMS/issues"
+  },
+  "homepage": "https://github.com/PRANAVBIRHADE/LMS#readme",
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}

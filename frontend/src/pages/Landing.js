@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Heading, Text, Button, SimpleGrid, Image, VStack, HStack, Stack, Icon, Flex, useColorModeValue, Card, CardBody, Badge } from '@chakra-ui/react';
+import { Box, Heading, Text, Button, SimpleGrid, Image, VStack, HStack, Stack, Icon, Flex, useColorModeValue, Card, CardBody, Badge, Input, InputGroup, InputLeftElement, Stat, StatLabel, StatNumber } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FaStar, FaCheckCircle, FaRocket, FaUserGraduate, FaEye, FaPlay, FaUsers, FaClock } from 'react-icons/fa';
+import { FaStar, FaCheckCircle, FaRocket, FaUserGraduate, FaEye, FaPlay, FaUsers, FaClock, FaSearch, FaChalkboardTeacher, FaBook } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -35,9 +35,21 @@ const whyChoose = [
   { icon: FaStar, label: 'Student-Centric Approach' },
 ];
 
+const categories = [
+  { label: 'Science', icon: FaRocket },
+  { label: 'Mathematics', icon: FaUserGraduate },
+  { label: 'Language', icon: FaBook },
+  { label: 'Technology', icon: FaChalkboardTeacher },
+  { label: 'Commerce', icon: FaStar },
+  { label: 'Arts', icon: FaCheckCircle },
+];
+
 const Landing = () => {
-  const { user } = useAuth();
+  const { user, token } = useAuth();
   const [courses, setCourses] = useState([]);
+  const [hasPaidEnrollment, setHasPaidEnrollment] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [stories, setStories] = useState([]);
   const bg = useColorModeValue('gray.50', 'gray.900');
   const navigate = useNavigate();
 
@@ -47,6 +59,31 @@ const Landing = () => {
       .then(data => setCourses(data.slice(0, 4)))
       .catch(() => setCourses([]));
   }, []);
+
+  useEffect(() => {
+    fetch('/api/public/stories')
+      .then(res => res.ok ? res.json() : [])
+      .then(data => setStories(Array.isArray(data) ? data.slice(0, 6) : []))
+      .catch(() => setStories([]));
+  }, []);
+
+  useEffect(() => {
+    const checkPaid = async () => {
+      try {
+        if (!user) { setHasPaidEnrollment(false); return; }
+        const res = await fetch('/api/enrollments/user', {
+          headers: token ? { Authorization: `Bearer ${token}` } : {}
+        });
+        if (!res.ok) { setHasPaidEnrollment(false); return; }
+        const data = await res.json();
+        const paid = Array.isArray(data) ? data.some(e => e.isPaid) : (Array.isArray(data?.enrollments) ? data.enrollments.some(e => e.isPaid) : false);
+        setHasPaidEnrollment(paid);
+      } catch {
+        setHasPaidEnrollment(false);
+      }
+    };
+    checkPaid();
+  }, [user, token]);
 
   // Subtle animated background bubbles
   const bubbles = [
@@ -88,69 +125,141 @@ const Landing = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7 }}
         as="section"
-        py={24}
-        textAlign="center"
+        py={{ base: 16, md: 24 }}
         color="brand.text"
         position="relative"
         zIndex={1}
       >
-        <Heading fontSize={{ base: '3xl', md: '5xl' }} mb={4} fontWeight="bold" className="gradient-text">
-          Unlock Your Potential with <Text as="span" color="teal.500">LMS</Text>
-        </Heading>
-        <Text fontSize={{ base: 'lg', md: '2xl' }} mb={8} opacity="1" color="gray.700">
-          India's most affordable, high-quality learning platform for NEET, JEE, and more.
-        </Text>
-        {!user ? (
-          <Button 
-            size="lg" 
-            colorScheme="teal"
-            px={10} 
-            py={6} 
-            fontWeight="bold" 
-            fontSize="xl" 
-            onClick={() => window.location.href = '/register'}
-            whileHover={{ scale: 1.05 }}
-            _hover={{ boxShadow: '0 10px 20px rgba(90,75,218,0.15)' }}
-            transition={{ type: 'spring', stiffness: 400 }}
-          >
-            Get Started
-          </Button>
-        ) : (
-          <Stack direction={{ base: 'column', sm: 'row' }} spacing={4} justify="center" align="center" mx="auto" mt={2}>
-            <Button 
-              size="lg" 
-              colorScheme="teal"
-              px={8} 
-              py={6} 
-              fontWeight="bold" 
-              fontSize="xl" 
-              onClick={() => navigate('/user/dashboard')}
-              whileHover={{ scale: 1.05 }}
-              _hover={{ boxShadow: '0 10px 20px rgba(90,75,218,0.15)' }}
-              transition={{ type: 'spring', stiffness: 400 }}
-            >
-              Go to Dashboard
-            </Button>
-            <Button 
-              size="lg" 
-              variant="outline"
-              colorScheme="teal"
-              px={8} 
-              py={6} 
-              fontWeight="bold" 
-              fontSize="xl" 
-              onClick={() => navigate('/')}
-              whileHover={{ scale: 1.05 }}
-              _hover={{ boxShadow: '0 10px 20px rgba(90,75,218,0.12)' }}
-              transition={{ type: 'spring', stiffness: 400 }}
-            >
-              Browse Courses
-            </Button>
-          </Stack>
-        )}
+        <Flex direction={{ base: 'column', md: 'row' }} align="center" justify="space-between" maxW="6xl" mx="auto" px={4} gap={10}>
+          <VStack align="start" spacing={6} flex={1}>
+            <Heading fontSize={{ base: '3xl', md: '5xl' }} fontWeight="bold" lineHeight={1.2}>
+              Learn Anything, Anytime, Anywhere
+            </Heading>
+            <Text fontSize={{ base: 'md', md: 'lg' }} color="gray.700">
+              Explore high-quality courses crafted by expert instructors. Build skills that advance your career.
+            </Text>
+            <InputGroup size="lg" maxW={{ base: '100%', md: 'lg' }}>
+              <InputLeftElement pointerEvents="none">
+                <Icon as={FaSearch} color="gray.400" />
+              </InputLeftElement>
+              <Input
+                placeholder="What do you want to learn?"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                bg="white"
+                borderColor="gray.200"
+              />
+              <Button ml={3} size="lg" colorScheme="teal" onClick={() => navigate('/courses')}>
+                Search
+              </Button>
+            </InputGroup>
+            <HStack spacing={10} pt={4} color="gray.700">
+              <Stat>
+                <StatNumber>10k+</StatNumber>
+                <StatLabel>Students</StatLabel>
+              </Stat>
+              <Stat>
+                <StatNumber>{Math.max(courses.length, 120)}</StatNumber>
+                <StatLabel>Courses</StatLabel>
+              </Stat>
+              <Stat>
+                <StatNumber>200+</StatNumber>
+                <StatLabel>Instructors</StatLabel>
+              </Stat>
+            </HStack>
+            <HStack spacing={{ base: 2, md: 4 }} pt={2} flexWrap="wrap" justify={{ base: 'center', md: 'flex-start' }}>
+              {!user ? (
+                <Button 
+                  size={{ base: 'lg', md: 'lg' }} 
+                  colorScheme="teal" 
+                  onClick={() => window.location.href = '/register'}
+                  w={{ base: 'full', md: 'auto' }}
+                  mb={{ base: 2, md: 0 }}
+                  fontSize={{ base: 'lg', md: 'lg' }}
+                  py={{ base: 6, md: 4 }}
+                  _hover={{ transform: 'translateY(-2px)', boxShadow: 'lg' }}
+                  transition="all 0.3s"
+                >
+                  Get Started
+                </Button>
+              ) : (
+                <Button 
+                  size={{ base: 'lg', md: 'lg' }} 
+                  colorScheme="teal" 
+                  onClick={() => navigate('/user/dashboard')}
+                  w={{ base: 'full', md: 'auto' }}
+                  mb={{ base: 2, md: 0 }}
+                >
+                  Go to Dashboard
+                </Button>
+              )}
+              <Button 
+                size={{ base: 'md', md: 'lg' }} 
+                variant="outline" 
+                colorScheme="teal" 
+                onClick={() => navigate('/courses')}
+                w={{ base: 'full', md: 'auto' }}
+                mb={{ base: 2, md: 0 }}
+              >
+                Browse Courses
+              </Button>
+              <Button 
+                size={{ base: 'md', md: 'lg' }} 
+                variant="ghost" 
+                colorScheme="teal" 
+                onClick={() => navigate('/quizzes')}
+                w={{ base: 'full', md: 'auto' }}
+                mb={{ base: 2, md: 0 }}
+              >
+                Practice Quizzes
+              </Button>
+              {!hasPaidEnrollment && user && (
+                <Button 
+                  size={{ base: 'md', md: 'lg' }} 
+                  colorScheme="teal" 
+                  onClick={() => navigate('/courses')}
+                  w={{ base: 'full', md: 'auto' }}
+                  mb={{ base: 2, md: 0 }}
+                >
+                  Buy Now
+                </Button>
+              )}
+            </HStack>
+          </VStack>
+          <Box flex={1} display={{ base: 'none', md: 'block' }}>
+            <Image
+              src="https://images.unsplash.com/photo-1553877522-43269d4ea984?q=80&w=1600&auto=format&fit=crop"
+              alt="Learning Hero"
+              rounded="lg"
+              objectFit="cover"
+              w="100%"
+              h="360px"
+              shadow="xl"
+            />
+          </Box>
+        </Flex>
       </MotionBox>
 
-      {/* Featured Courses */}
+      {/* Categories */}
+      <Box as="section" py={10} maxW="6xl" mx="auto" px={4}>
+        <Heading size="lg" mb={6} textAlign="center">Top Categories</Heading>
+        <SimpleGrid columns={{ base: 2, md: 3, lg: 6 }} spacing={6}>
+          {categories.map((c) => (
+            <Card key={c.label} variant="outline" _hover={{ shadow: 'md', transform: 'translateY(-4px)' }} transition="all 0.2s">
+              <CardBody textAlign="center">
+                <VStack spacing={3}>
+                  <Box p={3} rounded="full" bg="teal.50" color="teal.600">
+                    <Icon as={c.icon} boxSize={6} />
+                  </Box>
+                  <Text fontWeight="medium">{c.label}</Text>
+                </VStack>
+              </CardBody>
+            </Card>
+          ))}
+        </SimpleGrid>
+      </Box>
+
+      {/* Popular Courses */}
       <Box as="section" id="featured" py={20} maxW="6xl" mx="auto" px={4}>
         <MotionBox
           initial={{ opacity: 0, y: -20 }}
@@ -166,7 +275,7 @@ const Landing = () => {
             fontWeight="extrabold"
             letterSpacing="wide"
           >
-            Explore Our Courses
+            Popular Courses
           </Heading>
           <Text 
             textAlign="center" 
@@ -251,6 +360,54 @@ const Landing = () => {
           ))}
         </SimpleGrid>
       </Box>
+
+      {/* CTA Banner */}
+      <Box as="section" py={14} px={4}>
+        <Card maxW="6xl" mx="auto" bgGradient="linear(to-r, teal.500, teal.600)" color="white">
+          <CardBody>
+            <Flex direction={{ base: 'column', md: 'row' }} align="center" justify="space-between" gap={4}>
+              <VStack align="start" spacing={2}>
+                <Heading size="lg">Start learning today</Heading>
+                <Text opacity={0.9}>Join thousands of students achieving their goals</Text>
+              </VStack>
+              <HStack>
+                <Button colorScheme="whiteAlpha" variant="solid" size="lg" onClick={() => navigate('/courses')}>
+                  Browse Courses
+                </Button>
+                {!hasPaidEnrollment && (
+                  <Button bg="white" color="teal.600" _hover={{ bg: 'whiteAlpha.900' }} size="lg" onClick={() => navigate('/courses')}>
+                    Buy Now
+                  </Button>
+                )}
+              </HStack>
+            </Flex>
+          </CardBody>
+        </Card>
+      </Box>
+
+      {/* Student Success Stories (from admin-published) */}
+      {stories.length > 0 && (
+        <Box as="section" id="stories" py={16} maxW="6xl" mx="auto" px={4}>
+          <Heading mb={6} textAlign="center" color="brand.text" className="gradient-text" fontWeight="extrabold" letterSpacing="wide">
+            Student Success Stories
+          </Heading>
+          <SimpleGrid columns={{ base: 1, md: 3 }} spacing={8}>
+            {stories.map((s) => (
+              <Card key={s._id} variant="glass">
+                <CardBody>
+                  <VStack spacing={3} align="start">
+                    {s.imagePath && (
+                      <Image src={s.imagePath} alt={s.name} w="100%" h="180px" objectFit="cover" rounded="md" />
+                    )}
+                    <Heading size="md" color="gray.800">{s.name}</Heading>
+                    <Text color="gray.600" noOfLines={4}>{s.story}</Text>
+                  </VStack>
+                </CardBody>
+              </Card>
+            ))}
+          </SimpleGrid>
+        </Box>
+      )}
 
       {/* Testimonials */}
       <Box as="section" id="testimonials" py={20} bg="brand.surface">

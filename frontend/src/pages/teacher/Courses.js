@@ -77,8 +77,13 @@ const TeacherCourses = () => {
     price: 0,
     category: '',
     level: 'beginner',
-    thumbnail: ''
+    thumbnail: '',
+    thumbnailFile: null,
+    thumbnailPreview: null,
+    duration: '',
+    durationUnit: 'hours'
   });
+  const [isUploading, setIsUploading] = useState(false);
   const toast = useToast();
 
   useEffect(() => {
@@ -114,18 +119,59 @@ const TeacherCourses = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsUploading(true);
     try {
+      let thumbnailUrl = formData.thumbnail;
+
+      // If there's a new file, upload it to Cloudinary first
+      if (formData.thumbnailFile) {
+        toast({
+          title: 'Uploading image...',
+          description: 'Please wait while we upload your image to Cloudinary',
+          status: 'info',
+          duration: 2000,
+          isClosable: true,
+        });
+
+        const formDataCloudinary = new FormData();
+        formDataCloudinary.append('file', formData.thumbnailFile);
+        formDataCloudinary.append('upload_preset', 'lms_images');
+        formDataCloudinary.append('cloud_name', 'dsqgbqinh');
+
+        const uploadRes = await fetch(`https://api.cloudinary.com/v1_1/dsqgbqinh/image/upload`, {
+          method: 'POST',
+          body: formDataCloudinary
+        });
+
+        if (!uploadRes.ok) {
+          throw new Error('Failed to upload image');
+        }
+
+        const uploadData = await uploadRes.json();
+        thumbnailUrl = uploadData.secure_url;
+        
+        toast({
+          title: 'Image uploaded successfully!',
+          description: 'Your image has been uploaded to Cloudinary',
+          status: 'success',
+          duration: 2000,
+          isClosable: true,
+        });
+      }
+
       const url = editingCourse 
         ? `${apiBaseUrl}/api/courses/teacher/${editingCourse._id}`
         : `${apiBaseUrl}/api/courses/teacher`;
       
       const method = editingCourse ? 'PUT' : 'POST';
 
-      // Sanitize numeric fields
+      // Sanitize numeric fields and prepare data
       const sanitizedData = {
         ...formData,
         price: isNaN(Number(formData.price)) ? 0 : Number(formData.price),
-        // add other numeric fields here if needed
+        thumbnail: thumbnailUrl,
+        // Remove the file object as it's not needed in the database
+        thumbnailFile: undefined
       };
 
       const res = await fetch(url, {
@@ -155,7 +201,11 @@ const TeacherCourses = () => {
         price: 0,
         category: '',
         level: 'beginner',
-        thumbnail: ''
+        thumbnail: '',
+        thumbnailFile: null,
+        thumbnailPreview: null,
+        duration: '',
+        durationUnit: 'hours'
       });
       fetchCourses();
     } catch (error) {
@@ -164,19 +214,25 @@ const TeacherCourses = () => {
         description: error.message,
         status: 'error'
       });
+    } finally {
+      setIsUploading(false);
     }
   };
 
   const handleEdit = (course) => {
     setEditingCourse(course);
-    setFormData({
-      title: course.title,
-      description: course.description,
-      price: course.price,
-      category: course.category,
-      level: course.level,
-      thumbnail: course.thumbnail
-    });
+          setFormData({
+        title: course.title,
+        description: course.description,
+        price: course.price,
+        category: course.category,
+        level: course.level,
+        thumbnail: course.thumbnail,
+        thumbnailFile: null,
+        thumbnailPreview: null,
+        duration: course.duration || '',
+        durationUnit: course.durationUnit || 'hours'
+      });
     setIsModalOpen(true);
   };
 
@@ -217,7 +273,11 @@ const TeacherCourses = () => {
       price: 0,
       category: '',
       level: 'beginner',
-      thumbnail: ''
+      thumbnail: '',
+      thumbnailFile: null,
+      thumbnailPreview: null,
+      duration: '',
+      durationUnit: 'hours'
     });
     setIsModalOpen(true);
   };
@@ -491,17 +551,79 @@ const TeacherCourses = () => {
                   </FormControl>
 
                   <FormControl>
-                    <FormLabel>Thumbnail URL</FormLabel>
-                    <Input
-                      value={formData.thumbnail}
-                      onChange={(e) => setFormData({ ...formData, thumbnail: e.target.value })}
-                      placeholder="Enter thumbnail URL"
-                    />
+                    <FormLabel>Duration</FormLabel>
+                    <NumberInput
+                      value={formData.duration === '' ? '' : formData.duration}
+                      onChange={(value) => setFormData({ ...formData, duration: value === '' ? '' : parseFloat(value) })}
+                      min={0}
+                      step={0.5}
+                    >
+                      <NumberInputField />
+                      <NumberInputStepper>
+                        <NumberIncrementStepper />
+                        <NumberDecrementStepper />
+                      </NumberInputStepper>
+                    </NumberInput>
+                  </FormControl>
+                </HStack>
+
+                <HStack spacing={4} w="full">
+                  <FormControl>
+                    <FormLabel>Duration Unit</FormLabel>
+                    <Select
+                      value={formData.durationUnit}
+                      onChange={(e) => setFormData({ ...formData, durationUnit: e.target.value })}
+                    >
+                      <option value="hours">Hours</option>
+                      <option value="days">Days</option>
+                      <option value="weeks">Weeks</option>
+                      <option value="months">Months</option>
+                    </Select>
+                  </FormControl>
+
+                  <FormControl>
+                    <FormLabel>Course Thumbnail</FormLabel>
+                    <VStack spacing={3} align="stretch">
+                      <Input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => {
+                          const file = e.target.files[0];
+                          if (file) {
+                            setFormData({ ...formData, thumbnailFile: file });
+                            // Create preview URL for the new file
+                            const previewUrl = URL.createObjectURL(file);
+                            setFormData(prev => ({ ...prev, thumbnailPreview: previewUrl }));
+                          }
+                        }}
+                        p={1}
+                      />
+                      {(formData.thumbnailPreview || formData.thumbnail) && (
+                        <Box>
+                          <Text fontSize="sm" color="gray.600" mb={2}>
+                            {formData.thumbnailPreview ? 'New Thumbnail Preview:' : 'Current Thumbnail:'}
+                          </Text>
+                          <Image
+                            src={formData.thumbnailPreview || formData.thumbnail}
+                            alt="Course thumbnail"
+                            maxH="100px"
+                            borderRadius="md"
+                            objectFit="cover"
+                          />
+                        </Box>
+                      )}
+                    </VStack>
                   </FormControl>
                 </HStack>
 
                 <HStack spacing={4} w="full" pt={4}>
-                  <Button type="submit" colorScheme="teal" flex={1}>
+                  <Button 
+                    type="submit" 
+                    colorScheme="teal" 
+                    flex={1}
+                    isLoading={isUploading}
+                    loadingText={editingCourse ? 'Updating...' : 'Creating...'}
+                  >
                     {editingCourse ? 'Update Course' : 'Create Course'}
                   </Button>
                   <Button variant="outline" onClick={() => setIsModalOpen(false)} flex={1}>

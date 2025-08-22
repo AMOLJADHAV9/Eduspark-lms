@@ -61,7 +61,9 @@ const TeacherLiveClasses = () => {
     duration: '',
     maxStudents: '',
     streamingPlatform: 'youtube',
-    youtubeStreamUrl: ''
+    youtubeStreamUrl: '',
+    zegoRoomId: '',
+    meetingUrl: ''
   });
   const toast = useToast();
   const navigate = useNavigate();
@@ -151,7 +153,8 @@ const TeacherLiveClasses = () => {
         duration: '',
         maxStudents: '',
         streamingPlatform: 'youtube',
-        youtubeStreamUrl: ''
+        youtubeStreamUrl: '',
+        zegoRoomId: ''
       });
       fetchLiveClasses();
     } catch (error) {
@@ -174,7 +177,9 @@ const TeacherLiveClasses = () => {
       duration: liveClass.duration,
       maxStudents: liveClass.maxStudents,
       streamingPlatform: liveClass.streamingPlatform || 'youtube',
-      youtubeStreamUrl: liveClass.youtubeStreamUrl || ''
+      youtubeStreamUrl: liveClass.youtubeStreamUrl || '',
+      zegoRoomId: liveClass.zegoRoomId || '',
+      meetingUrl: liveClass.meetingUrl || ''
     });
     setIsModalOpen(true);
   };
@@ -521,7 +526,9 @@ const TeacherLiveClasses = () => {
           duration: '',
           maxStudents: '',
           streamingPlatform: 'youtube',
-          youtubeStreamUrl: ''
+          youtubeStreamUrl: '',
+          zegoRoomId: '',
+          meetingUrl: ''
         });
       }} size="xl">
         <ModalOverlay />
@@ -603,6 +610,9 @@ const TeacherLiveClasses = () => {
                     placeholder="Select streaming platform"
                   >
                     <option value="youtube">YouTube</option>
+                    <option value="google_meet">Google Meet</option>
+                    <option value="custom">Custom URL</option>
+                    <option value="zego">ZEGOCLOUD</option>
                     {/* Add other platforms here as needed */}
                   </Select>
                 </FormControl>
@@ -649,6 +659,38 @@ const TeacherLiveClasses = () => {
                   </>
                 )}
 
+                {formData.streamingPlatform === 'zego' && (
+                  <>
+                    <FormControl>
+                      <FormLabel>Zego Room ID</FormLabel>
+                      <Input
+                        value={formData.zegoRoomId}
+                        onChange={(e) => setFormData({ ...formData, zegoRoomId: e.target.value })}
+                        placeholder="Enter a unique room ID (e.g., course123-lecture1)"
+                      />
+                      <Text fontSize="xs" color="gray.500" mt={1}>
+                        Students will join this room using embedded video. Token is generated securely on the server.
+                      </Text>
+                    </FormControl>
+                  </>
+                )}
+
+                {(formData.streamingPlatform === 'google_meet' || formData.streamingPlatform === 'custom') && (
+                  <>
+                    <FormControl isRequired>
+                      <FormLabel>{formData.streamingPlatform === 'google_meet' ? 'Google Meet Link' : 'Meeting URL'}</FormLabel>
+                      <Input
+                        value={formData.meetingUrl}
+                        onChange={(e) => setFormData({ ...formData, meetingUrl: e.target.value })}
+                        placeholder={formData.streamingPlatform === 'google_meet' ? 'https://meet.google.com/abc-defg-hij' : 'https://your-stream-url.com/session'}
+                      />
+                      <Text fontSize="xs" color="gray.500" mt={1}>
+                        Paste the full meeting URL students should join.
+                      </Text>
+                    </FormControl>
+                  </>
+                )}
+
                 <FormControl>
                   <FormLabel>Description</FormLabel>
                   <Textarea
@@ -675,7 +717,9 @@ const TeacherLiveClasses = () => {
                       duration: '',
                       maxStudents: '',
                       streamingPlatform: 'youtube',
-                      youtubeStreamUrl: ''
+                      youtubeStreamUrl: '',
+                      zegoRoomId: '',
+                      meetingUrl: ''
                     });
                   }} flex={1}>
                     Cancel

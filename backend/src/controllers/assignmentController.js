@@ -1,6 +1,7 @@
 const Assignment = require('../models/Assignment');
 const AssignmentSubmission = require('../models/AssignmentSubmission');
 const Course = require('../models/Course');
+const Enrollment = require('../models/Enrollment');
 
 // Create a new assignment
 exports.createAssignment = async (req, res) => {
@@ -95,17 +96,17 @@ exports.deleteAssignment = async (req, res) => {
 exports.submitAssignment = async (req, res) => {
   try {
     const { assignmentId } = req.params;
-    const { attachments, comments } = req.body;
+    const { comments } = req.body;
     
     const assignment = await Assignment.findById(assignmentId);
     if (!assignment) {
       return res.status(404).json({ message: 'Assignment not found' });
     }
     
-    // Check if user is enrolled in the course
-    const enrollment = await Course.findOne({
-      _id: assignment.course,
-      'enrollments.user': req.user.id
+    // Check if user is enrolled in the course (use Enrollment collection)
+    const enrollment = await Enrollment.findOne({
+      course: assignment.course,
+      user: req.user.id
     });
     
     if (!enrollment) {
@@ -140,6 +141,16 @@ exports.submitAssignment = async (req, res) => {
       latePenalty = assignment.latePenalty;
     }
     
+    // Build attachments array from uploaded files (multer) or fallback to body attachments
+    const uploadedAttachments = Array.isArray(req.files) ? req.files.map((f) => ({
+      filename: f.filename,
+      originalName: f.originalname,
+      path: `/uploads/assignments/${f.filename}`,
+      size: f.size
+    })) : [];
+
+    const bodyAttachments = Array.isArray(req.body.attachments) ? req.body.attachments : [];
+
     const submission = await AssignmentSubmission.create({
       user: req.user.id,
       assignment: assignmentId,
@@ -149,7 +160,7 @@ exports.submitAssignment = async (req, res) => {
       latePenalty,
       maxScore: assignment.maxScore,
       status: isLate ? 'late' : 'submitted',
-      attachments: attachments || [],
+      attachments: uploadedAttachments.length ? uploadedAttachments : bodyAttachments,
       comments
     });
     

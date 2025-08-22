@@ -23,6 +23,7 @@ const courseSchema = new mongoose.Schema({
   ] },
   level: { type: String, required: true, enum: ['beginner', 'intermediate', 'advanced'] },
   duration: { type: Number, default: 0 }, // in hours
+  durationUnit: { type: String, default: 'hours', enum: ['hours', 'days', 'weeks', 'months'] },
   tags: [{ type: String }],
   lectures: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Lecture' }],
   createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },

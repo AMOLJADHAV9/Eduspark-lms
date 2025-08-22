@@ -145,12 +145,15 @@ const Quizzes = () => {
         <HStack align="start" spacing={8}>
           <AdminSidebar />
           <VStack spacing={6} align="stretch" flex={1}>
-            <HStack justify="space-between">
-              <Heading color="teal.600">Quiz Management</Heading>
-              <Button leftIcon={<FaPlus />} colorScheme="teal" onClick={openCreateModal}>
-                Create Quiz
-              </Button>
-            </HStack>
+            <Box bg="white" p={6} rounded="2xl" shadow="0 4px 20px rgba(0, 0, 0, 0.1)" border="1px solid" borderColor="gray.200" mb={6}>
+              <HStack justify="space-between">
+                <Heading color="red.600" fontSize="3xl" fontWeight="extrabold">Quiz Management</Heading>
+                <Button leftIcon={<FaPlus />} colorScheme="red" size="lg" onClick={openCreateModal} _hover={{ transform: 'translateY(-2px)', boxShadow: '0 4px 12px rgba(239, 68, 68, 0.4)' }} transition="all 0.2s ease">
+                  Create Quiz
+                </Button>
+              </HStack>
+            </Box>
+            <Box bg="white" p={6} rounded="2xl" shadow="0 4px 20px rgba(0, 0, 0, 0.1)" border="1px solid" borderColor="gray.200">
 
             {quizzes.length === 0 ? (
               <Alert status="info">
@@ -203,8 +206,10 @@ const Quizzes = () => {
                               size="sm"
                               icon={<FaEdit />}
                               onClick={() => handleEdit(quiz)}
-                              colorScheme="blue"
+                              colorScheme="green"
                               variant="ghost"
+                              _hover={{ transform: 'translateY(-1px)', boxShadow: '0 4px 12px rgba(34, 197, 94, 0.4)' }}
+                              transition="all 0.2s ease"
                             />
                             <IconButton
                               size="sm"
@@ -212,6 +217,8 @@ const Quizzes = () => {
                               onClick={() => handleDelete(quiz._id)}
                               colorScheme="red"
                               variant="ghost"
+                              _hover={{ transform: 'translateY(-1px)', boxShadow: '0 4px 12px rgba(239, 68, 68, 0.4)' }}
+                              transition="all 0.2s ease"
                             />
                           </HStack>
                         </Td>
@@ -221,7 +228,8 @@ const Quizzes = () => {
                 </Table>
               </Box>
             )}
-          </VStack>
+          </Box>
+        </VStack>
         </HStack>
       </Container>
 
@@ -302,8 +310,8 @@ const Quizzes = () => {
                 </FormControl>
 
                 <HStack spacing={4} justify="flex-end">
-                  <Button onClick={() => setIsModalOpen(false)}>Cancel</Button>
-                  <Button type="submit" colorScheme="teal">
+                  <Button onClick={() => setIsModalOpen(false)} colorScheme="gray" variant="outline" _hover={{ bg: 'gray.50' }}>Cancel</Button>
+                  <Button type="submit" colorScheme="red" _hover={{ transform: 'translateY(-2px)', boxShadow: '0 4px 12px rgba(239, 68, 68, 0.4)' }} transition="all 0.2s ease">
                     {editingQuiz ? 'Update' : 'Create'}
                   </Button>
                 </HStack>

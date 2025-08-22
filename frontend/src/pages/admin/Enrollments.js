@@ -42,10 +42,10 @@ const Enrollments = () => {
   const freeCount = enrollments.length - paidCount;
 
   return (
-    <Flex minH="100vh" bgGradient="linear(to-br, gray.900, teal.700)">
+    <Flex minH="100vh" bg="white">
       <AdminSidebar />
       <Box flex={1} p={8}>
-        <Heading color="white" mb={8} textAlign="center">Enrollments & Analytics</Heading>
+        <Heading color="gray.800" mb={8} textAlign="center">Enrollments & Analytics</Heading>
         <Box bg="white" p={6} rounded="lg" shadow="xl">
           <ChakraSelect mb={4} value={selectedCourse} onChange={e => setSelectedCourse(e.target.value)} maxW="sm" bg="gray.50">
             {courses.map(c => <option key={c._id} value={c._id}>{c.title}</option>)}

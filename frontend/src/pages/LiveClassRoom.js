@@ -24,11 +24,12 @@ import { useAuth } from '../context/AuthContext';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import YouTubeLiveStream from '../components/YouTubeLiveStream';
+import ZegoLiveStream from '../components/ZegoLiveStream';
 
 const LiveClassRoom = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { token, apiBaseUrl } = useAuth();
+  const { token, apiBaseUrl, user, isTeacher } = useAuth();
   const [liveClass, setLiveClass] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -79,13 +80,13 @@ const LiveClassRoom = () => {
         throw new Error('Failed to join live class');
       }
 
-        toast({
-          title: 'Success',
+      toast({
+        title: 'Success',
         description: 'Successfully joined live class',
-          status: 'success',
-          duration: 3000,
+        status: 'success',
+        duration: 3000,
         isClosable: true,
-        });
+      });
     } catch (error) {
       console.error('Error joining live class:', error);
       toast({
@@ -197,11 +198,23 @@ const LiveClassRoom = () => {
                                 </Text>
                       </Box>
                       
-          {/* YouTube Live Stream Component */}
-          <YouTubeLiveStream 
-            liveClass={liveClass} 
-            onJoin={handleJoinLiveClass}
-          />
+          {/* Stream Component */}
+          {liveClass.streamingPlatform === 'zego' ? (
+            <ZegoLiveStream
+              liveClass={liveClass}
+              onJoin={handleJoinLiveClass}
+              currentUserName={user?.name || 'Guest'}
+              currentUserRole={
+                user && (user._id === liveClass.instructor?._id) ? 'Host' : 'Audience'
+              }
+              currentUserId={user?._id}
+            />
+          ) : (
+            <YouTubeLiveStream 
+              liveClass={liveClass} 
+              onJoin={handleJoinLiveClass}
+            />
+          )}
             </VStack>
       </Container>
 

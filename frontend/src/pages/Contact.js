@@ -39,19 +39,19 @@ const Contact = () => {
     {
       icon: FaEnvelope,
       title: 'Email',
-      value: 'contact@lms.com',
+      value: 'amolj9238@gmail.com',
       description: 'Send us an email anytime',
     },
     {
       icon: FaPhone,
       title: 'Phone',
-      value: '+91 98765 43210',
+      value: '+91 9552678123',
       description: 'Mon-Fri from 8am to 6pm',
     },
     {
       icon: FaMapMarkerAlt,
       title: 'Office',
-      value: 'Mumbai, Maharashtra',
+      value: 'LATUR, Maharashtra',
       description: 'Main office location',
     },
     {

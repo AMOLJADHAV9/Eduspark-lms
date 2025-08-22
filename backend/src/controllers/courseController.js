@@ -3,11 +3,12 @@ const Lecture = require('../models/Lecture');
 
 exports.createCourse = async (req, res) => {
   try {
-    const { title, description, thumbnail, isPaid, price, syllabus, category, level, duration, tags } = req.body;
+    const { title, description, thumbnail, isPaid, price, syllabus, category, level, duration, durationUnit, tags } = req.body;
     
     // Normalize inputs to satisfy schema enums/types
     const normalizedLevel = (level || 'beginner').toString().toLowerCase();
     const normalizedDuration = duration !== undefined && duration !== null ? Number(duration) : 0;
+    const normalizedDurationUnit = durationUnit || 'hours';
     const normalizedIsPaid = Boolean(isPaid);
     const normalizedPrice = normalizedIsPaid ? Number(price || 0) : 0;
 
@@ -23,6 +24,7 @@ exports.createCourse = async (req, res) => {
       category: category || 'Other',
       level: normalizedLevel,
       duration: normalizedDuration,
+      durationUnit: normalizedDurationUnit,
       tags: Array.isArray(tags) ? tags : (tags ? String(tags).split(',').map(t => t.trim()).filter(Boolean) : []),
     };
     
@@ -120,6 +122,7 @@ exports.updateCourse = async (req, res) => {
     if (update.isPaid === false) update.price = 0;
     if (update.price !== undefined) update.price = Number(update.price || 0);
     if (update.duration !== undefined) update.duration = Number(update.duration || 0);
+    if (update.durationUnit) update.durationUnit = String(update.durationUnit);
     const course = await Course.findByIdAndUpdate(req.params.id, update, { new: true, runValidators: true });
     if (!course) return res.status(404).json({ message: 'Course not found' });
     res.json(course);
@@ -168,7 +171,7 @@ exports.createTeacherCourse = async (req, res) => {
       return res.status(403).json({ message: 'Access denied. Teacher only.' });
     }
     
-    const { title, description, thumbnail, price, syllabus, category, level, duration, tags } = req.body;
+    const { title, description, thumbnail, price, syllabus, category, level, duration, durationUnit, tags } = req.body;
     
     const courseData = {
       title,
@@ -179,6 +182,7 @@ exports.createTeacherCourse = async (req, res) => {
       category: category || 'Other',
       level: level || 'Beginner',
       duration: duration || 0,
+      durationUnit: durationUnit || 'hours',
       tags: tags || [],
       createdBy: req.user.id
     };

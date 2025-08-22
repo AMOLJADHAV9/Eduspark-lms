@@ -47,6 +47,13 @@ const loadScript = (src) => {
 
 const onPayment = async (price, itemName) => {
   try {
+    // Require login before initiating purchase
+    if (!user) {
+      toast({ title: 'Login required', description: 'Please log in to purchase this course.', status: 'warning' });
+      navigate('/login');
+      return;
+    }
+
     const options = {
       courseId: id,
       price: price * 100, // Convert to paise
@@ -293,7 +300,7 @@ useEffect(()=>{
                     {enrolled && (
                       <Button
                         size="lg"
-                        colorScheme="blue"
+                        colorScheme="teal"
                         variant="outline"
                         onClick={() => navigate(`/course/${id}/quizzes`)}
                         w={{ base: '100%', sm: 'auto' }}
@@ -304,7 +311,7 @@ useEffect(()=>{
                     {enrolled && (
                       <Button
                         size="lg"
-                        colorScheme="purple"
+                        colorScheme="teal"
                         variant="outline"
                         onClick={() => navigate(`/course/${id}/assignments`)}
                         w={{ base: '100%', sm: 'auto' }}
@@ -315,7 +322,7 @@ useEffect(()=>{
                     {enrolled && (
                       <Button
                         size="lg"
-                        colorScheme="orange"
+                        colorScheme="teal"
                         variant="outline"
                         onClick={() => navigate(`/course/${id}/forums`)}
                         w={{ base: '100%', sm: 'auto' }}

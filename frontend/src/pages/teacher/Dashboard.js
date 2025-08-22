@@ -22,7 +22,8 @@ import {
   Spinner,
   Center,
   Icon,
-  Button
+  Button,
+  useDisclosure
 } from '@chakra-ui/react';
 import {
   FaBook,
@@ -40,38 +41,17 @@ import { useAuth } from '../../context/AuthContext';
 import TeacherSidebar from '../../components/teacher/TeacherSidebar';
 import Navbar from '../../components/Navbar';
 
-const StatCard = ({ label, value, icon: IconComponent, color, helpText }) => {
-  // Safety check to ensure all props are valid
-  if (!label || !IconComponent || !color) {
-    return null;
-  }
-
+const StatCard = ({ label, value, icon: IconComponent }) => {
+  if (!label || !IconComponent) return null;
   return (
-    <Card
-      bg="white"
-      boxShadow="0 4px 20px rgba(0, 0, 0, 0.1)"
-      borderRadius="xl"
-      border="1px solid"
-      borderColor="gray.200"
-      _hover={{ transform: 'translateY(-2px)', boxShadow: '0 8px 25px rgba(0, 0, 0, 0.15)' }}
-      transition="all 0.3s ease"
-    >
+    <Card bg="white" boxShadow="0 4px 20px rgba(0, 0, 0, 0.1)" borderRadius="xl" border="1px solid" borderColor="gray.200" _hover={{ transform: 'translateY(-2px)', boxShadow: '0 8px 25px rgba(0, 0, 0, 0.15)' }} transition="all 0.3s ease">
       <CardBody>
         <HStack spacing={4}>
-          <Box
-            p={3}
-            bg={`${color}.500`}
-            borderRadius="lg"
-            color="white"
-            boxShadow="0 4px 12px rgba(0, 0, 0, 0.15)"
-          >
-            <IconComponent size={24} />
-          </Box>
+          <Box p={3} bg="teal.500" borderRadius="lg" color="white" boxShadow="0 4px 12px rgba(0, 0, 0, 0.15)"><IconComponent size={24} /></Box>
           <VStack align="start" spacing={1}>
             <Stat>
               <StatLabel color="gray.600" fontSize="sm" fontWeight="medium">{label}</StatLabel>
               <StatNumber color="gray.800" fontSize="2xl" fontWeight="bold">{value || 0}</StatNumber>
-              {helpText && <StatHelpText color="gray.500" fontSize="xs">{helpText}</StatHelpText>}
             </Stat>
           </VStack>
         </HStack>
@@ -84,6 +64,7 @@ const TeacherDashboard = () => {
   const { user, token, apiBaseUrl } = useAuth();
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { isOpen, onToggle, onClose } = useDisclosure();
   const toast = useToast();
 
   useEffect(() => {
@@ -119,30 +100,18 @@ const TeacherDashboard = () => {
         recentCourses: [
           {
             id: 1,
-            title: 'JavaScript Fundamentals',
+            title: 'Advanced Mathematics',
             students: 25,
-            progress: 85,
-            rating: 4.9
+            rating: 4.9,
+            progress: 85
           },
           {
             id: 2,
-            title: 'React Development',
+            title: 'Physics Fundamentals',
             students: 18,
-            progress: 72,
-            rating: 4.7
-          },
-          {
-            id: 3,
-            title: 'Node.js Backend',
-            students: 12,
-            progress: 60,
-            rating: 4.6
+            rating: 4.7,
+            progress: 72
           }
-        ],
-        recentStudents: [
-          { id: 1, name: 'John Doe', course: 'JavaScript Fundamentals', progress: 85 },
-          { id: 2, name: 'Jane Smith', course: 'React Development', progress: 72 },
-          { id: 3, name: 'Mike Johnson', course: 'Node.js Backend', progress: 60 }
         ]
       });
     } finally {
@@ -152,187 +121,91 @@ const TeacherDashboard = () => {
 
   if (loading) {
     return (
-      <>
+      <Box bg="white" minH="100vh">
         <Navbar />
-        <Flex minH="100vh" bg="gray.50">
-          <TeacherSidebar />
-          <Box flex={1} p={8}>
-            <Center h="50vh">
-              <Spinner size="xl" color="blue.500" />
-            </Center>
-          </Box>
-        </Flex>
-      </>
+        <Center h="60vh">
+          <VStack spacing={6}>
+            <Spinner size="xl" color="teal.500" thickness="4px" />
+            <Text color="brand.text" fontSize="lg">Loading your dashboard...</Text>
+          </VStack>
+        </Center>
+      </Box>
     );
   }
 
   return (
-    <>
+    <Box bg="white" minH="100vh">
       <Navbar />
-      <Flex minH="100vh" bg="gray.50">
-        <TeacherSidebar />
-        <Box flex={1} p={8}>
-          <VStack spacing={8} align="stretch">
-            {/* Header */}
-            <Box
-              bg="white"
-              boxShadow="0 4px 20px rgba(0, 0, 0, 0.1)"
-              borderRadius="2xl"
-              border="1px solid"
-              borderColor="gray.200"
-              p={8}
-            >
-              <VStack spacing={4} align="start">
-                <Heading color="blue.600" fontSize="3xl" fontWeight="extrabold">
-                  Welcome back, {user?.name}!
-                </Heading>
-                <Text color="gray.600" fontSize="lg">
-                  Here's what's happening with your courses today
-                </Text>
-              </VStack>
-            </Box>
-
+      <Flex minH="calc(100vh - 80px)" bg="gray.50">
+        <TeacherSidebar isOpen={isOpen} onToggle={onToggle} onClose={onClose} />
+        <Box flex={1} p={{ base: 4, md: 8 }} overflowX="auto">
+          <Box
+            bg="white"
+            boxShadow="0 4px 20px rgba(0, 0, 0, 0.1)"
+            borderRadius="2xl"
+            border="1px solid"
+            borderColor="gray.200"
+            p={{ base: 4, md: 8 }}
+            mt={4}
+            mx="auto"
+            maxW="5xl"
+          >
+            <Heading color="teal.600" mb={8} textAlign="center" fontWeight="extrabold" letterSpacing="wide" fontSize={{ base: '2xl', md: '3xl' }}>
+              Teacher Dashboard
+            </Heading>
+            
             {/* Stats Grid */}
-            {dashboardData && (
-              <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={6}>
-                <StatCard
-                  label="Total Courses"
-                  value={dashboardData?.stats?.totalCourses || 0}
-                  icon={FaBook}
-                  color="blue"
-                  helpText="Active courses"
-                />
-                <StatCard
-                  label="Total Students"
-                  value={dashboardData?.stats?.totalStudents || 0}
-                  icon={FaUsers}
-                  color="green"
-                  helpText="Enrolled students"
-                />
-                <StatCard
-                  label="Total Earnings"
-                  value={`$${dashboardData?.stats?.totalEarnings || 0}`}
-                  icon={FaDollarSign}
-                  color="purple"
-                  helpText="This month"
-                />
-                <StatCard
-                  label="Average Rating"
-                  value={dashboardData?.stats?.averageRating || 0}
-                  icon={FaStar}
-                  color="yellow"
-                  helpText="Student feedback"
-                />
-              </SimpleGrid>
-            )}
+            <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={6} mb={8}>
+              <StatCard label="Total Courses" value={dashboardData?.stats?.totalCourses} icon={FaBook} />
+              <StatCard label="Total Students" value={dashboardData?.stats?.totalStudents} icon={FaUsers} />
+              <StatCard label="Total Earnings" value={`$${dashboardData?.stats?.totalEarnings}`} icon={FaDollarSign} />
+              <StatCard label="Average Rating" value={dashboardData?.stats?.averageRating} icon={FaStar} />
+            </SimpleGrid>
+
+            {/* Additional Stats */}
+            <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={6} mb={8}>
+              <StatCard label="Active Courses" value={dashboardData?.stats?.activeCourses} icon={FaPlay} />
+              <StatCard label="Total Lectures" value={dashboardData?.stats?.totalLectures} icon={FaVideo} />
+              <StatCard label="Upcoming Live Classes" value={dashboardData?.stats?.upcomingLiveClasses} icon={FaClipboardList} />
+              <StatCard label="Total Assignments" value={dashboardData?.stats?.totalAssignments} icon={FaFileAlt} />
+            </SimpleGrid>
 
             {/* Recent Courses */}
-            <Card bg="white" boxShadow="0 4px 20px rgba(0, 0, 0, 0.1)" borderRadius="xl" border="1px solid" borderColor="gray.200">
-              <CardHeader>
-                <HStack justify="space-between">
-                  <Heading size="md" color="gray.800">Recent Courses</Heading>
-                  <Button size="sm" colorScheme="blue" variant="outline">
-                    View All
-                  </Button>
-                </HStack>
-              </CardHeader>
-              <CardBody>
-                <VStack spacing={4} align="stretch">
-                  {dashboardData?.recentCourses?.map((course) => (
-                    <Box
-                      key={course.id}
-                      p={4}
-                      bg="gray.50"
-                      borderRadius="lg"
-                      border="1px solid"
-                      borderColor="gray.200"
-                      _hover={{ bg: 'gray.100' }}
-                      transition="all 0.2s ease"
-                    >
-                      <HStack justify="space-between" mb={3}>
-                        <VStack align="start" spacing={1}>
-                          <Text fontWeight="bold" color="gray.800">
-                            {course.title}
-                          </Text>
-                          <HStack spacing={4}>
-                            <Text fontSize="sm" color="gray.600">
-                              {course.students} students
-                            </Text>
-                            <HStack spacing={1}>
-                              <Icon as={FaStar} color="yellow.500" boxSize={3} />
-                              <Text fontSize="sm" color="gray.600">
-                                {course.rating}
-                              </Text>
-                            </HStack>
+            {dashboardData?.recentCourses && dashboardData.recentCourses.length > 0 && (
+              <Box>
+                <Heading size="lg" mb={6} color="gray.700">Recent Courses</Heading>
+                <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
+                  {dashboardData.recentCourses.map((course) => (
+                    <Card key={course.id} bg="white" boxShadow="0 2px 10px rgba(0, 0, 0, 0.1)" borderRadius="xl" border="1px solid" borderColor="gray.200">
+                      <CardBody>
+                        <VStack align="start" spacing={4}>
+                          <Heading size="md" color="gray.800">{course.title}</Heading>
+                          <HStack spacing={6} w="full">
+                            <Stat>
+                              <StatLabel color="gray.600" fontSize="sm">Students</StatLabel>
+                              <StatNumber color="gray.800" fontSize="lg">{course.students}</StatNumber>
+                            </Stat>
+                            <Stat>
+                              <StatLabel color="gray.600" fontSize="sm">Rating</StatLabel>
+                              <StatNumber color="gray.800" fontSize="lg">{course.rating}</StatNumber>
+                            </Stat>
                           </HStack>
+                          <Box w="full">
+                            <Text fontSize="sm" color="gray.600" mb={2}>Progress</Text>
+                            <Progress value={course.progress} colorScheme="teal" borderRadius="full" size="lg" />
+                            <Text fontSize="sm" color="gray.500" mt={1}>{course.progress}%</Text>
+                          </Box>
                         </VStack>
-                        <Badge colorScheme="green" variant="solid">
-                          {course.progress}% Complete
-                        </Badge>
-                      </HStack>
-                      <Progress value={course.progress} colorScheme="blue" size="sm" />
-                    </Box>
+                      </CardBody>
+                    </Card>
                   ))}
-                </VStack>
-              </CardBody>
-            </Card>
-
-            {/* Quick Actions */}
-            <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
-              <Card bg="white" boxShadow="0 4px 20px rgba(0, 0, 0, 0.1)" borderRadius="xl" border="1px solid" borderColor="gray.200">
-                <CardHeader>
-                  <Heading size="md" color="gray.800">Quick Actions</Heading>
-                </CardHeader>
-                <CardBody>
-                  <VStack spacing={4} align="stretch">
-                    <Button leftIcon={<FaBook />} colorScheme="blue" variant="solid" size="lg" _hover={{ transform: 'translateY(-2px)', boxShadow: '0 4px 12px rgba(59, 130, 246, 0.4)' }} transition="all 0.2s ease">
-                      Create New Course
-                    </Button>
-                    <Button leftIcon={<FaVideo />} colorScheme="green" variant="solid" size="lg" _hover={{ transform: 'translateY(-2px)', boxShadow: '0 4px 12px rgba(34, 197, 94, 0.4)' }} transition="all 0.2s ease">
-                      Schedule Live Class
-                    </Button>
-                    <Button leftIcon={<FaFileAlt />} colorScheme="yellow" variant="solid" size="lg" _hover={{ transform: 'translateY(-2px)', boxShadow: '0 4px 12px rgba(234, 179, 8, 0.4)' }} transition="all 0.2s ease">
-                      Add Assignment
-                    </Button>
-                    <Button leftIcon={<FaComments />} colorScheme="red" variant="solid" size="lg" _hover={{ transform: 'translateY(-2px)', boxShadow: '0 4px 12px rgba(239, 68, 68, 0.4)' }} transition="all 0.2s ease">
-                      Create Quiz
-                    </Button>
-                  </VStack>
-                </CardBody>
-              </Card>
-
-              <Card bg="white" boxShadow="0 4px 20px rgba(0, 0, 0, 0.1)" borderRadius="xl" border="1px solid" borderColor="gray.200">
-                <CardHeader>
-                  <Heading size="md" color="gray.800">Recent Students</Heading>
-                </CardHeader>
-                <CardBody>
-                  <VStack spacing={4} align="stretch">
-                    {dashboardData?.recentStudents?.map((student) => (
-                      <HStack key={student.id} justify="space-between" p={3} bg="gray.50" borderRadius="lg" border="1px solid" borderColor="gray.200" _hover={{ bg: 'gray.100' }} transition="all 0.2s ease">
-                        <HStack spacing={3}>
-                          <Avatar size="sm" name={student.name} />
-                          <VStack align="start" spacing={1}>
-                            <Text fontWeight="bold" color="gray.800" fontSize="sm">
-                              {student.name}
-                            </Text>
-                            <Text fontSize="xs" color="gray.600">
-                              {student.course}
-                            </Text>
-                          </VStack>
-                        </HStack>
-                        <Badge colorScheme="green" variant="solid">
-                          {student.progress}%
-                        </Badge>
-                      </HStack>
-                    ))}
-                  </VStack>
-                </CardBody>
-              </Card>
-            </SimpleGrid>
-          </VStack>
+                </SimpleGrid>
+              </Box>
+            )}
+          </Box>
         </Box>
       </Flex>
-    </>
+    </Box>
   );
 };
 

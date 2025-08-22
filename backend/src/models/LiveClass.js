@@ -21,7 +21,7 @@ const liveClassSchema = new mongoose.Schema({
   // Streaming Platform
   streamingPlatform: {
     type: String,
-    enum: ['youtube', 'zoom', 'google_meet', 'custom'],
+    enum: ['youtube', 'zoom', 'google_meet', 'custom', 'zego'],
     default: 'youtube'
   },
   
@@ -30,6 +30,9 @@ const liveClassSchema = new mongoose.Schema({
   youtubeVideoId: { type: String },
   youtubeChannelId: { type: String }, // Optional - for future features
   youtubeLiveChatId: { type: String },
+  
+  // ZEGOCLOUD Live Streaming
+  zegoRoomId: { type: String },
   
   // Meeting details (for other platforms)
   meetingId: { type: String, unique: true },

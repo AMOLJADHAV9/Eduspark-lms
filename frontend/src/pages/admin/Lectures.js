@@ -108,21 +108,23 @@ const Lectures = () => {
   };
 
   return (
-    <Flex minH="100vh" bgGradient="linear(to-br, gray.900, teal.700)">
+    <Flex minH="100vh" bg="gray.50">
       <AdminSidebar />
       <Box flex={1} p={8}>
-        <Heading color="white" mb={8} textAlign="center">Lecture Management</Heading>
-        <Box bg="white" p={6} rounded="lg" shadow="xl">
-          <ChakraSelect mb={4} value={selectedCourse} onChange={e => setSelectedCourse(e.target.value)} maxW="sm" bg="gray.50">
+        <Box bg="white" p={6} rounded="2xl" shadow="0 4px 20px rgba(0, 0, 0, 0.1)" border="1px solid" borderColor="gray.200" mb={6}>
+          <Heading color="purple.600" mb={4} textAlign="center" fontSize="3xl" fontWeight="extrabold">Lecture Management</Heading>
+          <ChakraSelect mb={4} value={selectedCourse} onChange={e => setSelectedCourse(e.target.value)} maxW="sm" bg="gray.50" border="1px solid" borderColor="gray.200" _focus={{ borderColor: 'purple.500', boxShadow: '0 0 0 1px purple.500' }}>
             {courses.map(c => <option key={c._id} value={c._id}>{c.title}</option>)}
           </ChakraSelect>
-          <Button leftIcon={<AddIcon />} colorScheme="teal" mb={4} onClick={handleOpenAdd}>Add Lecture</Button>
+          <Button leftIcon={<AddIcon />} colorScheme="purple" size="lg" onClick={handleOpenAdd} _hover={{ transform: 'translateY(-2px)', boxShadow: '0 4px 12px rgba(147, 51, 234, 0.4)' }} transition="all 0.2s ease">Add Lecture</Button>
+        </Box>
+        <Box bg="white" p={6} rounded="2xl" shadow="0 4px 20px rgba(0, 0, 0, 0.1)" border="1px solid" borderColor="gray.200">
           {loading ? (
             <Box display="flex" justifyContent="center" alignItems="center" minH="30vh">
-              <Spinner size="lg" color="teal.400" />
+              <Spinner size="lg" color="purple.500" />
             </Box>
           ) : (
-            <Table variant="simple" colorScheme="teal">
+            <Table variant="simple" colorScheme="purple">
               <Thead>
                 <Tr>
                   <Th>Title</Th>
@@ -140,8 +142,8 @@ const Lectures = () => {
                     <Td>{lec.notesUrl ? <a href={lec.notesUrl} target="_blank" rel="noopener noreferrer">Notes</a> : '-'}</Td>
                     <Td>{lec.order}</Td>
                     <Td>
-                      <IconButton icon={<EditIcon />} colorScheme="blue" size="sm" mr={2} onClick={() => handleOpenEdit(lec)} aria-label="Edit lecture" />
-                      <IconButton icon={<DeleteIcon />} colorScheme="red" size="sm" onClick={() => handleDelete(lec._id)} aria-label="Delete lecture" />
+                      <IconButton icon={<EditIcon />} colorScheme="green" size="sm" mr={2} onClick={() => handleOpenEdit(lec)} aria-label="Edit lecture" _hover={{ transform: 'translateY(-1px)', boxShadow: '0 4px 12px rgba(34, 197, 94, 0.4)' }} transition="all 0.2s ease" />
+                      <IconButton icon={<DeleteIcon />} colorScheme="red" size="sm" onClick={() => handleDelete(lec._id)} aria-label="Delete lecture" _hover={{ transform: 'translateY(-1px)', boxShadow: '0 4px 12px rgba(239, 68, 68, 0.4)' }} transition="all 0.2s ease" />
                     </Td>
                   </Tr>
                 ))}
@@ -174,8 +176,8 @@ const Lectures = () => {
                 </FormControl>
               </ModalBody>
               <ModalFooter>
-                <Button colorScheme="teal" mr={3} type="submit">{modalMode === 'add' ? 'Add' : 'Update'}</Button>
-                <Button onClick={onClose}>Cancel</Button>
+                <Button colorScheme="purple" mr={3} type="submit" _hover={{ transform: 'translateY(-2px)', boxShadow: '0 4px 12px rgba(147, 51, 234, 0.4)' }} transition="all 0.2s ease">{modalMode === 'add' ? 'Add' : 'Update'}</Button>
+                <Button onClick={onClose} colorScheme="gray" variant="outline" _hover={{ bg: 'gray.50' }}>Cancel</Button>
               </ModalFooter>
             </form>
           </ModalContent>

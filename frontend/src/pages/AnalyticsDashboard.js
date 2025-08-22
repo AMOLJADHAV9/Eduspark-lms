@@ -215,7 +215,7 @@ const AnalyticsDashboard = () => {
 
           {dashboardData?.overview && (
             <SimpleGrid columns={{ base: 1, md: 4 }} spacing={6}>
-              <Card>
+              <Card bg="white" textColor="gray.800">
                 <CardBody textAlign="center">
                   <Stat>
                     <StatLabel>Total Users</StatLabel>
@@ -228,7 +228,7 @@ const AnalyticsDashboard = () => {
                   </Stat>
                 </CardBody>
               </Card>
-              <Card>
+              <Card bg="white" textColor="gray.800">
                 <CardBody textAlign="center">
                   <Stat>
                     <StatLabel>Active Courses</StatLabel>
@@ -241,7 +241,7 @@ const AnalyticsDashboard = () => {
                   </Stat>
                 </CardBody>
               </Card>
-              <Card>
+              <Card bg="white" textColor="gray.800">
                 <CardBody textAlign="center">
                   <Stat>
                     <StatLabel>Total Revenue</StatLabel>
@@ -254,7 +254,7 @@ const AnalyticsDashboard = () => {
                   </Stat>
                 </CardBody>
               </Card>
-              <Card>
+              <Card bg="white" textColor="gray.800">
                 <CardBody textAlign="center">
                   <Stat>
                     <StatLabel>Engagement Score</StatLabel>
@@ -270,7 +270,7 @@ const AnalyticsDashboard = () => {
             </SimpleGrid>
           )}
 
-          <Card>
+          <Card bg="white" textColor="gray.800">
             <CardBody>
               <Tabs value={selectedView} onChange={setSelectedView}>
                 <TabList>
@@ -284,7 +284,7 @@ const AnalyticsDashboard = () => {
                   <TabPanel>
                     <VStack spacing={6} align="stretch">
                       {revenueData && (
-                        <Card>
+                        <Card bg="white" textColor="gray.800">
                           <CardHeader>
                             <HStack>
                               <Icon as={FaChartLine} color="green.500" />
@@ -310,7 +310,7 @@ const AnalyticsDashboard = () => {
                       )}
 
                       {engagementData && (
-                        <Card>
+                        <Card bg="white" textColor="gray.800">
                           <CardHeader>
                             <HStack>
                               <Icon as={FaUsers} color="blue.500" />
@@ -373,7 +373,7 @@ const AnalyticsDashboard = () => {
                       {revenueData && (
                         <>
                           <SimpleGrid columns={{ base: 1, md: 3 }} spacing={6}>
-                            <Card>
+                            <Card bg="white" textColor="gray.800">
                               <CardBody textAlign="center">
                                 <Stat>
                                   <StatLabel>Total Revenue</StatLabel>
@@ -386,7 +386,7 @@ const AnalyticsDashboard = () => {
                                 </Stat>
                               </CardBody>
                             </Card>
-                            <Card>
+                            <Card bg="white" textColor="gray.800">
                               <CardBody textAlign="center">
                                 <Stat>
                                   <StatLabel>Average Order Value</StatLabel>
@@ -397,7 +397,7 @@ const AnalyticsDashboard = () => {
                                 </Stat>
                               </CardBody>
                             </Card>
-                            <Card>
+                            <Card bg="white" textColor="gray.800">
                               <CardBody textAlign="center">
                                 <Stat>
                                   <StatLabel>Monthly Recurring Revenue</StatLabel>
@@ -410,7 +410,7 @@ const AnalyticsDashboard = () => {
                             </Card>
                           </SimpleGrid>
 
-                          <Card>
+                          <Card bg="white" textColor="gray.800">
                             <CardHeader>
                               <Heading size="md">Revenue by Payment Method</Heading>
                             </CardHeader>
@@ -452,7 +452,7 @@ const AnalyticsDashboard = () => {
                     <VStack spacing={6} align="stretch">
                       {engagementData && (
                         <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
-                          <Card>
+                          <Card bg="white" textColor="gray.800">
                             <CardHeader>
                               <Heading size="md">User Engagement</Heading>
                             </CardHeader>
@@ -486,7 +486,7 @@ const AnalyticsDashboard = () => {
                             </CardBody>
                           </Card>
 
-                          <Card>
+                          <Card bg="white" textColor="gray.800">
                             <CardHeader>
                               <Heading size="md">Social Engagement</Heading>
                             </CardHeader>

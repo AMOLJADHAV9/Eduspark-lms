@@ -18,7 +18,9 @@ exports.createLiveClass = async (req, res) => {
       allowWhiteboard,
       requireApproval,
       streamingPlatform = 'youtube',
-      youtubeStreamUrl
+      youtubeStreamUrl,
+      zegoRoomId,
+      meetingUrl
     } = req.body;
 
     // Validate course exists
@@ -53,7 +55,9 @@ exports.createLiveClass = async (req, res) => {
       requireApproval: requireApproval || false,
       streamingPlatform,
       youtubeStreamUrl,
-      youtubeVideoId
+      youtubeVideoId,
+      zegoRoomId,
+      meetingUrl
     });
 
     await liveClass.populate('course instructor');
@@ -212,7 +216,9 @@ exports.joinLiveClass = async (req, res) => {
     res.json({ 
       message: 'Joined live class successfully',
       meetingId: liveClass.meetingId,
-      meetingUrl: liveClass.meetingUrl
+      meetingUrl: liveClass.meetingUrl,
+      streamingPlatform: liveClass.streamingPlatform,
+      zegoRoomId: liveClass.zegoRoomId
     });
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
@@ -234,11 +240,20 @@ exports.startLiveClass = async (req, res) => {
 
     liveClass.status = 'live';
     
-    // Set meeting URL based on streaming platform
+    // Set meeting URL based on streaming platform, but preserve existing if provided
     if (liveClass.streamingPlatform === 'youtube' && liveClass.youtubeStreamUrl) {
       liveClass.meetingUrl = liveClass.youtubeStreamUrl;
-    } else {
-      liveClass.meetingUrl = `https://meet.google.com/${liveClass.meetingId}`;
+    } else if (liveClass.streamingPlatform === 'google_meet') {
+      // Use provided Google Meet link if present; otherwise fallback to a generic meet URL pattern
+      liveClass.meetingUrl = liveClass.meetingUrl && liveClass.meetingUrl.trim() !== ''
+        ? liveClass.meetingUrl
+        : `https://meet.google.com/${liveClass.meetingId}`;
+    } else if (liveClass.streamingPlatform === 'zego') {
+      // Frontend will render ZEGOCLOUD UI with roomId; leave meetingUrl empty
+      liveClass.meetingUrl = '';
+    } else if (liveClass.streamingPlatform === 'custom') {
+      // Respect any custom meeting URL
+      liveClass.meetingUrl = liveClass.meetingUrl || '';
     }
     
     await liveClass.save();
@@ -258,7 +273,8 @@ exports.startLiveClass = async (req, res) => {
       meetingUrl: liveClass.meetingUrl,
       meetingId: liveClass.meetingId,
       streamingPlatform: liveClass.streamingPlatform,
-      youtubeStreamUrl: liveClass.youtubeStreamUrl
+      youtubeStreamUrl: liveClass.youtubeStreamUrl,
+      zegoRoomId: liveClass.zegoRoomId
     });
   } catch (error) {
     console.error('Error starting live class:', error);
@@ -411,7 +427,11 @@ exports.createTeacherLiveClass = async (req, res) => {
       scheduledTime,
       duration,
       maxStudents,
-      meetingLink
+      meetingLink,
+      meetingUrl: meetingUrlBody,
+      streamingPlatform = 'youtube',
+      youtubeStreamUrl,
+      zegoRoomId
     } = req.body;
 
     // Verify the course belongs to the teacher
@@ -431,12 +451,15 @@ exports.createTeacherLiveClass = async (req, res) => {
       scheduledAt,
       duration: parseInt(duration),
       maxParticipants: parseInt(maxStudents),
-      meetingLink,
+      meetingUrl: meetingUrlBody || meetingLink || undefined,
       status: 'scheduled',
       allowChat: true,
       allowScreenShare: true,
       allowWhiteboard: true,
-      requireApproval: false
+      requireApproval: false,
+      streamingPlatform,
+      youtubeStreamUrl,
+      zegoRoomId
     });
 
     await liveClass.populate('course', 'title');
@@ -458,7 +481,11 @@ exports.updateTeacherLiveClass = async (req, res) => {
       return res.status(404).json({ message: 'Live class not found or access denied' });
     }
 
-    const updatedLiveClass = await LiveClass.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const updatedLiveClass = await LiveClass.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    );
     res.json(updatedLiveClass);
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });

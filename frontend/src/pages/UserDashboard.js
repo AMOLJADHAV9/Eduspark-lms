@@ -22,7 +22,7 @@ import {
 } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
-import { FaPlay, FaBook, FaChartLine, FaGraduationCap, FaClock, FaStar, FaEye, FaCreditCard } from 'react-icons/fa';
+import { FaPlay, FaBook, FaChartLine, FaGraduationCap, FaClock, FaStar, FaEye } from 'react-icons/fa';
 import Navbar from '../components/Navbar';
 import { api } from '../utils/api';
 
@@ -36,13 +36,21 @@ const UserDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [payments, setPayments] = useState([]);
   const [paymentsLoading, setPaymentsLoading] = useState(true);
+  const [showAllCourses, setShowAllCourses] = useState(false);
+  const [showPayments, setShowPayments] = useState(false);
+  const hasPaidEnrollment = enrollments.some(e => e.isPaid);
   const bg = useColorModeValue('gray.50', 'gray.900');
   const cardBg = useColorModeValue('white', 'gray.800');
 
   useEffect(() => {
     fetchEnrollments();
-    fetchPayments();
   }, []);
+
+  useEffect(() => {
+    if (showPayments) {
+      fetchPayments();
+    }
+  }, [showPayments]);
 
   const fetchEnrollments = async () => {
     try {
@@ -84,34 +92,43 @@ const UserDashboard = () => {
   return (
     <Box bg="white" minH="100vh" position="relative" overflow="hidden">
       <Navbar />
-      <Container maxW="6xl" py={8}>
-        <VStack spacing={8} align="stretch">
+      <Container maxW="6xl" py={{ base: 4, md: 8 }} px={{ base: 2, md: 4 }}>
+        <VStack spacing={{ base: 6, md: 8 }} align="stretch">
           {/* Header */}
           <MotionBox
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 0.5 }}
+            bg="white"
+            p={{ base: 4, md: 8 }}
+            borderRadius="2xl"
+            boxShadow="0 4px 20px rgba(0, 0, 0, 0.1)"
+            border="1px solid"
+            borderColor="gray.200"
           >
-            <Card p={8} textAlign="center">
-              <CardBody>
-                <Heading 
-                  size="lg" 
-                  mb={2} 
-                  color="brand.text" 
-                  fontWeight="extrabold"
-                  letterSpacing="wide"
-                >
-                  Welcome back, {user?.name}!
-                </Heading>
-                <Text color="gray.700" opacity="1" fontSize="lg" fontWeight="medium">
-                  Continue your learning journey
-                </Text>
-              </CardBody>
-            </Card>
+            <VStack spacing={4} align="start">
+              <Heading 
+                color="teal.600" 
+                fontSize={{ base: '2xl', md: '3xl' }} 
+                fontWeight="extrabold"
+                textAlign={{ base: 'center', md: 'left' }}
+                w="full"
+              >
+                Welcome back, {user?.name}!
+              </Heading>
+              <Text 
+                color="gray.600" 
+                fontSize={{ base: 'md', md: 'lg' }}
+                textAlign={{ base: 'center', md: 'left' }}
+                w="full"
+              >
+                Here's what's happening with your courses today
+              </Text>
+            </VStack>
           </MotionBox>
 
           {/* Stats */}
-          <SimpleGrid columns={{ base: 1, md: 4 }} spacing={6}>
+          <SimpleGrid columns={{ base: 1, sm: 2, md: 4 }} spacing={{ base: 4, md: 6 }}>
             <MotionCard
               variant="3d"
               initial={{ opacity: 0, y: 20 }}
@@ -119,22 +136,22 @@ const UserDashboard = () => {
               transition={{ duration: 0.6, delay: 0.1 }}
               whileHover={{ scale: 1.05, rotateY: 5 }}
             >
-              <CardBody textAlign="center" p={6}>
+              <CardBody textAlign="center" p={{ base: 4, md: 6 }}>
                 <Box
-                  p={4}
+                  p={{ base: 3, md: 4 }}
                   bg="teal.500"
                   rounded="full"
                   color="white"
                   boxShadow="0 0 12px rgba(90, 75, 218, 0.25)"
                   display="inline-block"
-                  mb={4}
+                  mb={{ base: 3, md: 4 }}
                 >
-                  <Icon as={FaBook} boxSize={8} />
+                  <Icon as={FaBook} boxSize={{ base: 6, md: 8 }} />
                 </Box>
-                <Heading size="lg" color="brand.text" mb={2}>
+                <Heading size={{ base: 'md', md: 'lg' }} color="brand.text" mb={2}>
                   {enrollments.length}
                 </Heading>
-                <Text color="gray.700" opacity="1">Enrolled Courses</Text>
+                <Text color="gray.700" opacity="1" fontSize={{ base: 'sm', md: 'md' }}>Enrolled Courses</Text>
               </CardBody>
             </MotionCard>
             
@@ -145,14 +162,14 @@ const UserDashboard = () => {
               transition={{ duration: 0.6, delay: 0.2 }}
               whileHover={{ scale: 1.05, rotateY: 5 }}
             >
-              <CardBody textAlign="center" p={6}>
-                <Box p={4} bg="green.500" rounded="full" color="white" display="inline-block" mb={4}>
-                  <Icon as={FaPlay} boxSize={8} />
+              <CardBody textAlign="center" p={{ base: 4, md: 6 }}>
+                <Box p={{ base: 3, md: 4 }} bg="green.500" rounded="full" color="white" display="inline-block" mb={{ base: 3, md: 4 }}>
+                  <Icon as={FaPlay} boxSize={{ base: 6, md: 8 }} />
                 </Box>
-                <Heading size="lg" color="brand.text" mb={2}>
-                  {enrollments.filter(e => e.progress > 0).length}
+                <Heading size={{ base: 'md', md: 'lg' }} color="brand.text" mb={2}>
+                  {enrollments.filter(e => (e?.progress || 0) > 0).length}
                 </Heading>
-                <Text color="gray.700" opacity="1">Active Courses</Text>
+                <Text color="gray.700" opacity="1" fontSize={{ base: 'sm', md: 'md' }}>Active Courses</Text>
               </CardBody>
             </MotionCard>
             
@@ -163,40 +180,58 @@ const UserDashboard = () => {
               transition={{ duration: 0.6, delay: 0.3 }}
               whileHover={{ scale: 1.05, rotateY: 5 }}
             >
-              <CardBody textAlign="center" p={6}>
-                <Box p={4} bg="purple.500" rounded="full" color="white" display="inline-block" mb={4}>
-                  <Icon as={FaChartLine} boxSize={8} />
+              <CardBody textAlign="center" p={{ base: 4, md: 6 }}>
+                <Box p={{ base: 3, md: 4 }} bg="purple.500" rounded="full" color="white" display="inline-block" mb={{ base: 3, md: 4 }}>
+                  <Icon as={FaChartLine} boxSize={{ base: 6, md: 8 }} />
                 </Box>
-                <Heading size="lg" color="brand.text" mb={2}>
+                <Heading size={{ base: 'md', md: 'lg' }} color="brand.text" mb={2}>
                   {enrollments.length > 0 
                     ? Math.round(enrollments.reduce((acc, e) => acc + (e.progress || 0), 0) / enrollments.length)
                     : 0}%
                 </Heading>
-                <Text color="gray.700" opacity="1">Average Progress</Text>
+                <Text color="gray.700" opacity="1" fontSize={{ base: 'sm', md: 'md' }}>Average Progress</Text>
               </CardBody>
             </MotionCard>
 
+          </SimpleGrid>
+
+          {/* Buy Now CTA when no paid courses */}
+          {!hasPaidEnrollment && (
             <MotionCard
-              variant="3d"
+              variant="glass"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-              whileHover={{ scale: 1.05, rotateY: 5 }}
+              transition={{ duration: 0.6, delay: 0.45 }}
             >
-              <CardBody textAlign="center" p={6}>
-                <Box p={4} bg="orange.500" rounded="full" color="white" display="inline-block" mb={4}>
-                  <Icon as={FaCreditCard} boxSize={8} />
-                </Box>
-                <Heading size="lg" color="brand.text" mb={2}>
-                  {payments.filter(p => p.status === 'completed').length}
-                </Heading>
-                <Text color="gray.700" opacity="1">Total Payments</Text>
-                <Text fontSize="sm" color="green.600" mt={1}>
-                  ₹{(payments.filter(p => p.status === 'completed').reduce((acc, p) => acc + (p.amount / 100), 0)).toFixed(2)}
+              <CardBody textAlign="center" py={8}>
+                <Heading size="md" color="brand.text" mb={2}>No purchased courses yet</Heading>
+                <Text color="gray.700" opacity="1" mb={6}>
+                  Unlock premium courses and start learning today
                 </Text>
+                <Button colorScheme="teal" size="lg" onClick={() => navigate('/courses')}>
+                  Buy Now
+                </Button>
               </CardBody>
             </MotionCard>
-          </SimpleGrid>
+          )}
+
+          {/* Practice Quizzes CTA */}
+          <MotionCard
+            variant="glass"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.45 }}
+          >
+            <CardBody textAlign="center" py={8}>
+              <Heading size="md" color="brand.text" mb={2}>Practice Quizzes</Heading>
+              <Text color="gray.700" opacity="1" mb={6}>
+                Sharpen your skills with interactive quizzes
+              </Text>
+              <Button colorScheme="teal" size="lg" onClick={() => navigate('/quizzes')}>
+                Go to Quizzes
+              </Button>
+            </CardBody>
+          </MotionCard>
 
           {/* Enrolled Courses */}
           <MotionBox
@@ -229,192 +264,203 @@ const UserDashboard = () => {
                 >
                   Browse Courses
                 </Button>
+                {!hasPaidEnrollment && (
+                  <Button
+                    ml={4}
+                    colorScheme="teal"
+                    variant="outline"
+                    onClick={() => navigate('/courses')}
+                    size="lg"
+                  >
+                    Buy Now
+                  </Button>
+                )}
               </CardBody>
             </MotionCard>
           ) : (
-            <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
-              {enrollments.map((enrollment, index) => (
-                <MotionCard
-                  key={enrollment._id}
-                  variant="3d"
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ 
-                    duration: 0.6, 
-                    delay: 0.5 + index * 0.1 
-                  }}
-                  whileHover={{ 
-                    scale: 1.05,
-                    rotateY: 5,
-                    boxShadow: "0 25px 50px rgba(0,0,0,0.3)"
-                  }}
-                  cursor="pointer"
-                  onClick={() => navigate(`/course/${enrollment.course._id}`)}
-                >
-                  <CardBody p={0}>
-                    <Box position="relative">
-                      <Image 
-                        src={enrollment.course.thumbnail || 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=300&h=180&fit=crop'} 
-                        alt={enrollment.course.title} 
-                        w="full" 
-                        h="160px" 
-                        objectFit="cover"
-                        roundedTop="lg"
-                      />
-                      <Badge
-                        position="absolute"
-                        top={3}
-                        right={3}
-                        variant="neon"
-                        colorScheme="teal"
-                      >
-                        {enrollment.progress || 0}%
-                      </Badge>
-                    </Box>
-                    
-                    <Box p={6}>
-                      <Heading fontSize="lg" mb={3} color="gray.800" noOfLines={2} fontWeight="bold">
-                        {enrollment.course.title}
-                      </Heading>
+            <>
+              <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
+                {(showAllCourses ? enrollments : enrollments.slice(0, 2))
+                  .filter((enrollment) => enrollment && enrollment.course)
+                  .map((enrollment, index) => (
+                  <MotionCard
+                    key={enrollment._id}
+                    variant="3d"
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ 
+                      duration: 0.6, 
+                      delay: 0.5 + index * 0.1 
+                    }}
+                    whileHover={{ 
+                      scale: 1.05,
+                      rotateY: 5,
+                      boxShadow: "0 25px 50px rgba(0,0,0,0.3)"
+                    }}
+                    cursor="pointer"
+                    onClick={() => navigate(`/course/${enrollment.course?._id}`)}
+                  >
+                    <CardBody p={0}>
+                      <Box position="relative">
+                        <Image 
+                          src={enrollment.course?.thumbnail || 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=300&h=180&fit=crop'} 
+                          alt={enrollment.course?.title || 'Course thumbnail'} 
+                          w="full" 
+                          h="160px" 
+                          objectFit="cover"
+                          roundedTop="lg"
+                        />
+                        <Badge
+                          position="absolute"
+                          top={3}
+                          right={3}
+                          variant="neon"
+                          colorScheme="teal"
+                        >
+                          {enrollment.progress || 0}%
+                        </Badge>
+                      </Box>
                       
-                      <VStack spacing={3} mb={4} align="stretch">
-                        <HStack justify="space-between" color="gray.600" fontSize="sm">
-                          <HStack spacing={2}>
-                            <Icon as={FaClock} color="gray.500" />
-                            <Text color="gray.600" fontWeight="medium">Last accessed: {new Date(enrollment.updatedAt).toLocaleDateString()}</Text>
-                          </HStack>
-                        </HStack>
+                      <Box p={6}>
+                        <Heading fontSize="lg" mb={3} color="gray.800" noOfLines={2} fontWeight="bold">
+                          {enrollment.course?.title || 'Untitled Course'}
+                        </Heading>
                         
-                        <Box>
-                          <HStack justify="space-between" mb={2}>
-                            <Text fontSize="sm" color="gray.700" fontWeight="semibold">Progress</Text>
-                            <Text fontSize="sm" color="gray.700" fontWeight="semibold">{enrollment.progress || 0}%</Text>
+                        <VStack spacing={3} mb={4} align="stretch">
+                          <HStack justify="space-between" color="gray.600" fontSize="sm">
+                            <HStack spacing={2}>
+                              <Icon as={FaClock} color="gray.500" />
+                              <Text color="gray.600" fontWeight="medium">Last accessed: {new Date(enrollment.updatedAt).toLocaleDateString()}</Text>
+                            </HStack>
                           </HStack>
-                          <Progress 
-                            value={enrollment.progress || 0} 
-                            colorScheme="teal" 
-                            size="sm" 
-                            rounded="full"
-                            bg="gray.200"
-                          />
-                        </Box>
-                      </VStack>
-                      
-                      <Button
-                        variant="3d"
-                        leftIcon={<FaEye />}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          navigate(`/course/${enrollment.course._id}`);
-                        }}
-                        w="full"
-                        size="md"
-                      >
-                        Continue Learning
-                      </Button>
-                    </Box>
-                  </CardBody>
-                </MotionCard>
-              ))}
-            </SimpleGrid>
+                          
+                          <Box>
+                            <HStack justify="space-between" mb={2}>
+                              <Text fontSize="sm" color="gray.700" fontWeight="semibold">Progress</Text>
+                              <Text fontSize="sm" color="gray.700" fontWeight="semibold">{enrollment.progress || 0}%</Text>
+                            </HStack>
+                            <Progress 
+                              value={enrollment.progress || 0} 
+                              colorScheme="teal" 
+                              size="sm" 
+                              rounded="full"
+                              bg="gray.200"
+                            />
+                          </Box>
+                        </VStack>
+                        
+                        <Button
+                          variant="3d"
+                          leftIcon={<FaEye />}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigate(`/course/${enrollment.course?._id}`);
+                          }}
+                          w="full"
+                          size="md"
+                        >
+                          Continue Learning
+                        </Button>
+                      </Box>
+                    </CardBody>
+                  </MotionCard>
+                ))}
+              </SimpleGrid>
+              
+              {enrollments.length > 2 && (
+                <MotionBox
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.6 }}
+                  textAlign="center"
+                  mt={6}
+                >
+                  <Button
+                    variant="outline"
+                    colorScheme="teal"
+                    size="lg"
+                    onClick={() => setShowAllCourses(!showAllCourses)}
+                    leftIcon={showAllCourses ? <FaEye /> : <FaEye />}
+                  >
+                    {showAllCourses ? 'Show Less' : `View All ${enrollments.length} Courses`}
+                  </Button>
+                </MotionBox>
+              )}
+            </>
           )}
 
-          {/* Purchase History */}
-          <MotionBox
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-          >
-            <Heading size="lg" color="brand.text" mb={6} fontWeight="extrabold" letterSpacing="wide">
-              Purchased Courses
-            </Heading>
-          </MotionBox>
-          <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
-            {enrollments.filter(e => e.isPaid).length === 0 ? (
-              <Card variant="glass">
-                <CardBody textAlign="center" py={8}>
-                  <Text color="gray.600">No purchased courses yet.</Text>
-                </CardBody>
-              </Card>
-            ) : (
-              enrollments.filter(e => e.isPaid).map((enrollment) => (
-                <Card key={enrollment._id} variant="outline">
-                  <CardBody>
-                    <HStack justify="space-between">
-                      <VStack align="start" spacing={1}>
-                        <Heading size="md">{enrollment.course.title}</Heading>
-                        <Text color="gray.600">Purchased on {new Date(enrollment.enrolledAt).toLocaleDateString()}</Text>
-                      </VStack>
-                      <Badge colorScheme="green">Paid</Badge>
-                    </HStack>
-                  </CardBody>
-                </Card>
-              ))
-            )}
-          </SimpleGrid>
 
-          {/* Payment History */}
+
+          {/* Payment History Toggle */}
           <MotionBox
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
           >
-            <Heading size="lg" color="brand.text" mb={6} fontWeight="extrabold" letterSpacing="wide">
-              Payment History
-            </Heading>
+            <HStack justify="space-between" mb={4}>
+              <Heading size="lg" color="brand.text" fontWeight="extrabold" letterSpacing="wide">
+                Payment History
+              </Heading>
+              <Button variant="outline" colorScheme="teal" onClick={() => setShowPayments(!showPayments)}>
+                {showPayments ? 'Hide' : 'View'} Payment History
+              </Button>
+            </HStack>
           </MotionBox>
-          <Card>
-            <CardBody>
-              {paymentsLoading ? (
-                <Center py={8}>
-                  <Spinner size="lg" />
-                </Center>
-              ) : payments.length === 0 ? (
-                <Text color="gray.600">No payments found.</Text>
-              ) : (
-                <VStack align="stretch" spacing={3}>
-                  {payments.map(p => (
-                    <Card key={p._id} variant="outline" p={4}>
-                      <HStack justify="space-between" align="start">
-                        <VStack align="start" spacing={2} flex={1}>
-                          <Text fontWeight="medium" fontSize="lg">{p.description}</Text>
-                          <HStack spacing={4} fontSize="sm" color="gray.600">
-                            <Text>Date: {new Date(p.createdAt).toLocaleDateString()}</Text>
-                            <Text>Time: {new Date(p.createdAt).toLocaleTimeString()}</Text>
-                            {p.metadata?.courseTitle && (
-                              <Text>Course: {p.metadata.courseTitle}</Text>
-                            )}
-                          </HStack>
-                          <HStack spacing={2}>
-                            <Badge colorScheme="blue" variant="outline">
-                              {p.paymentMethod}
-                            </Badge>
-                            {p.metadata?.razorpay_payment_id && (
-                              <Badge colorScheme="green" variant="outline">
-                                ID: {p.metadata.razorpay_payment_id.slice(-8)}
+
+          {showPayments && (
+            <Card>
+              <CardBody>
+                {paymentsLoading ? (
+                  <Center py={8}>
+                    <Spinner size="lg" />
+                  </Center>
+                ) : payments.length === 0 ? (
+                  <Text color="gray.600">No payments found.</Text>
+                ) : (
+                  <VStack align="stretch" spacing={3}>
+                    {payments.map(p => (
+                      <Card key={p._id} variant="outline" p={4}>
+                        <HStack justify="space-between" align="start">
+                          <VStack align="start" spacing={2} flex={1}>
+                            <Text fontWeight="medium" fontSize="lg">{p.description}</Text>
+                            <HStack spacing={4} fontSize="sm" color="gray.600">
+                              <Text>Date: {new Date(p.createdAt).toLocaleDateString()}</Text>
+                              <Text>Time: {new Date(p.createdAt).toLocaleTimeString()}</Text>
+                              {p.metadata?.courseTitle && (
+                                <Text>Course: {p.metadata.courseTitle}</Text>
+                              )}
+                            </HStack>
+                            <HStack spacing={2}>
+                              <Badge colorScheme="blue" variant="outline">
+                                {p.paymentMethod}
                               </Badge>
-                            )}
-                          </HStack>
-                        </VStack>
-                        <VStack align="end" spacing={2}>
-                          <Badge 
-                            colorScheme={p.status === 'completed' ? 'green' : p.status === 'failed' ? 'red' : 'yellow'} 
-                            size="lg"
-                            textTransform="capitalize"
-                          >
-                            {p.status}
-                          </Badge>
-                          <Text fontWeight="bold" fontSize="lg" color="green.600">
-                            {p.currency} {(p.amount / 100).toFixed(2)}
-                          </Text>
-                        </VStack>
-                      </HStack>
-                    </Card>
-                  ))}
-                </VStack>
-              )}
-            </CardBody>
-          </Card>
+                              {p.metadata?.razorpay_payment_id && (
+                                <Badge colorScheme="green" variant="outline">
+                                  ID: {p.metadata.razorpay_payment_id.slice(-8)}
+                                </Badge>
+                              )}
+                            </HStack>
+                          </VStack>
+                          <VStack align="end" spacing={2}>
+                            <Badge 
+                              colorScheme={p.status === 'completed' ? 'green' : p.status === 'failed' ? 'red' : 'yellow'} 
+                              size="lg"
+                              textTransform="capitalize"
+                            >
+                              {p.status}
+                            </Badge>
+                            <Text fontWeight="bold" fontSize="lg" color="green.600">
+                              {new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format((p.amount || 0) / 100)}
+                            </Text>
+                          </VStack>
+                        </HStack>
+                      </Card>
+                    ))}
+                  </VStack>
+                )}
+              </CardBody>
+            </Card>
+          )}
         </VStack>
       </Container>
     </Box>

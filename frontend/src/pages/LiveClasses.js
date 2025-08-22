@@ -107,13 +107,20 @@ const LiveClasses = () => {
       });
 
       if (response.ok) {
+        const data = await response.json();
         toast({
           title: 'Success',
           description: 'Joined live class successfully!',
           status: 'success',
         });
-        
-        // Navigate to live class room
+
+        // If server provided a meetingUrl (e.g., Google Meet), open it directly
+        if (data?.meetingUrl) {
+          window.open(data.meetingUrl, '_blank', 'noopener,noreferrer');
+          return;
+        }
+
+        // Fallback: navigate to in-app live classroom
         navigate(`/live-class/${liveClass._id}`);
       }
     } catch (error) {
@@ -211,11 +218,14 @@ const LiveClasses = () => {
   };
 
   const isInstructor = (liveClass) => {
-    return user && liveClass.instructor._id === user.id;
+    return Boolean(user && liveClass?.instructor?._id === user.id);
   };
 
   const isEnrolled = (liveClass) => {
-    return user && liveClass.enrolledStudents.some(student => student._id === user.id);
+    return Boolean(
+      user && Array.isArray(liveClass?.enrolledStudents) &&
+      liveClass.enrolledStudents.some((student) => student?._id === user.id)
+    );
   };
 
   const upcomingClasses = liveClasses.filter(c => 
@@ -441,10 +451,10 @@ const LiveClasses = () => {
                                   <VStack spacing={3} align="stretch">
                                     <HStack justify="space-between">
                                       <HStack>
-                                        <Avatar size="sm" name={liveClass.instructor.name} />
+                                        <Avatar size="sm" name={liveClass.instructor?.name || 'Unknown Instructor'} />
                                         <VStack align="start" spacing={0}>
                                           <Text fontSize="sm" fontWeight="semibold" color="gray.800">
-                                            {liveClass.instructor.name}
+                                            {liveClass.instructor?.name || 'Unknown Instructor'}
                                           </Text>
                                           <Text fontSize="xs" color="gray.500">
                                             Instructor
@@ -454,7 +464,7 @@ const LiveClasses = () => {
                                       <HStack>
                                         <Icon as={FaUsers} color="neon.blue" />
                                         <Text fontSize="sm" color="gray.600">
-                                          {liveClass.enrolledStudents.length} enrolled
+                                          {liveClass.enrolledStudents?.length || 0} enrolled
                                         </Text>
                                       </HStack>
                                     </HStack>
@@ -464,7 +474,7 @@ const LiveClasses = () => {
                                       <HStack>
                                         <Icon as={FaCalendar} color="neon.purple" />
                                         <Text fontSize="sm" color="gray.700">
-                                          {formatDateTime(liveClass.scheduledAt)}
+                                          {formatDateTime(liveClass.scheduledAt || 'N/A')}
                                         </Text>
                                       </HStack>
                                       {liveClass.allowChat && (
@@ -480,7 +490,7 @@ const LiveClasses = () => {
                                   {/* Course Info */}
                                   <HStack justify="space-between">
                                     <Text fontSize="sm" fontWeight="medium" color="neon.blue">
-                                      {liveClass.course.title}
+                                      {liveClass.course?.title || 'N/A'}
                                     </Text>
                                     {liveClass.status === 'live' && (
                                       <Box
@@ -546,7 +556,7 @@ const LiveClasses = () => {
                                             size="sm"
                                             variant="outline"
                                             colorScheme="teal"
-                                            onClick={() => navigate(`/live-class/${liveClass._id}`)}
+                                            onClick={() => handleJoinClass(liveClass)}
                                             flex={1}
                                           >
                                             Join Now
@@ -641,10 +651,10 @@ const LiveClasses = () => {
                                   <VStack spacing={3} align="stretch">
                                     <HStack justify="space-between">
                                       <HStack>
-                                        <Avatar size="sm" name={liveClass.instructor.name} />
+                                        <Avatar size="sm" name={liveClass.instructor?.name || 'Unknown Instructor'} />
                                         <VStack align="start" spacing={0}>
                                           <Text fontSize="sm" fontWeight="semibold" color="gray.800">
-                                            {liveClass.instructor.name}
+                                            {liveClass.instructor?.name || 'Unknown Instructor'}
                                           </Text>
                                           <Text fontSize="xs" color="gray.500">
                                             Instructor
@@ -664,7 +674,7 @@ const LiveClasses = () => {
                                       <HStack>
                                         <Icon as={FaCalendar} color="neon.purple" />
                                         <Text fontSize="sm" color="gray.700">
-                                          {formatDateTime(liveClass.scheduledAt)}
+                                          {formatDateTime(liveClass.scheduledAt || 'N/A')}
                                         </Text>
                                       </HStack>
                                       {liveClass.isRecorded && (
@@ -680,7 +690,7 @@ const LiveClasses = () => {
                                   {/* Course Info */}
                                   <HStack justify="space-between">
                                     <Text fontSize="sm" fontWeight="medium" color="neon.blue">
-                                      {liveClass.course.title}
+                                      {liveClass.course?.title || 'N/A'}
                                     </Text>
                                     {liveClass.isRecorded && (
                                       <Badge variant="neon" colorScheme="purple" size="sm">
@@ -807,13 +817,13 @@ const LiveClasses = () => {
                                         <HStack>
                                           <Icon as={FaUsers} color="white" />
                                           <Text fontSize="sm" color="white">
-                                            {liveClass.enrolledStudents.length} enrolled
+                                            {liveClass.enrolledStudents?.length || 0} enrolled
                                           </Text>
                                         </HStack>
                                         <HStack>
                                           <Icon as={FaCalendar} color="white" />
                                           <Text fontSize="sm" color="white">
-                                            {formatDateTime(liveClass.scheduledAt)}
+                                            {formatDateTime(liveClass.scheduledAt || 'N/A')}
                                           </Text>
                                         </HStack>
                                       </HStack>
@@ -823,7 +833,7 @@ const LiveClasses = () => {
 
                                     {/* Course Info */}
                                     <Text fontSize="sm" fontWeight="medium" color="white" opacity={0.9}>
-                                      {liveClass.course.title}
+                                      {liveClass.course?.title || 'N/A'}
                                     </Text>
 
                                     {/* Action Buttons */}

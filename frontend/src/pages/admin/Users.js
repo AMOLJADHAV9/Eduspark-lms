@@ -72,11 +72,11 @@ const Users = () => {
   );
 
   return (
-    <Flex minH="100vh" bgGradient="linear(to-br, gray.900, teal.700)">
+    <Flex minH="100vh" bg="gray.50">
       <AdminSidebar />
       <Box flex={1} p={8}>
-        <Heading color="white" mb={8} textAlign="center">User Management</Heading>
-        <Box bg="white" p={6} rounded="lg" shadow="xl">
+        <Box bg="white" p={6} rounded="2xl" shadow="0 4px 20px rgba(0, 0, 0, 0.1)" border="1px solid" borderColor="gray.200" mb={6}>
+          <Heading color="green.600" mb={4} textAlign="center" fontSize="3xl" fontWeight="extrabold">User Management</Heading>
           <Input
             placeholder="Search by name or email"
             mb={4}
@@ -84,13 +84,18 @@ const Users = () => {
             onChange={e => setSearch(e.target.value)}
             maxW="sm"
             bg="gray.50"
+            border="1px solid"
+            borderColor="gray.200"
+            _focus={{ borderColor: 'green.500', boxShadow: '0 0 0 1px green.500' }}
           />
+        </Box>
+        <Box bg="white" p={6} rounded="2xl" shadow="0 4px 20px rgba(0, 0, 0, 0.1)" border="1px solid" borderColor="gray.200">
           {loading ? (
             <Box display="flex" justifyContent="center" alignItems="center" minH="30vh">
-              <Spinner size="lg" color="teal.400" />
+              <Spinner size="lg" color="green.500" />
             </Box>
           ) : (
-            <Table variant="simple" colorScheme="teal">
+            <Table variant="simple" colorScheme="green">
               <Thead>
                 <Tr>
                   <Th>Name</Th>
@@ -124,6 +129,8 @@ const Users = () => {
                         onClick={() => handleDelete(u._id)}
                         isDisabled={u._id === user?._id}
                         aria-label="Delete user"
+                        _hover={{ transform: 'translateY(-1px)', boxShadow: '0 4px 12px rgba(239, 68, 68, 0.4)' }}
+                        transition="all 0.2s ease"
                       />
                     </Td>
                   </Tr>

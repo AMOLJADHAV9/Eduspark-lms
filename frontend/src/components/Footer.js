@@ -17,7 +17,7 @@ const MotionBox = motion(Box);
 
 const Footer = () => (
   <MotionBox
-    bg="gradients.dark"
+    bg="teal.700"
     color="white"
     py={12}
     mt={16}
@@ -62,25 +62,25 @@ const Footer = () => (
             <Box
               w="50px"
               h="50px"
-              bg="gradients.primary"
+              bg="teal.500"
               borderRadius="xl"
               display="flex"
               alignItems="center"
               justifyContent="center"
-              boxShadow="neon-blue"
+              boxShadow="3d-md"
             >
               <Icon as={FaGraduationCap} boxSize={6} color="white" />
             </Box>
             <VStack align="start" spacing={0}>
-              <Text fontWeight="extrabold" fontSize="2xl" className="gradient-text">
-                PW LMS
+              <Text fontWeight="extrabold" fontSize="2xl" color="white">
+                SkillEdge
               </Text>
-              <Text fontSize="sm" color="gray.300">
+              <Text fontSize="sm" color="whiteAlpha.800">
                 Empowering Education Through Technology
               </Text>
             </VStack>
           </HStack>
-          <Text color="gray.300" maxW="300px" lineHeight="tall">
+          <Text color="whiteAlpha.800" maxW="300px" lineHeight="tall">
             Transform your learning experience with our cutting-edge Learning Management System. 
             Join thousands of students and educators worldwide.
           </Text>
@@ -97,54 +97,10 @@ const Footer = () => (
             Quick Links
           </Text>
           <VStack align="start" spacing={2}>
-            <Link 
-              href="#about" 
-              color="gray.300" 
-              _hover={{ 
-                color: 'neon.blue',
-                textShadow: '0 0 10px rgba(0, 212, 255, 0.5)',
-                transform: 'translateX(5px)'
-              }}
-              transition="all 0.3s"
-            >
-              About Us
-            </Link>
-            <Link 
-              href="#courses" 
-              color="gray.300" 
-              _hover={{ 
-                color: 'neon.purple',
-                textShadow: '0 0 10px rgba(168, 85, 247, 0.5)',
-                transform: 'translateX(5px)'
-              }}
-              transition="all 0.3s"
-            >
-              Courses
-            </Link>
-            <Link 
-              href="#live-classes" 
-              color="gray.300" 
-              _hover={{ 
-                color: 'neon.green',
-                textShadow: '0 0 10px rgba(16, 185, 129, 0.5)',
-                transform: 'translateX(5px)'
-              }}
-              transition="all 0.3s"
-            >
-              Live Classes
-            </Link>
-            <Link 
-              href="#certificates" 
-              color="gray.300" 
-              _hover={{ 
-                color: 'neon.orange',
-                textShadow: '0 0 10px rgba(245, 158, 11, 0.5)',
-                transform: 'translateX(5px)'
-              }}
-              transition="all 0.3s"
-            >
-              Certificates
-            </Link>
+            <Link href="#about" color="whiteAlpha.900" _hover={{ color: 'white', textDecoration: 'underline' }} transition="all 0.3s">About Us</Link>
+            <Link href="#courses" color="whiteAlpha.900" _hover={{ color: 'white', textDecoration: 'underline' }} transition="all 0.3s">Courses</Link>
+            <Link href="#live-classes" color="whiteAlpha.900" _hover={{ color: 'white', textDecoration: 'underline' }} transition="all 0.3s">Live Classes</Link>
+            <Link href="#certificates" color="whiteAlpha.900" _hover={{ color: 'white', textDecoration: 'underline' }} transition="all 0.3s">Certificates</Link>
           </VStack>
         </VStack>
 
@@ -154,54 +110,10 @@ const Footer = () => (
             Support
           </Text>
           <VStack align="start" spacing={2}>
-            <Link 
-              href="#contact" 
-              color="gray.300" 
-              _hover={{ 
-                color: 'neon.blue',
-                textShadow: '0 0 10px rgba(0, 212, 255, 0.5)',
-                transform: 'translateX(5px)'
-              }}
-              transition="all 0.3s"
-            >
-              Contact Us
-            </Link>
-            <Link 
-              href="#help" 
-              color="gray.300" 
-              _hover={{ 
-                color: 'neon.purple',
-                textShadow: '0 0 10px rgba(168, 85, 247, 0.5)',
-                transform: 'translateX(5px)'
-              }}
-              transition="all 0.3s"
-            >
-              Help Center
-            </Link>
-            <Link 
-              href="#privacy" 
-              color="gray.300" 
-              _hover={{ 
-                color: 'neon.green',
-                textShadow: '0 0 10px rgba(16, 185, 129, 0.5)',
-                transform: 'translateX(5px)'
-              }}
-              transition="all 0.3s"
-            >
-              Privacy Policy
-            </Link>
-            <Link 
-              href="#terms" 
-              color="gray.300" 
-              _hover={{ 
-                color: 'neon.orange',
-                textShadow: '0 0 10px rgba(245, 158, 11, 0.5)',
-                transform: 'translateX(5px)'
-              }}
-              transition="all 0.3s"
-            >
-              Terms of Service
-            </Link>
+            <Link href="#contact" color="whiteAlpha.900" _hover={{ color: 'white', textDecoration: 'underline' }} transition="all 0.3s">Contact Us</Link>
+            <Link href="#help" color="whiteAlpha.900" _hover={{ color: 'white', textDecoration: 'underline' }} transition="all 0.3s">Help Center</Link>
+            <Link href="#privacy" color="whiteAlpha.900" _hover={{ color: 'white', textDecoration: 'underline' }} transition="all 0.3s">Privacy Policy</Link>
+            <Link href="#terms" color="whiteAlpha.900" _hover={{ color: 'white', textDecoration: 'underline' }} transition="all 0.3s">Terms of Service</Link>
           </VStack>
         </VStack>
 
@@ -211,80 +123,16 @@ const Footer = () => (
             Connect With Us
           </Text>
           <HStack spacing={4}>
-            <Box
-              as="a"
-              href="#github"
-              w="40px"
-              h="40px"
-              bg="glass.200"
-              borderRadius="full"
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-              _hover={{
-                bg: 'neon.blue',
-                boxShadow: 'neon-blue',
-                transform: 'translateY(-3px) scale(1.1)',
-              }}
-              transition="all 0.3s"
-            >
+            <Box as="a" href="#github" w="40px" h="40px" bg="whiteAlpha.200" borderRadius="full" display="flex" alignItems="center" justifyContent="center" _hover={{ bg: 'whiteAlpha.300', boxShadow: '3d-md', transform: 'translateY(-3px) scale(1.1)' }} transition="all 0.3s">
               <Icon as={FaGithub} color="white" />
             </Box>
-            <Box
-              as="a"
-              href="#twitter"
-              w="40px"
-              h="40px"
-              bg="glass.200"
-              borderRadius="full"
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-              _hover={{
-                bg: 'neon.purple',
-                boxShadow: 'neon-purple',
-                transform: 'translateY(-3px) scale(1.1)',
-              }}
-              transition="all 0.3s"
-            >
+            <Box as="a" href="#twitter" w="40px" h="40px" bg="whiteAlpha.200" borderRadius="full" display="flex" alignItems="center" justifyContent="center" _hover={{ bg: 'whiteAlpha.300', boxShadow: '3d-md', transform: 'translateY(-3px) scale(1.1)' }} transition="all 0.3s">
               <Icon as={FaTwitter} color="white" />
             </Box>
-            <Box
-              as="a"
-              href="#linkedin"
-              w="40px"
-              h="40px"
-              bg="glass.200"
-              borderRadius="full"
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-              _hover={{
-                bg: 'neon.green',
-                boxShadow: 'neon-green',
-                transform: 'translateY(-3px) scale(1.1)',
-              }}
-              transition="all 0.3s"
-            >
+            <Box as="a" href="#linkedin" w="40px" h="40px" bg="whiteAlpha.200" borderRadius="full" display="flex" alignItems="center" justifyContent="center" _hover={{ bg: 'whiteAlpha.300', boxShadow: '3d-md', transform: 'translateY(-3px) scale(1.1)' }} transition="all 0.3s">
               <Icon as={FaLinkedin} color="white" />
             </Box>
-            <Box
-              as="a"
-              href="#email"
-              w="40px"
-              h="40px"
-              bg="glass.200"
-              borderRadius="full"
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-              _hover={{
-                bg: 'neon.orange',
-                boxShadow: 'neon-orange',
-                transform: 'translateY(-3px) scale(1.1)',
-              }}
-              transition="all 0.3s"
-            >
+            <Box as="a" href="#email" w="40px" h="40px" bg="whiteAlpha.200" borderRadius="full" display="flex" alignItems="center" justifyContent="center" _hover={{ bg: 'whiteAlpha.300', boxShadow: '3d-md', transform: 'translateY(-3px) scale(1.1)' }} transition="all 0.3s">
               <Icon as={FaEnvelope} color="white" />
             </Box>
           </HStack>
@@ -292,23 +140,17 @@ const Footer = () => (
       </Flex>
 
       {/* Bottom Section */}
-      <Box 
-        borderTop="1px solid" 
-        borderColor="glass.300" 
-        mt={8} 
-        pt={8}
-        textAlign="center"
-      >
+      <Box borderTop="1px solid" borderColor="whiteAlpha.300" mt={8} pt={8} textAlign="center">
         <HStack justify="center" spacing={2} mb={2}>
-          <Text fontSize="sm" color="gray.300">
+          <Text fontSize="sm" color="whiteAlpha.700">
             Made with
           </Text>
-          <Icon as={FaHeart} color="neon.pink" animation="pulse 2s infinite" />
-          <Text fontSize="sm" color="gray.300">
+          <Icon as={FaHeart} color="red.400" animation="pulse 2s infinite" />
+          <Text fontSize="sm" color="whiteAlpha.700">
             by the PW LMS Team
           </Text>
         </HStack>
-        <Text fontSize="sm" color="gray.400">
+        <Text fontSize="sm" color="whiteAlpha.600">
           &copy; {new Date().getFullYear()} PW LMS. All rights reserved.
         </Text>
       </Box>
