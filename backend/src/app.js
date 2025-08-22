@@ -35,7 +35,7 @@ const parseOrigins = (csv) => (csv || '')
 
 const defaultOrigins = [
   'http://localhost:3000',
-  'https://lms-drab-six.vercel.app'
+  'https://eduspark-lms.vercel.app',
 ];
 
 const allowedOrigins = parseOrigins(process.env.CORS_ORIGINS).length
