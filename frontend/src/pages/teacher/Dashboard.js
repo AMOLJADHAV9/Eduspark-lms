@@ -35,7 +35,8 @@ import {
   FaClipboardList,
   FaGraduationCap,
   FaFileAlt,
-  FaComments
+  FaComments,
+  FaPlus
 } from 'react-icons/fa';
 import { useAuth } from '../../context/AuthContext';
 import TeacherSidebar from '../../components/teacher/TeacherSidebar';
