@@ -143,11 +143,11 @@ const Footer = () => (
           </Text>
           <Icon as={FaHeart} color="red.400" animation="pulse 2s infinite" />
           <Text fontSize="sm" color="whiteAlpha.700">
-            by the PW LMS Team
+            by the Aj DevLabs Team
           </Text>
         </HStack>
         <Text fontSize="sm" color="whiteAlpha.600">
-          &copy; 2025 Eduspark India AJ DevLabs Team. All rights reserved.
+          &copy; 2025 Eduspark India . All rights reserved.
         </Text>
       </Box>
     </Box>
