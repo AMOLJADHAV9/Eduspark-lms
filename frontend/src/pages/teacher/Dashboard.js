@@ -23,7 +23,8 @@ import {
   Center,
   Icon,
   Button,
-  useDisclosure
+  useDisclosure,
+  color
 } from '@chakra-ui/react';
 import {
   FaBook,
@@ -137,7 +138,7 @@ const TeacherDashboard = () => {
   return (
     <Box bg="white" minH="100vh">
       <Navbar />
-      <TeacherSidebar isOpen={isOpen} onToggle={onToggle} onClose={onClose} />
+      <TeacherSidebar isOpen={isOpen} onToggle={onToggle} onClose={onClose}  style={{ marginTop: '62px',marginLeft: '-10px',backgroundColor: '#1d127d',color: 'white' }}/>
       <Flex minH="calc(100vh - 80px)" bg="gray.50">
         {/* <TeacherSidebar isOpen={isOpen} onToggle={onToggle} onClose={onClose} /> */}
         <Box flex={1} p={{ base: 4, md: 8 }} overflowX="auto">
