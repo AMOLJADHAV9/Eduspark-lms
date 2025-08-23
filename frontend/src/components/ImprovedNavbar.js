@@ -26,7 +26,6 @@ import {
   InputGroup,
   InputLeftElement,
   Divider,
-  Badge,
   useToast
 } from '@chakra-ui/react';
 import { Link as RouterLink, useNavigate, useLocation } from 'react-router-dom';
@@ -43,17 +42,9 @@ import {
   FaCertificate, 
   FaTrophy, 
   FaUser, 
-  FaCog,
   FaSignOutAlt,
-  FaTachometerAlt
+  FaDashboard
 } from 'react-icons/fa';
-
-const scrollToSection = (sectionId) => {
-  const element = document.getElementById(sectionId);
-  if (element) {
-    element.scrollIntoView({ behavior: 'smooth' });
-  }
-};
 
 const MotionBox = motion(Box);
 const MotionText = motion(Text);
@@ -64,7 +55,7 @@ const menuItemVariants = {
   hover: { scale: 1.08, color: '#5A4BDA', textShadow: '0 2px 8px rgba(90,75,218,0.15)' },
 };
 
-const Navbar = () => {
+const ImprovedNavbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, logout, isAdmin, isTeacher } = useAuth();
@@ -110,7 +101,7 @@ const Navbar = () => {
         ...(user.role !== 'admin' ? [{ label: 'Certificates', to: '/certificates', icon: FaCertificate }] : []),
         ...(user.role !== 'teacher' && user.role !== 'admin' ? [{ label: 'Achievements', to: '/achievements', icon: FaTrophy }] : []),
         ...(user.role !== 'teacher' && user.role !== 'admin' ? [{ label: 'Personalized', to: '/personalized-dashboard' }] : []),
-        ...(user.role === 'teacher' ? [{ label: 'Teacher Dashboard', to: '/teacher/dashboard', icon: FaTachometerAlt }] : []),
+        ...(user.role === 'teacher' ? [{ label: 'Teacher Dashboard', to: '/teacher/dashboard', icon: FaDashboard }] : []),
       ] : []),
       ...(user?.role !== 'teacher' && user?.role !== 'admin' ? [{ label: 'Pricing', to: '/pricing' }] : []),
       { label: 'Verify Certificate', to: '/certificate/verify' },
@@ -200,7 +191,7 @@ const Navbar = () => {
                   variant="ghost"
                   justifyContent="flex-start"
                   size="lg"
-                  leftIcon={<FaTachometerAlt />}
+                  leftIcon={<FaDashboard />}
                   onClick={() => {
                     navigate(isAdmin ? "/admin/dashboard" : isTeacher ? "/teacher/dashboard" : "/user/dashboard");
                     onClose();
@@ -409,7 +400,7 @@ const Navbar = () => {
                   style={{ backdropFilter: 'blur(12px)' }}
                 >
                   <MenuItem as={RouterLink} to={isAdmin ? "/admin/dashboard" : isTeacher ? "/teacher/dashboard" : "/user/dashboard"}>
-                    <FaTachometerAlt style={{ marginRight: '8px' }} />
+                    <FaDashboard style={{ marginRight: '8px' }} />
                     Dashboard
                   </MenuItem>
                   {!isAdmin && (
@@ -469,4 +460,4 @@ const Navbar = () => {
   );
 };
 
-export default Navbar; 
+export default ImprovedNavbar;

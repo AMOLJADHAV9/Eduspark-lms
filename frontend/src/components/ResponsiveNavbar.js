@@ -26,7 +26,6 @@ import {
   InputGroup,
   InputLeftElement,
   Divider,
-  Badge,
   useToast
 } from '@chakra-ui/react';
 import { Link as RouterLink, useNavigate, useLocation } from 'react-router-dom';
@@ -35,7 +34,6 @@ import { useAuth } from '../context/AuthContext';
 import NotificationBell from './NotificationBell';
 import { 
   FaBars, 
-  FaTimes, 
   FaSearch, 
   FaHome, 
   FaBook, 
@@ -43,44 +41,25 @@ import {
   FaCertificate, 
   FaTrophy, 
   FaUser, 
-  FaCog,
   FaSignOutAlt,
-  FaTachometerAlt
+  FaDashboard
 } from 'react-icons/fa';
-
-const scrollToSection = (sectionId) => {
-  const element = document.getElementById(sectionId);
-  if (element) {
-    element.scrollIntoView({ behavior: 'smooth' });
-  }
-};
 
 const MotionBox = motion(Box);
 const MotionText = motion(Text);
-const MotionMenuList = motion(MenuList);
 
-const menuItemVariants = {
-  initial: { y: 0, scale: 1, color: '#4A5568' },
-  hover: { scale: 1.08, color: '#5A4BDA', textShadow: '0 2px 8px rgba(90,75,218,0.15)' },
-};
-
-const Navbar = () => {
+const ResponsiveNavbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, logout, isAdmin, isTeacher } = useAuth();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [searchTerm, setSearchTerm] = useState('');
   const isMobile = useBreakpointValue({ base: true, md: false });
-  const isTablet = useBreakpointValue({ base: false, md: true, lg: false });
   const toast = useToast();
   
   const glassBg = useColorModeValue(
     'rgba(255,255,255,0.95)',
     'rgba(26,32,44,0.95)'
-  );
-  const glassBorder = useColorModeValue(
-    '1px solid rgba(180, 255, 255, 0.18)',
-    '1px solid rgba(49, 151, 149, 0.18)'
   );
 
   const handleLogout = () => {
@@ -109,24 +88,13 @@ const Navbar = () => {
       ...(user ? [
         ...(user.role !== 'admin' ? [{ label: 'Certificates', to: '/certificates', icon: FaCertificate }] : []),
         ...(user.role !== 'teacher' && user.role !== 'admin' ? [{ label: 'Achievements', to: '/achievements', icon: FaTrophy }] : []),
-        ...(user.role !== 'teacher' && user.role !== 'admin' ? [{ label: 'Personalized', to: '/personalized-dashboard' }] : []),
-        ...(user.role === 'teacher' ? [{ label: 'Teacher Dashboard', to: '/teacher/dashboard', icon: FaTachometerAlt }] : []),
+        ...(user.role === 'teacher' ? [{ label: 'Teacher Dashboard', to: '/teacher/dashboard', icon: FaDashboard }] : []),
       ] : []),
-      ...(user?.role !== 'teacher' && user?.role !== 'admin' ? [{ label: 'Pricing', to: '/pricing' }] : []),
-      { label: 'Verify Certificate', to: '/certificate/verify' },
       { label: 'About', to: '/about' },
       { label: 'Contact', to: '/contact' },
     ];
 
-    const isStudent = user?.role === 'student';
-    const path = location.pathname;
-    const onStudentLandingOrDashboard = (path === '/') || (isStudent && path === '/user/dashboard');
-
-    const filtered = onStudentLandingOrDashboard
-      ? baseItems.filter(i => !['Personalized', 'Pricing', 'Verify Certificate'].includes(i.label))
-      : baseItems;
-
-    return filtered;
+    return baseItems;
   };
 
   const menuItems = getMenuItems();
@@ -154,7 +122,7 @@ const Navbar = () => {
                   onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
                   bg="white"
                   borderColor="gray.200"
-                  _focus={{ borderColor: 'teal.500', boxShadow: '0 0 0 1px var(--chakra-colors-teal-500)' }}
+                  _focus={{ borderColor: 'teal.500' }}
                 />
               </InputGroup>
               <Button
@@ -183,7 +151,6 @@ const Navbar = () => {
                   onClose();
                 }}
                 _hover={{ bg: 'teal.50', color: 'teal.600' }}
-                _active={{ bg: 'teal.100' }}
                 borderRadius="lg"
                 h="56px"
               >
@@ -200,7 +167,7 @@ const Navbar = () => {
                   variant="ghost"
                   justifyContent="flex-start"
                   size="lg"
-                  leftIcon={<FaTachometerAlt />}
+                  leftIcon={<FaDashboard />}
                   onClick={() => {
                     navigate(isAdmin ? "/admin/dashboard" : isTeacher ? "/teacher/dashboard" : "/user/dashboard");
                     onClose();
@@ -333,7 +300,7 @@ const Navbar = () => {
                 onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
                 bg="white"
                 borderColor="gray.200"
-                _focus={{ borderColor: 'teal.500', boxShadow: '0 0 0 1px var(--chakra-colors-teal-500)' }}
+                _focus={{ borderColor: 'teal.500' }}
               />
             </InputGroup>
           </Box>
@@ -341,17 +308,15 @@ const Navbar = () => {
 
         {/* Desktop Menu */}
         {!isMobile && (
-          <HStack spacing={{ md: 4, lg: 6 }} display={{ base: 'none', md: 'flex' }}>
-            {menuItems.slice(0, isTablet ? 3 : 5).map((item) => (
+          <HStack spacing={6} display={{ base: 'none', md: 'flex' }}>
+            {menuItems.slice(0, 4).map((item) => (
               <MotionText
                 key={item.label}
                 cursor="pointer"
                 fontWeight="medium"
                 color="gray.700"
                 fontSize="sm"
-                variants={menuItemVariants}
-                initial={menuItemVariants.initial}
-                whileHover="hover"
+                whileHover={{ scale: 1.08, color: '#5A4BDA' }}
                 transition={{ type: 'spring', stiffness: 400 }}
                 onClick={() => navigate(item.to)}
                 position="relative"
@@ -395,35 +360,22 @@ const Navbar = () => {
               >
                 <Text display={{ base: 'none', lg: 'block' }}>{user.name}</Text>
               </MenuButton>
-              <AnimatePresence>
-                <MotionMenuList
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ duration: 0.18 }}
-                  as={Box}
-                  borderRadius="xl"
-                  boxShadow="xl"
-                  bg={glassBg}
-                  border={glassBorder}
-                  style={{ backdropFilter: 'blur(12px)' }}
-                >
-                  <MenuItem as={RouterLink} to={isAdmin ? "/admin/dashboard" : isTeacher ? "/teacher/dashboard" : "/user/dashboard"}>
-                    <FaTachometerAlt style={{ marginRight: '8px' }} />
-                    Dashboard
+              <MenuList>
+                <MenuItem as={RouterLink} to={isAdmin ? "/admin/dashboard" : isTeacher ? "/teacher/dashboard" : "/user/dashboard"}>
+                  <FaDashboard style={{ marginRight: '8px' }} />
+                  Dashboard
+                </MenuItem>
+                {!isAdmin && (
+                  <MenuItem as={RouterLink} to="/profile">
+                    <FaUser style={{ marginRight: '8px' }} />
+                    Profile
                   </MenuItem>
-                  {!isAdmin && (
-                    <MenuItem as={RouterLink} to="/profile">
-                      <FaUser style={{ marginRight: '8px' }} />
-                      Profile
-                    </MenuItem>
-                  )}
-                  <MenuItem onClick={handleLogout} color="red.500">
-                    <FaSignOutAlt style={{ marginRight: '8px' }} />
-                    Logout
-                  </MenuItem>
-                </MotionMenuList>
-              </AnimatePresence>
+                )}
+                <MenuItem onClick={handleLogout} color="red.500">
+                  <FaSignOutAlt style={{ marginRight: '8px' }} />
+                  Logout
+                </MenuItem>
+              </MenuList>
             </Menu>
           </HStack>
         ) : (
@@ -469,4 +421,4 @@ const Navbar = () => {
   );
 };
 
-export default Navbar; 
+export default ResponsiveNavbar;
