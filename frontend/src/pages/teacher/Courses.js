@@ -288,7 +288,7 @@ const TeacherCourses = () => {
         <Navbar />
         <Flex minH="100vh" bg="gray.50">
           <TeacherSidebar />
-          <Box flex={1} p={8}>
+          <Box flex={1} p={8} ml={{ base: "-15px", md: 0 }}>
             <Center h="50vh">
               <Spinner size="xl" color="blue.500" />
             </Center>
@@ -303,7 +303,7 @@ const TeacherCourses = () => {
       <Navbar />
       <Flex minH="100vh" bg="gray.50">
         <TeacherSidebar />
-        <Box flex={1} p={8}>
+        <Box flex={1} p={8} ml={{ base: "-15px", md: 0 }}>
           <VStack spacing={8} align="stretch">
             {/* Header */}
             <Box

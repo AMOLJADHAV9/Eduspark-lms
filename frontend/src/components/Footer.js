@@ -100,7 +100,6 @@ const Footer = () => (
             <Link href="#about" color="whiteAlpha.900" _hover={{ color: 'white', textDecoration: 'underline' }} transition="all 0.3s">About Us</Link>
             <Link href="#courses" color="whiteAlpha.900" _hover={{ color: 'white', textDecoration: 'underline' }} transition="all 0.3s">Courses</Link>
             <Link href="#live-classes" color="whiteAlpha.900" _hover={{ color: 'white', textDecoration: 'underline' }} transition="all 0.3s">Live Classes</Link>
-            <Link href="#certificates" color="whiteAlpha.900" _hover={{ color: 'white', textDecoration: 'underline' }} transition="all 0.3s">Certificates</Link>
           </VStack>
         </VStack>
 

@@ -29,14 +29,8 @@ import AssignmentCreate from './pages/AssignmentCreate';
 import AssignmentSubmit from './pages/AssignmentSubmit';
 import CourseAssignments from './pages/CourseAssignments';
 import AdminAssignments from './pages/admin/Assignments';
-import CertificateView from './pages/CertificateView';
-import Certificates from './pages/Certificates';
-import CertificateVerify from './pages/CertificateVerify';
 import AdminCertificates from './pages/admin/Certificates';
 import CourseForums from './pages/CourseForums';
-import Achievements from './pages/Achievements';
-import PersonalizedDashboard from './pages/PersonalizedDashboard';
-import PricingPlans from './pages/PricingPlans';
 import AnalyticsDashboard from './pages/AnalyticsDashboard';
 import AuthProvider from './context/AuthContext';
 import TeacherDashboard from './pages/teacher/Dashboard';
@@ -55,7 +49,6 @@ import RoleSelection from './pages/RoleSelection';
 import TeacherApplications from './pages/admin/TeacherApplications';
 import StudentProfile from './pages/Profile';
 import Notifications from './pages/Notifications';
-import ResponsiveTest from './pages/ResponsiveTest';
 import Home from './pages/teacher/Home';
 import Room from './pages/teacher/Room';
 
@@ -92,14 +85,8 @@ function App() {
           <Route path="/assignment/:id/submit" element={<AssignmentSubmit />} />
           <Route path="/course/:courseId/assignments" element={<CourseAssignments />} />
           <Route path="/admin/assignments" element={<AdminAssignments />} />
-          <Route path="/certificate/:id" element={<CertificateView />} />
-          <Route path="/certificates" element={<Certificates />} />
-          <Route path="/certificate/verify" element={<CertificateVerify />} />
           <Route path="/admin/certificates" element={<AdminCertificates />} />
           <Route path="/course/:courseId/forums" element={<CourseForums />} />
-          <Route path="/achievements" element={<Achievements />} />
-          <Route path="/personalized-dashboard" element={<PersonalizedDashboard />} />
-          <Route path="/pricing" element={<PricingPlans />} />
           <Route path="/analytics" element={<AnalyticsDashboard />} />
           <Route path="/teacher/dashboard" element={<TeacherDashboard />} />
           <Route path="/teacher/courses" element={<TeacherCourses />} />
@@ -122,7 +109,6 @@ function App() {
             <Route path="/teacher/profile" element={<TeacherProfile />} />
             <Route path="/profile" element={<StudentProfile />} />
             <Route path="/notifications" element={<Notifications />} />
-            <Route path="/responsive-test" element={<ResponsiveTest />} />
             <Route path="*" element={<Navigate to="/login" />} />
           </Routes>
         </Router>

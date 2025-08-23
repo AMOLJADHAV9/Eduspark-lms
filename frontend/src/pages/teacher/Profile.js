@@ -1,54 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Box,
-  Heading,
-  FormControl,
-  FormLabel,
-  Input,
-  Textarea,
-  Button,
-  VStack,
-  Avatar,
-  HStack,
-  IconButton,
-  useToast,
-  Card,
-  CardBody,
-  CardHeader,
-  Text,
-  Badge,
-  Divider,
-  Flex,
-  Spacer,
-  useColorModeValue,
-  InputGroup,
-  InputLeftElement,
-  Select,
-  Tag,
-  TagLabel,
-  TagCloseButton,
-  Wrap,
-  WrapItem,
-  Alert,
-  AlertIcon,
-  AlertTitle,
-  AlertDescription
-} from '@chakra-ui/react';
-import {
-  FaPlus,
-  FaTrash,
   FaUser,
   FaEnvelope,
-  FaPhone,
+  FaBirthdayCake,
   FaGraduationCap,
-  FaBriefcase,
+  FaSchool,
   FaImage,
+  FaHeart,
   FaLink,
   FaEdit,
   FaSave,
   FaTimes,
-  FaChalkboardTeacher,
-  FaAward,
+  FaPlus,
+  FaTrash,
+  FaLinkedin,
+  FaGithub,
+  FaTwitter,
   FaGlobe
 } from 'react-icons/fa';
 import axios from 'axios';
@@ -61,11 +28,7 @@ const TeacherProfile = () => {
   const [edit, setEdit] = useState(false);
   const [form, setForm] = useState({});
   const [saving, setSaving] = useState(false);
-  const toast = useToast();
-
-  const bgColor = useColorModeValue('white', 'gray.800');
-  const borderColor = useColorModeValue('gray.200', 'gray.700');
-  const cardBg = useColorModeValue('white', 'gray.700');
+  const [newInterest, setNewInterest] = useState('');
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -82,35 +45,44 @@ const TeacherProfile = () => {
           const defaultProfile = {
             fullName: user?.name || '',
             email: user?.email || '',
-            phone: '',
+            age: '',
             bio: '',
-            expertise: '',
-            experience: '',
-            education: '',
-            portfolio: '',
+            interests: [],
             profilePicture: '',
+            specialization: '',
+            institution: '',
+            experience: '',
             socialLinks: []
           };
           setProfile(defaultProfile);
           setForm(defaultProfile);
-        } else {
-          toast({
-            title: 'Error loading profile',
-            description: 'Please try again later',
-            status: 'error',
-            duration: 5000,
-            isClosable: true
-          });
         }
       } finally {
         setLoading(false);
       }
     };
     fetchProfile();
-  }, [token, toast, apiBaseUrl, user]);
+  }, [token, apiBaseUrl, user]);
 
   const handleChange = e => {
     setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const addInterest = () => {
+    if (newInterest.trim() && !form.interests?.includes(newInterest.trim())) {
+      setForm({
+        ...form,
+        interests: [...(form.interests || []), newInterest.trim()]
+      });
+      setNewInterest('');
+    }
+  };
+
+  const removeInterest = (interest) => {
+    setForm({
+      ...form,
+      interests: (form.interests || []).filter(i => i !== interest)
+    });
   };
 
   const handleSocialChange = (idx, field, value) => {
@@ -142,386 +114,374 @@ const TeacherProfile = () => {
       });
       setProfile(res.data);
       setEdit(false);
-      toast({
-        title: 'Profile updated successfully!',
-        status: 'success',
-        duration: 3000,
-        isClosable: true
-      });
     } catch (err) {
       console.error('Profile update error:', err);
-      toast({
-        title: 'Error updating profile',
-        description: err.response?.data?.message || 'Please try again',
-        status: 'error',
-        duration: 5000,
-        isClosable: true
-      });
     } finally {
       setSaving(false);
     }
   };
 
+  const getInitials = (name) => {
+    return name
+      ?.split(' ')
+      .map(word => word.charAt(0))
+      .join('')
+      .toUpperCase() || 'T';
+  };
+
+  const getSocialIcon = (platform) => {
+    const platformLower = platform.toLowerCase();
+    if (platformLower.includes('linkedin')) return FaLinkedin;
+    if (platformLower.includes('github')) return FaGithub;
+    if (platformLower.includes('twitter')) return FaTwitter;
+    return FaGlobe;
+  };
+
   if (loading) {
     return (
-      <Box p={8} textAlign="center">
-        <VStack spacing={4}>
-          <Box className="loading-spinner" />
-          <Text>Loading your profile...</Text>
-        </VStack>
-      </Box>
+      <div className="max-w-md mx-auto px-4 py-6">
+        <div className="flex items-center justify-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-500"></div>
+        </div>
+      </div>
     );
   }
 
   if (!profile) {
     return (
-      <Box p={8} textAlign="center">
-        <Alert status="info">
-          <AlertIcon />
-          <AlertTitle>Profile not found!</AlertTitle>
-          <AlertDescription>
-            We couldn't load your profile. Please try refreshing the page.
-          </AlertDescription>
-        </Alert>
-      </Box>
+      <div className="max-w-md mx-auto px-4 py-6">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-center">
+          <p className="text-red-600">Profile not found. Please try refreshing the page.</p>
+        </div>
+      </div>
     );
   }
 
   return (
-    <Box maxW="4xl" mx="auto" p={8}>
-      <VStack spacing={8} align="stretch">
-        {/* Header */}
-        <Card bg={cardBg} shadow="lg" border="1px" borderColor={borderColor}>
-          <CardHeader>
-            <Flex align="center" justify="space-between">
-              <VStack align="start" spacing={2}>
-                <Heading size="lg" color="teal.500">
-                  Teacher Profile
-                </Heading>
-                <Text color="gray.500">
-                  Manage your teaching profile and professional information
-                </Text>
-              </VStack>
-              {!edit && (
-                <Button
-                  leftIcon={<FaEdit />}
-                  colorScheme="teal"
-                  variant="outline"
-                  onClick={() => setEdit(true)}
-                >
-                  Edit Profile
-                </Button>
-              )}
-            </Flex>
-          </CardHeader>
-        </Card>
+    <div className="max-w-md mx-auto px-4 py-6">
+      {/* Profile Header */}
+      <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6 mb-6">
+        <div className="flex flex-col items-center space-y-4">
+          {/* Avatar */}
+          <div className="relative">
+            {profile.profilePicture ? (
+              <img
+                src={profile.profilePicture}
+                alt={profile.fullName}
+                className="w-24 h-24 rounded-full object-cover border-4 border-teal-200"
+              />
+            ) : (
+              <div className="w-24 h-24 rounded-full bg-teal-500 flex items-center justify-center text-white text-2xl font-bold border-4 border-teal-200">
+                {getInitials(profile.fullName)}
+              </div>
+            )}
+            {edit && (
+              <button className="absolute -bottom-1 -right-1 bg-teal-500 text-white rounded-full p-2 hover:bg-teal-600 transition-colors">
+                <FaImage className="w-4 h-4" />
+              </button>
+            )}
+          </div>
 
-        {/* Profile Content */}
-        <Card bg={cardBg} shadow="lg" border="1px" borderColor={borderColor}>
-          <CardBody>
-            <VStack spacing={8} align="stretch">
-              {/* Profile Picture and Basic Info */}
-              <HStack spacing={8} align="start">
-                <VStack spacing={4}>
-                  <Avatar
-                    size="2xl"
-                    name={typeof profile?.fullName === 'string' ? profile.fullName : 'Teacher'}
-                    src={typeof profile?.profilePicture === 'string' ? profile.profilePicture : undefined}
-                    border="4px solid"
-                    borderColor="teal.200"
-                  />
-                  {edit && (
-                    <FormControl>
-                      <FormLabel fontSize="sm" color="gray.600">
-                        Profile Picture URL
-                      </FormLabel>
-                      <InputGroup>
-                        <InputLeftElement>
-                          <FaImage color="gray.400" />
-                        </InputLeftElement>
-                        <Input
-                          name="profilePicture"
-                          value={form.profilePicture || ''}
-                          onChange={handleChange}
-                          placeholder="https://example.com/image.jpg"
-                        />
-                      </InputGroup>
-                    </FormControl>
-                  )}
-                </VStack>
+          {/* Name and Edit Button */}
+          <div className="text-center">
+            <h1 className="text-2xl font-bold text-gray-800 mb-2">
+              {profile.fullName || 'Teacher Name'}
+            </h1>
+            {!edit && (
+              <button
+                onClick={() => setEdit(true)}
+                className="bg-teal-500 text-white px-6 py-2 rounded-lg hover:bg-teal-600 transition-colors flex items-center space-x-2 mx-auto"
+              >
+                <FaEdit className="w-4 h-4" />
+                <span>Edit Profile</span>
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
 
-                <VStack spacing={4} align="stretch" flex={1}>
-                  <HStack spacing={4}>
-                    <FormControl isRequired>
-                      <FormLabel fontSize="sm" color="gray.600">
-                        Full Name
-                      </FormLabel>
-                      <InputGroup>
-                        <InputLeftElement>
-                          <FaUser color="gray.400" />
-                        </InputLeftElement>
-                        <Input
-                          name="fullName"
-                          value={form.fullName || ''}
-                          onChange={handleChange}
-                          placeholder="Enter your full name"
-                          isReadOnly={!edit}
-                          bg={edit ? 'white' : 'gray.50'}
-                        />
-                      </InputGroup>
-                    </FormControl>
-
-                    <FormControl isRequired>
-                      <FormLabel fontSize="sm" color="gray.600">
-                        Email
-                      </FormLabel>
-                      <InputGroup>
-                        <InputLeftElement>
-                          <FaEnvelope color="gray.400" />
-                        </InputLeftElement>
-                        <Input
-                          name="email"
-                          value={form.email || ''}
-                          onChange={handleChange}
-                          type="email"
-                          placeholder="your.email@example.com"
-                          isReadOnly={!edit}
-                          bg={edit ? 'white' : 'gray.50'}
-                        />
-                      </InputGroup>
-                    </FormControl>
-                  </HStack>
-
-                  <HStack spacing={4}>
-                    <FormControl>
-                      <FormLabel fontSize="sm" color="gray.600">
-                        Phone Number
-                      </FormLabel>
-                      <InputGroup>
-                        <InputLeftElement>
-                          <FaPhone color="gray.400" />
-                        </InputLeftElement>
-                        <Input
-                          name="phone"
-                          value={form.phone || ''}
-                          onChange={handleChange}
-                          placeholder="Enter your phone number"
-                          isReadOnly={!edit}
-                          bg={edit ? 'white' : 'gray.50'}
-                        />
-                      </InputGroup>
-                    </FormControl>
-
-                    <FormControl>
-                      <FormLabel fontSize="sm" color="gray.600">
-                        Years of Experience
-                      </FormLabel>
-                      <InputGroup>
-                        <InputLeftElement>
-                          <FaBriefcase color="gray.400" />
-                        </InputLeftElement>
-                        <Select
-                          name="experience"
-                          value={form.experience || ''}
-                          onChange={handleChange}
-                          isReadOnly={!edit}
-                          bg={edit ? 'white' : 'gray.50'}
-                        >
-                          <option value="">Select Experience</option>
-                          <option value="0-1">0-1 years</option>
-                          <option value="1-3">1-3 years</option>
-                          <option value="3-5">3-5 years</option>
-                          <option value="5-10">5-10 years</option>
-                          <option value="10+">10+ years</option>
-                        </Select>
-                      </InputGroup>
-                    </FormControl>
-                  </HStack>
-                </VStack>
-              </HStack>
-
-              <Divider />
-
-              {/* Professional Information */}
-              <VStack align="stretch" spacing={4}>
-                <FormLabel fontSize="sm" color="gray.600" fontWeight="bold">
-                  Professional Information
-                </FormLabel>
-
-                <HStack spacing={4}>
-                  <FormControl>
-                    <FormLabel fontSize="sm" color="gray.600">
-                      Area of Expertise
-                    </FormLabel>
-                    <InputGroup>
-                      <InputLeftElement>
-                        <FaChalkboardTeacher color="gray.400" />
-                      </InputLeftElement>
-                      <Input
-                        name="expertise"
-                        value={form.expertise || ''}
-                        onChange={handleChange}
-                        placeholder="e.g., Mathematics, Computer Science, English"
-                        isReadOnly={!edit}
-                        bg={edit ? 'white' : 'gray.50'}
-                      />
-                    </InputGroup>
-                  </FormControl>
-
-                  <FormControl>
-                    <FormLabel fontSize="sm" color="gray.600">
-                      Education
-                    </FormLabel>
-                    <InputGroup>
-                      <InputLeftElement>
-                        <FaGraduationCap color="gray.400" />
-                      </InputLeftElement>
-                      <Input
-                        name="education"
-                        value={form.education || ''}
-                        onChange={handleChange}
-                        placeholder="e.g., Master's in Computer Science"
-                        isReadOnly={!edit}
-                        bg={edit ? 'white' : 'gray.50'}
-                      />
-                    </InputGroup>
-                  </FormControl>
-                </HStack>
-
-                <FormControl>
-                  <FormLabel fontSize="sm" color="gray.600">
-                    Portfolio/Website
-                  </FormLabel>
-                  <InputGroup>
-                    <InputLeftElement>
-                      <FaGlobe color="gray.400" />
-                    </InputLeftElement>
-                    <Input
-                      name="portfolio"
-                      value={form.portfolio || ''}
-                      onChange={handleChange}
-                      placeholder="https://your-portfolio.com"
-                      isReadOnly={!edit}
-                      bg={edit ? 'white' : 'gray.50'}
-                    />
-                  </InputGroup>
-                </FormControl>
-              </VStack>
-
-              <Divider />
-
-              {/* Bio Section */}
-              <FormControl>
-                <FormLabel fontSize="sm" color="gray.600">
-                  Bio
-                </FormLabel>
-                <Textarea
-                  name="bio"
-                  value={form.bio || ''}
+      {/* Info Section */}
+      <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6 mb-6">
+        <h2 className="text-lg font-semibold text-gray-800 mb-4">Personal Information</h2>
+        <div className="space-y-4">
+          <div className="flex items-center space-x-3">
+            <FaUser className="w-5 h-5 text-gray-400 flex-shrink-0" />
+            <div className="flex-1">
+              <label className="block text-sm font-medium text-gray-600 mb-1">Full Name</label>
+              {edit ? (
+                <input
+                  type="text"
+                  name="fullName"
+                  value={form.fullName || ''}
                   onChange={handleChange}
-                  placeholder="Tell us about your teaching experience, methodology, and what makes you a great teacher..."
-                  rows={4}
-                  isReadOnly={!edit}
-                  bg={edit ? 'white' : 'gray.50'}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                  placeholder="Enter your full name"
                 />
-              </FormControl>
-
-              <Divider />
-
-              {/* Social Links Section */}
-              <VStack align="stretch" spacing={4}>
-                <FormLabel fontSize="sm" color="gray.600">
-                  Professional Social Links
-                </FormLabel>
-
-                {edit ? (
-                  <VStack align="stretch" spacing={3}>
-                    {(form.socialLinks || []).map((link, idx) => (
-                      <HStack key={idx} spacing={3}>
-                        <Input
-                          placeholder="Platform (e.g., LinkedIn, GitHub, Twitter)"
-                          value={link.platform}
-                          onChange={e => handleSocialChange(idx, 'platform', e.target.value)}
-                        />
-                        <Input
-                          placeholder="URL"
-                          value={link.url}
-                          onChange={e => handleSocialChange(idx, 'url', e.target.value)}
-                        />
-                        <IconButton
-                          icon={<FaTrash />}
-                          onClick={() => removeSocial(idx)}
-                          aria-label="Remove social link"
-                          colorScheme="red"
-                          variant="outline"
-                          size="md"
-                        />
-                      </HStack>
-                    ))}
-                    <Button
-                      leftIcon={<FaPlus />}
-                      onClick={addSocial}
-                      colorScheme="teal"
-                      variant="outline"
-                      size="sm"
-                    >
-                      Add Social Link
-                    </Button>
-                  </VStack>
-                ) : (
-                  <VStack align="start" spacing={2}>
-                    {(profile.socialLinks || []).map((link, idx) => (
-                      <HStack key={idx} spacing={2}>
-                        <FaLink color="gray.400" />
-                        <Text fontWeight="medium">{link.platform}:</Text>
-                        <a
-                          href={link.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          style={{ color: '#3182ce', textDecoration: 'underline' }}
-                        >
-                          {link.url}
-                        </a>
-                      </HStack>
-                    ))}
-                    {(!profile.socialLinks || profile.socialLinks.length === 0) && (
-                      <Text color="gray.500" fontStyle="italic">
-                        No social links added yet
-                      </Text>
-                    )}
-                  </VStack>
-                )}
-              </VStack>
-
-              {/* Action Buttons */}
-              {edit && (
-                <HStack spacing={4} justify="flex-end" pt={4}>
-                  <Button
-                    leftIcon={<FaTimes />}
-                    onClick={() => {
-                      setEdit(false);
-                      setForm(profile); // Reset form to original data
-                    }}
-                    variant="outline"
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    leftIcon={<FaSave />}
-                    onClick={handleSubmit}
-                    colorScheme="teal"
-                    isLoading={saving}
-                    loadingText="Saving..."
-                  >
-                    Save Changes
-                  </Button>
-                </HStack>
+              ) : (
+                <p className="text-gray-800">{profile.fullName || 'Not specified'}</p>
               )}
-            </VStack>
-          </CardBody>
-        </Card>
-      </VStack>
-    </Box>
+            </div>
+          </div>
+
+          <div className="flex items-center space-x-3">
+            <FaEnvelope className="w-5 h-5 text-gray-400 flex-shrink-0" />
+            <div className="flex-1">
+              <label className="block text-sm font-medium text-gray-600 mb-1">Email</label>
+              {edit ? (
+                <input
+                  type="email"
+                  name="email"
+                  value={form.email || ''}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                  placeholder="your.email@example.com"
+                />
+              ) : (
+                <p className="text-gray-800">{profile.email || 'Not specified'}</p>
+              )}
+            </div>
+          </div>
+
+          <div className="flex items-center space-x-3">
+            <FaBirthdayCake className="w-5 h-5 text-gray-400 flex-shrink-0" />
+            <div className="flex-1">
+              <label className="block text-sm font-medium text-gray-600 mb-1">Age</label>
+              {edit ? (
+                <input
+                  type="number"
+                  name="age"
+                  value={form.age || ''}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                  placeholder="Enter your age"
+                />
+              ) : (
+                <p className="text-gray-800">{profile.age || 'Not specified'}</p>
+              )}
+            </div>
+          </div>
+
+          <div className="flex items-center space-x-3">
+            <FaGraduationCap className="w-5 h-5 text-gray-400 flex-shrink-0" />
+            <div className="flex-1">
+              <label className="block text-sm font-medium text-gray-600 mb-1">Specialization</label>
+              {edit ? (
+                <input
+                  type="text"
+                  name="specialization"
+                  value={form.specialization || ''}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                  placeholder="e.g., Mathematics, Physics"
+                />
+              ) : (
+                <p className="text-gray-800">{profile.specialization || 'Not specified'}</p>
+              )}
+            </div>
+          </div>
+
+          <div className="flex items-center space-x-3">
+            <FaSchool className="w-5 h-5 text-gray-400 flex-shrink-0" />
+            <div className="flex-1">
+              <label className="block text-sm font-medium text-gray-600 mb-1">Institution</label>
+              {edit ? (
+                <input
+                  type="text"
+                  name="institution"
+                  value={form.institution || ''}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                  placeholder="Enter your institution"
+                />
+              ) : (
+                <p className="text-gray-800">{profile.institution || 'Not specified'}</p>
+              )}
+            </div>
+          </div>
+
+          <div className="flex items-center space-x-3">
+            <FaGraduationCap className="w-5 h-5 text-gray-400 flex-shrink-0" />
+            <div className="flex-1">
+              <label className="block text-sm font-medium text-gray-600 mb-1">Experience (Years)</label>
+              {edit ? (
+                <input
+                  type="number"
+                  name="experience"
+                  value={form.experience || ''}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                  placeholder="Enter years of experience"
+                />
+              ) : (
+                <p className="text-gray-800">{profile.experience || 'Not specified'}</p>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Bio Section */}
+      <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6 mb-6">
+        <h2 className="text-lg font-semibold text-gray-800 mb-4">Bio</h2>
+        {edit ? (
+          <textarea
+            name="bio"
+            value={form.bio || ''}
+            onChange={handleChange}
+            rows={4}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent resize-none"
+            placeholder="Tell us about yourself, your teaching philosophy, and expertise..."
+          />
+        ) : (
+          <p className="text-gray-700 leading-relaxed">
+            {profile.bio || 'No bio available. Click "Edit Profile" to add your bio.'}
+          </p>
+        )}
+      </div>
+
+      {/* Interests Section */}
+      <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6 mb-6">
+        <h2 className="text-lg font-semibold text-gray-800 mb-4">Interests & Expertise</h2>
+        {edit ? (
+          <div className="space-y-4">
+            <div className="flex space-x-2">
+              <input
+                type="text"
+                value={newInterest}
+                onChange={(e) => setNewInterest(e.target.value)}
+                placeholder="Add a new interest"
+                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                onKeyPress={(e) => e.key === 'Enter' && addInterest()}
+              />
+              <button
+                onClick={addInterest}
+                className="bg-teal-500 text-white px-4 py-2 rounded-lg hover:bg-teal-600 transition-colors flex items-center space-x-1"
+              >
+                <FaPlus className="w-4 h-4" />
+                <span>Add</span>
+              </button>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {(form.interests || []).map((interest, idx) => (
+                <span
+                  key={idx}
+                  className="bg-teal-100 text-teal-800 px-3 py-1 rounded-full text-sm flex items-center space-x-2"
+                >
+                  <span>{interest}</span>
+                  <button
+                    onClick={() => removeInterest(interest)}
+                    className="text-teal-600 hover:text-teal-800"
+                  >
+                    <FaTimes className="w-3 h-3" />
+                  </button>
+                </span>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <div className="flex flex-wrap gap-2">
+            {(profile.interests || []).map((interest, idx) => (
+              <span
+                key={idx}
+                className="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm"
+              >
+                {interest}
+              </span>
+            ))}
+            {(!profile.interests || profile.interests.length === 0) && (
+              <p className="text-gray-500 italic">No interests added yet</p>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Social Links Section */}
+      <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6 mb-6">
+        <h2 className="text-lg font-semibold text-gray-800 mb-4">Social Links</h2>
+        {edit ? (
+          <div className="space-y-4">
+            {(form.socialLinks || []).map((link, idx) => (
+              <div key={idx} className="flex space-x-2">
+                <input
+                  placeholder="Platform (e.g., LinkedIn, GitHub)"
+                  value={link.platform}
+                  onChange={e => handleSocialChange(idx, 'platform', e.target.value)}
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                />
+                <input
+                  placeholder="URL"
+                  value={link.url}
+                  onChange={e => handleSocialChange(idx, 'url', e.target.value)}
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                />
+                <button
+                  onClick={() => removeSocial(idx)}
+                  className="bg-red-500 text-white px-3 py-2 rounded-lg hover:bg-red-600 transition-colors"
+                >
+                  <FaTrash className="w-4 h-4" />
+                </button>
+              </div>
+            ))}
+            <button
+              onClick={addSocial}
+              className="bg-teal-500 text-white px-4 py-2 rounded-lg hover:bg-teal-600 transition-colors flex items-center space-x-2"
+            >
+              <FaPlus className="w-4 h-4" />
+              <span>Add Social Link</span>
+            </button>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {(profile.socialLinks || []).map((link, idx) => {
+              const IconComponent = getSocialIcon(link.platform);
+              return (
+                <div key={idx} className="flex items-center space-x-3">
+                  <IconComponent className="w-5 h-5 text-gray-400" />
+                  <div className="flex-1">
+                    <p className="font-medium text-gray-800">{link.platform}</p>
+                    <a
+                      href={link.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-teal-600 hover:text-teal-800 text-sm break-all"
+                    >
+                      {link.url}
+                    </a>
+                  </div>
+                </div>
+              );
+            })}
+            {(!profile.socialLinks || profile.socialLinks.length === 0) && (
+              <p className="text-gray-500 italic">No social links added yet</p>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Action Buttons */}
+      {edit && (
+        <div className="flex space-x-4">
+          <button
+            onClick={() => {
+              setEdit(false);
+              setForm(profile);
+            }}
+            className="flex-1 bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600 transition-colors flex items-center justify-center space-x-2"
+          >
+            <FaTimes className="w-4 h-4" />
+            <span>Cancel</span>
+          </button>
+          <button
+            onClick={handleSubmit}
+            disabled={saving}
+            className="flex-1 bg-teal-500 text-white px-6 py-3 rounded-lg hover:bg-teal-600 transition-colors flex items-center justify-center space-x-2 disabled:opacity-50"
+          >
+            <FaSave className="w-4 h-4" />
+            <span>{saving ? 'Saving...' : 'Save Changes'}</span>
+          </button>
+        </div>
+      )}
+    </div>
   );
 };
 

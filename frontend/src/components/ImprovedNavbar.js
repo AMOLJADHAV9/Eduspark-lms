@@ -39,8 +39,6 @@ import {
   FaHome, 
   FaBook, 
   FaVideo, 
-  FaCertificate, 
-  FaTrophy, 
   FaUser, 
   FaSignOutAlt,
   FaDashboard
@@ -98,13 +96,8 @@ const ImprovedNavbar = () => {
       ...(user?.role !== 'admin' ? [{ label: 'Courses', to: '/courses', icon: FaBook }] : []),
       ...(user?.role !== 'teacher' && user?.role !== 'admin' ? [{ label: 'Live Classes', to: '/live-classes', icon: FaVideo }] : []),
       ...(user ? [
-        ...(user.role !== 'admin' ? [{ label: 'Certificates', to: '/certificates', icon: FaCertificate }] : []),
-        ...(user.role !== 'teacher' && user.role !== 'admin' ? [{ label: 'Achievements', to: '/achievements', icon: FaTrophy }] : []),
-        ...(user.role !== 'teacher' && user.role !== 'admin' ? [{ label: 'Personalized', to: '/personalized-dashboard' }] : []),
         ...(user.role === 'teacher' ? [{ label: 'Teacher Dashboard', to: '/teacher/dashboard', icon: FaDashboard }] : []),
       ] : []),
-      ...(user?.role !== 'teacher' && user?.role !== 'admin' ? [{ label: 'Pricing', to: '/pricing' }] : []),
-      { label: 'Verify Certificate', to: '/certificate/verify' },
       { label: 'About', to: '/about' },
       { label: 'Contact', to: '/contact' },
     ];
@@ -113,9 +106,7 @@ const ImprovedNavbar = () => {
     const path = location.pathname;
     const onStudentLandingOrDashboard = (path === '/') || (isStudent && path === '/user/dashboard');
 
-    const filtered = onStudentLandingOrDashboard
-      ? baseItems.filter(i => !['Personalized', 'Pricing', 'Verify Certificate'].includes(i.label))
-      : baseItems;
+    const filtered = baseItems;
 
     return filtered;
   };

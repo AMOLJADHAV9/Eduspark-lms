@@ -38,8 +38,6 @@ import {
   FaHome, 
   FaBook, 
   FaVideo, 
-  FaCertificate, 
-  FaTrophy, 
   FaUser, 
   FaSignOutAlt,
   FaDashboard
@@ -86,8 +84,6 @@ const ResponsiveNavbar = () => {
       ...(user?.role !== 'admin' ? [{ label: 'Courses', to: '/courses', icon: FaBook }] : []),
       ...(user?.role !== 'teacher' && user?.role !== 'admin' ? [{ label: 'Live Classes', to: '/live-classes', icon: FaVideo }] : []),
       ...(user ? [
-        ...(user.role !== 'admin' ? [{ label: 'Certificates', to: '/certificates', icon: FaCertificate }] : []),
-        ...(user.role !== 'teacher' && user.role !== 'admin' ? [{ label: 'Achievements', to: '/achievements', icon: FaTrophy }] : []),
         ...(user.role === 'teacher' ? [{ label: 'Teacher Dashboard', to: '/teacher/dashboard', icon: FaDashboard }] : []),
       ] : []),
       { label: 'About', to: '/about' },

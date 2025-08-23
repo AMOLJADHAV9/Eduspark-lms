@@ -150,9 +150,29 @@ const TeacherDashboard = () => {
             mx="auto"
             maxW="5xl"
           >
-            <Heading color="teal.600" mb={8} textAlign="center" fontWeight="extrabold" letterSpacing="wide" fontSize={{ base: '2xl', md: '3xl' }}>
-              Teacher Dashboard
-            </Heading>
+            <Flex justify="space-between" align="center" mb={8}>
+              <Heading color="teal.600" fontWeight="extrabold" letterSpacing="wide" fontSize={{ base: '2xl', md: '3xl' }}>
+                Teacher Dashboard
+              </Heading>
+              <Button
+                leftIcon={<FaPlus />}
+                colorScheme="teal"
+                size={{ base: "md", md: "lg" }}
+                onClick={() => window.location.href = '/teacher/courses'}
+                _hover={{ transform: 'translateY(-2px)', boxShadow: '0 4px 12px rgba(20, 184, 166, 0.4)' }}
+                transition="all 0.2s ease"
+                borderRadius="full"
+                px={{ base: 4, md: 6 }}
+                display={{ base: 'flex', md: 'flex' }}
+                position={{ base: 'fixed', md: 'static' }}
+                bottom={{ base: 4, md: 'auto' }}
+                right={{ base: 4, md: 'auto' }}
+                zIndex={{ base: 1000, md: 'auto' }}
+                boxShadow={{ base: '0 4px 12px rgba(0, 0, 0, 0.15)', md: 'none' }}
+              >
+                Create Course
+              </Button>
+            </Flex>
             
             {/* Stats Grid */}
             <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={6} mb={8}>
