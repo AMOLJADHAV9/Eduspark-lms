@@ -9,6 +9,7 @@ import {
   FaDollarSign, 
   FaCalendarAlt,
   FaCog,
+  FaUser,
   FaFileAlt,
   FaComments
 } from 'react-icons/fa';
@@ -24,7 +25,7 @@ const links = [
   { to: '/teacher/analytics', label: 'Analytics', icon: FaChartLine },
   { to: '/teacher/earnings', label: 'Earnings', icon: FaDollarSign },
   { to: '/teacher/settings', label: 'Settings', icon: FaCog },
- // { to: '/teacher/profile', label: 'Profile', icon: FaCog },
+  { to: '/teacher/profile', label: 'Profile', icon: FaUser },
   { to: '/teacher/stories', label: 'Student Success Stories', icon: FaComments },
 ];
 
