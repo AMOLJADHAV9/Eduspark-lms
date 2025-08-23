@@ -326,12 +326,20 @@ const TeacherCourses = () => {
                 <Button
                   leftIcon={<FaPlus />}
                   colorScheme="blue"
-                  size="lg"
+                  size={{ base: "md", md: "lg" }}
                   onClick={openCreateModal}
                   _hover={{ transform: 'translateY(-2px)', boxShadow: '0 4px 12px rgba(59, 130, 246, 0.4)' }}
                   transition="all 0.2s ease"
+                  borderRadius="full"
+                  px={{ base: 4, md: 6 }}
+                  display={{ base: 'flex', md: 'flex' }}
+                  position={{ base: 'fixed', md: 'static' }}
+                  bottom={{ base: 4, md: 'auto' }}
+                  right={{ base: 4, md: 'auto' }}
+                  zIndex={{ base: 1000, md: 'auto' }}
+                  boxShadow={{ base: '0 4px 12px rgba(0, 0, 0, 0.15)', md: 'none' }}
                 >
-                  Create Course
+                  <Text display={{ base: 'none', md: 'block' }}>Create Course</Text>
                 </Button>
               </HStack>
             </Box>

@@ -187,9 +187,9 @@ const TeacherProfile = () => {
             <h1 className="text-2xl font-bold text-gray-800 mb-2">
               {profile.fullName || 'Teacher Name'}
             </h1>
-            {!edit && (
+              {!edit && (
               <button
-                onClick={() => setEdit(true)}
+                  onClick={() => setEdit(true)}
                 className="bg-teal-500 text-white px-6 py-2 rounded-lg hover:bg-teal-600 transition-colors flex items-center space-x-2 mx-auto"
               >
                 <FaEdit className="w-4 h-4" />
@@ -211,11 +211,11 @@ const TeacherProfile = () => {
               {edit ? (
                 <input
                   type="text"
-                  name="fullName"
-                  value={form.fullName || ''}
-                  onChange={handleChange}
+                          name="fullName"
+                          value={form.fullName || ''}
+                          onChange={handleChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                  placeholder="Enter your full name"
+                          placeholder="Enter your full name"
                 />
               ) : (
                 <p className="text-gray-800">{profile.fullName || 'Not specified'}</p>
@@ -230,11 +230,11 @@ const TeacherProfile = () => {
               {edit ? (
                 <input
                   type="email"
-                  name="email"
-                  value={form.email || ''}
-                  onChange={handleChange}
+                          name="email"
+                          value={form.email || ''}
+                          onChange={handleChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                  placeholder="your.email@example.com"
+                          placeholder="your.email@example.com"
                 />
               ) : (
                 <p className="text-gray-800">{profile.email || 'Not specified'}</p>
@@ -251,7 +251,7 @@ const TeacherProfile = () => {
                   type="number"
                   name="age"
                   value={form.age || ''}
-                  onChange={handleChange}
+                          onChange={handleChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                   placeholder="Enter your age"
                 />
@@ -270,7 +270,7 @@ const TeacherProfile = () => {
                   type="text"
                   name="specialization"
                   value={form.specialization || ''}
-                  onChange={handleChange}
+                          onChange={handleChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                   placeholder="e.g., Mathematics, Physics"
                 />
@@ -289,7 +289,7 @@ const TeacherProfile = () => {
                   type="text"
                   name="institution"
                   value={form.institution || ''}
-                  onChange={handleChange}
+                        onChange={handleChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                   placeholder="Enter your institution"
                 />
@@ -308,7 +308,7 @@ const TeacherProfile = () => {
                   type="number"
                   name="experience"
                   value={form.experience || ''}
-                  onChange={handleChange}
+                      onChange={handleChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                   placeholder="Enter years of experience"
                 />
@@ -320,15 +320,15 @@ const TeacherProfile = () => {
         </div>
       </div>
 
-      {/* Bio Section */}
+              {/* Bio Section */}
       <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6 mb-6">
         <h2 className="text-lg font-semibold text-gray-800 mb-4">Bio</h2>
         {edit ? (
           <textarea
-            name="bio"
-            value={form.bio || ''}
-            onChange={handleChange}
-            rows={4}
+                  name="bio"
+                  value={form.bio || ''}
+                  onChange={handleChange}
+                  rows={4}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent resize-none"
             placeholder="Tell us about yourself, your teaching philosophy, and expertise..."
           />
@@ -395,27 +395,27 @@ const TeacherProfile = () => {
         )}
       </div>
 
-      {/* Social Links Section */}
+              {/* Social Links Section */}
       <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6 mb-6">
         <h2 className="text-lg font-semibold text-gray-800 mb-4">Social Links</h2>
-        {edit ? (
+                {edit ? (
           <div className="space-y-4">
-            {(form.socialLinks || []).map((link, idx) => (
+                    {(form.socialLinks || []).map((link, idx) => (
               <div key={idx} className="flex space-x-2">
                 <input
                   placeholder="Platform (e.g., LinkedIn, GitHub)"
-                  value={link.platform}
-                  onChange={e => handleSocialChange(idx, 'platform', e.target.value)}
+                          value={link.platform}
+                          onChange={e => handleSocialChange(idx, 'platform', e.target.value)}
                   className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                />
+                        />
                 <input
-                  placeholder="URL"
-                  value={link.url}
-                  onChange={e => handleSocialChange(idx, 'url', e.target.value)}
+                          placeholder="URL"
+                          value={link.url}
+                          onChange={e => handleSocialChange(idx, 'url', e.target.value)}
                   className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                />
+                        />
                 <button
-                  onClick={() => removeSocial(idx)}
+                          onClick={() => removeSocial(idx)}
                   className="bg-red-500 text-white px-3 py-2 rounded-lg hover:bg-red-600 transition-colors"
                 >
                   <FaTrash className="w-4 h-4" />
@@ -423,7 +423,7 @@ const TeacherProfile = () => {
               </div>
             ))}
             <button
-              onClick={addSocial}
+                      onClick={addSocial}
               className="bg-teal-500 text-white px-4 py-2 rounded-lg hover:bg-teal-600 transition-colors flex items-center space-x-2"
             >
               <FaPlus className="w-4 h-4" />
@@ -439,31 +439,31 @@ const TeacherProfile = () => {
                   <IconComponent className="w-5 h-5 text-gray-400" />
                   <div className="flex-1">
                     <p className="font-medium text-gray-800">{link.platform}</p>
-                    <a
-                      href={link.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                        <a
+                          href={link.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
                       className="text-teal-600 hover:text-teal-800 text-sm break-all"
-                    >
-                      {link.url}
-                    </a>
+                        >
+                          {link.url}
+                        </a>
                   </div>
                 </div>
               );
             })}
-            {(!profile.socialLinks || profile.socialLinks.length === 0) && (
+                    {(!profile.socialLinks || profile.socialLinks.length === 0) && (
               <p className="text-gray-500 italic">No social links added yet</p>
-            )}
+                    )}
           </div>
-        )}
+                )}
       </div>
 
-      {/* Action Buttons */}
-      {edit && (
+              {/* Action Buttons */}
+              {edit && (
         <div className="flex space-x-4">
           <button
-            onClick={() => {
-              setEdit(false);
+                    onClick={() => {
+                      setEdit(false);
               setForm(profile);
             }}
             className="flex-1 bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600 transition-colors flex items-center justify-center space-x-2"
@@ -472,7 +472,7 @@ const TeacherProfile = () => {
             <span>Cancel</span>
           </button>
           <button
-            onClick={handleSubmit}
+                    onClick={handleSubmit}
             disabled={saving}
             className="flex-1 bg-teal-500 text-white px-6 py-3 rounded-lg hover:bg-teal-600 transition-colors flex items-center justify-center space-x-2 disabled:opacity-50"
           >

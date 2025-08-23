@@ -364,8 +364,17 @@ const TeacherLiveClasses = () => {
                   onClick={() => setIsModalOpen(true)}
                   _hover={{ transform: 'translateY(-2px)', boxShadow: '0 4px 12px rgba(34, 197, 94, 0.4)' }}
                   transition="all 0.2s ease"
+                  size={{ base: "md", md: "lg" }}
+                  borderRadius="full"
+                  px={{ base: 4, md: 6 }}
+                  display={{ base: 'flex', md: 'flex' }}
+                  position={{ base: 'fixed', md: 'static' }}
+                  bottom={{ base: 4, md: 'auto' }}
+                  right={{ base: 4, md: 'auto' }}
+                  zIndex={{ base: 1000, md: 'auto' }}
+                  boxShadow={{ base: '0 4px 12px rgba(0, 0, 0, 0.15)', md: 'none' }}
                 >
-                  Schedule Class
+                  <Text display={{ base: 'none', md: 'block' }}>Schedule Class</Text>
                 </Button>
               </HStack>
             </Box>

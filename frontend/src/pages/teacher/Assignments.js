@@ -84,11 +84,11 @@ const TeacherAssignments = () => {
       const res = await fetch(`${apiBaseUrl}/api/assignments/teacher`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      
+
       if (!res.ok) {
         throw new Error('Failed to fetch assignments');
       }
-      
+
       const data = await res.json();
       setAssignments(data);
     } catch (error) {
@@ -204,7 +204,7 @@ const TeacherAssignments = () => {
   const openEdit = (assignment) => {
     setEditingAssignment(assignment);
     const due = assignment.dueDate ? new Date(assignment.dueDate) : null;
-    const fmt = (d) => d ? `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}T${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}` : '';
+    const fmt = (d) => d ? `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}T${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}` : '';
     setEditForm({
       title: assignment.title || '',
       description: assignment.description || '',
@@ -273,7 +273,7 @@ const TeacherAssignments = () => {
         <Navbar />
         <Flex minH="100vh" bg="gray.50">
           <TeacherSidebar />
-          <Box flex={1} p={8}>
+          <Box flex={1} p={{ base: 4, md: 8 }} ml={{ base: "-15px", md: 0 }}>
             <Center h="50vh">
               <Spinner size="xl" color="yellow.500" />
             </Center>
@@ -288,8 +288,8 @@ const TeacherAssignments = () => {
       <Navbar />
       <Flex minH="100vh" bg="gray.50">
         <TeacherSidebar />
-        <Box flex={1} p={8}>
-          <VStack spacing={8} align="stretch">
+        <Box flex={1} p={{ base: 4, md: 8 }} ml={{ base: "-15px", md: 0 }}>
+          <VStack spacing={{ base: 6, md: 8 }} align="stretch">
             {/* Header */}
             <Box
               bg="white"
@@ -297,7 +297,7 @@ const TeacherAssignments = () => {
               borderRadius="2xl"
               border="1px solid"
               borderColor="gray.200"
-              p={8}
+              p={{ base: 6, md: 8 }}
             >
               <HStack justify="space-between">
                 <VStack align="start" spacing={2}>
@@ -312,8 +312,17 @@ const TeacherAssignments = () => {
                   colorScheme="teal"
                   leftIcon={<FaPlus />}
                   onClick={() => navigate('/assignment/create')}
+                  size={{ base: "md", md: "lg" }}
+                  borderRadius="full"
+                  px={{ base: 4, md: 6 }}
+                  display={{ base: 'flex', md: 'flex' }}
+                  position={{ base: 'fixed', md: 'static' }}
+                  bottom={{ base: 4, md: 'auto' }}
+                  right={{ base: 4, md: 'auto' }}
+                  zIndex={{ base: 1000, md: 'auto' }}
+                  boxShadow={{ base: '0 4px 12px rgba(0, 0, 0, 0.15)', md: 'none' }}
                 >
-                  Create Assignment
+                  <Text display={{ base: 'none', md: 'block' }}>Create Assignment</Text>
                 </Button>
               </HStack>
             </Box>
@@ -325,7 +334,7 @@ const TeacherAssignments = () => {
                 backdropFilter="blur(8px)"
                 borderRadius="2xl"
                 border="1px solid rgba(255, 255, 255, 0.18)"
-                p={8}
+                p={{ base: 6, md: 8 }}
                 textAlign="center"
               >
                 <VStack spacing={4}>
@@ -346,7 +355,7 @@ const TeacherAssignments = () => {
                 </VStack>
               </Box>
             ) : (
-              <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6}>
+              <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={{ base: 4, md: 6 }}>
                 {assignments.map((assignment) => (
                   <Card
                     key={assignment._id}
@@ -378,7 +387,7 @@ const TeacherAssignments = () => {
                         <Text color="gray.200" fontSize="sm" noOfLines={3}>
                           {typeof assignment.description === 'string' ? assignment.description : 'No description available'}
                         </Text>
-                        
+
                         <HStack justify="space-between" fontSize="sm" color="gray.400">
                           <HStack spacing={1}>
                             <Icon as={FaUsers} boxSize={3} />
@@ -390,19 +399,34 @@ const TeacherAssignments = () => {
                           </HStack>
                         </HStack>
 
-                        <HStack>
-                          <Button size="sm" colorScheme="teal" variant="solid" onClick={() => openSubmissions(assignment)}>
+                        <VStack spacing={2} w="full">
+                          <Button
+                            size="sm"
+                            colorScheme="teal"
+                            variant="solid"
+                            onClick={() => openSubmissions(assignment)}
+                            w="full"
+                          >
                             View Submissions
                           </Button>
-                          <Button size="sm" variant="outline" onClick={() => openEdit(assignment)}>
-                            Edit
-                          </Button>
-                          <Button size="sm" colorScheme="red" variant="outline" onClick={() => handleDelete(assignment._id)}>
-                            Delete
-                          </Button>
-                        </HStack>
+                          <HStack spacing={2} w="full">
+                            <Button size="sm" variant="outline" onClick={() => openEdit(assignment)} flex={1}>
+                              Edit
+                            </Button>
+                            <Button
+                              size="sm"
+                              colorScheme="red"
+                              variant="outline"
+                              onClick={() => handleDelete(assignment._id)}
+                              flex={1}
+                            >
+                              Delete
+                            </Button>
+                          </HStack>
+                        </VStack>   {/* ✅ Closing tag added here */}
                       </VStack>
                     </CardBody>
+
                   </Card>
                 ))}
               </SimpleGrid>
