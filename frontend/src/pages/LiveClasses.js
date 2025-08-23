@@ -277,7 +277,7 @@ const LiveClasses = () => {
                     <Icon as={FaVideo} boxSize={6} color="white" />
                   </Box>
                   <Box>
-                    <Heading size="3xl" color="brand.text" fontWeight="extrabold" letterSpacing="wide">
+                    <Heading size="xl" color="brand.text" fontWeight="extrabold" letterSpacing="wide">
                       Live Classes
                     </Heading>
                     <Text fontSize="xl" color="gray.700" opacity={1} fontWeight="medium">
@@ -300,16 +300,7 @@ const LiveClasses = () => {
                   </HStack>
                 </HStack>
               </VStack>
-              {user && user.role === 'teacher' && (
-                <Button
-                  leftIcon={<FaPlus />}
-                  colorScheme="teal"
-                  size="lg"
-                  onClick={() => setShowCreateModal(true)}
-                >
-                  Create Live Class
-                </Button>
-              )}
+
             </Flex>
           </MotionBox>
 
@@ -334,7 +325,7 @@ const LiveClasses = () => {
                   >
                     <HStack spacing={2}>
                       <Icon as={FaRocket} />
-                      <Text>Upcoming Classes</Text>
+                      <Text color="white">Upcoming Classes</Text>
                     </HStack>
                   </Tab>
                   <Tab 
@@ -349,7 +340,7 @@ const LiveClasses = () => {
                   >
                     <HStack spacing={2}>
                       <Icon as={FaClock} />
-                      <Text>Past Classes</Text>
+                      <Text color="white">Past Classes</Text>
                     </HStack>
                   </Tab>
                   {user && (

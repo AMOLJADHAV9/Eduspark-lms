@@ -444,7 +444,7 @@ const ImprovedLanding = () => {
               fontWeight="extrabold"
               className="gradient-text"
             >
-              Why Choose SkillEdge?
+                              Why Choose Eduspark?
             </Heading>
             
             <SimpleGrid 

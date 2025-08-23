@@ -305,7 +305,7 @@ const Navbar = () => {
           transition={{ type: 'spring', stiffness: 300 }}
           flexShrink={0}
         >
-          SkillEdge
+          Eduspark
         </MotionText>
 
         <Spacer />

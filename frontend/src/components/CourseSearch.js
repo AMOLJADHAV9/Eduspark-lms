@@ -132,15 +132,7 @@ const CourseSearch = ({ onSearch, courses = [] }) => {
                 _placeholder={{ color: "gray.400" }}
               />
             </InputGroup>
-            <Button
-              variant="3d"
-              leftIcon={<FaFilter />}
-              onClick={() => setShowFilters(!showFilters)}
-              size="lg"
-              minW="120px"
-            >
-              Filters
-            </Button>
+
             <Button
               variant="3d-primary"
               onClick={handleSearch}

@@ -73,7 +73,7 @@ const Footer = () => (
             </Box>
             <VStack align="start" spacing={0}>
               <Text fontWeight="extrabold" fontSize="2xl" color="white">
-                SkillEdge
+                Eduspark
               </Text>
               <Text fontSize="sm" color="whiteAlpha.800">
                 Empowering Education Through Technology
@@ -122,16 +122,13 @@ const Footer = () => (
             Connect With Us
           </Text>
           <HStack spacing={4}>
-            <Box as="a" href="#github" w="40px" h="40px" bg="whiteAlpha.200" borderRadius="full" display="flex" alignItems="center" justifyContent="center" _hover={{ bg: 'whiteAlpha.300', boxShadow: '3d-md', transform: 'translateY(-3px) scale(1.1)' }} transition="all 0.3s">
+            <Box as="a" href="https://github.com/AMOLJADHAV9" target="_blank" rel="noopener noreferrer" w="40px" h="40px" bg="whiteAlpha.200" borderRadius="full" display="flex" alignItems="center" justifyContent="center" _hover={{ bg: 'whiteAlpha.300', boxShadow: '3d-md', transform: 'translateY(-3px) scale(1.1)' }} transition="all 0.3s">
               <Icon as={FaGithub} color="white" />
             </Box>
-            <Box as="a" href="#twitter" w="40px" h="40px" bg="whiteAlpha.200" borderRadius="full" display="flex" alignItems="center" justifyContent="center" _hover={{ bg: 'whiteAlpha.300', boxShadow: '3d-md', transform: 'translateY(-3px) scale(1.1)' }} transition="all 0.3s">
-              <Icon as={FaTwitter} color="white" />
-            </Box>
-            <Box as="a" href="#linkedin" w="40px" h="40px" bg="whiteAlpha.200" borderRadius="full" display="flex" alignItems="center" justifyContent="center" _hover={{ bg: 'whiteAlpha.300', boxShadow: '3d-md', transform: 'translateY(-3px) scale(1.1)' }} transition="all 0.3s">
+            <Box as="a" href="https://www.linkedin.com/in/amol-jadhav-818a232a6" target="_blank" rel="noopener noreferrer" w="40px" h="40px" bg="whiteAlpha.200" borderRadius="full" display="flex" alignItems="center" justifyContent="center" _hover={{ bg: 'whiteAlpha.300', boxShadow: '3d-md', transform: 'translateY(-3px) scale(1.1)' }} transition="all 0.3s">
               <Icon as={FaLinkedin} color="white" />
             </Box>
-            <Box as="a" href="#email" w="40px" h="40px" bg="whiteAlpha.200" borderRadius="full" display="flex" alignItems="center" justifyContent="center" _hover={{ bg: 'whiteAlpha.300', boxShadow: '3d-md', transform: 'translateY(-3px) scale(1.1)' }} transition="all 0.3s">
+            <Box as="a" href="mailto:amolj9238@gmail.com" w="40px" h="40px" bg="whiteAlpha.200" borderRadius="full" display="flex" alignItems="center" justifyContent="center" _hover={{ bg: 'whiteAlpha.300', boxShadow: '3d-md', transform: 'translateY(-3px) scale(1.1)' }} transition="all 0.3s">
               <Icon as={FaEnvelope} color="white" />
             </Box>
           </HStack>
@@ -150,7 +147,7 @@ const Footer = () => (
           </Text>
         </HStack>
         <Text fontSize="sm" color="whiteAlpha.600">
-          &copy; {new Date().getFullYear()} PW LMS. All rights reserved.
+          &copy; 2025 Eduspark India AJ DevLabs Team. All rights reserved.
         </Text>
       </Box>
     </Box>
