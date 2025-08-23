@@ -35,7 +35,7 @@ const TeacherSidebar = ({ isOpen, onToggle, onClose }) => (
     isOpen={isOpen}
     onToggle={onToggle}
     onClose={onClose}
-    mobileButtonStyle={{ marginTop: '839px' }}
+    mobileButtonStyle={{ marginBottom: '50px' }}
   />
 );
 
