@@ -3,7 +3,7 @@ import { Box, VStack, Link, Text, Divider, IconButton, useDisclosure, Drawer, Dr
 import { NavLink } from 'react-router-dom';
 import { FaBars, FaTimes } from 'react-icons/fa';
 
-const ResponsiveSidebar = ({ links, title, isOpen, onToggle, onClose }) => {
+const ResponsiveSidebar = ({ links, title, isOpen, onToggle, onClose, mobileButtonStyle }) => {
   const isMobile = useBreakpointValue({ base: true, md: false });
 
   const SidebarContent = () => (
@@ -51,6 +51,7 @@ const ResponsiveSidebar = ({ links, title, isOpen, onToggle, onClose }) => {
           zIndex={1000}
           bg="white"
           boxShadow="lg"
+          style={mobileButtonStyle}
         />
         
         <Drawer isOpen={isOpen} placement="left" onClose={onClose} size="xs">

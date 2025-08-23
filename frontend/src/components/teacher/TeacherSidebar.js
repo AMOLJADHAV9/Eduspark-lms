@@ -29,12 +29,13 @@ const links = [
 ];
 
 const TeacherSidebar = ({ isOpen, onToggle, onClose }) => (
-  <ResponsiveSidebar style={{ marginTop: '839px' }}
+  <ResponsiveSidebar 
     links={links}
     title="Teacher Panel"
     isOpen={isOpen}
     onToggle={onToggle}
     onClose={onClose}
+    mobileButtonStyle={{ marginTop: '839px' }}
   />
 );
 
