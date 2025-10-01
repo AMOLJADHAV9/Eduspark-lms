@@ -1,0 +1,74 @@
+[1mdiff --git a/frontend/src/pages/LiveClassRoom.js b/frontend/src/pages/LiveClassRoom.js[m
+[1mindex b320dfd..cbc973c 100644[m
+[1m--- a/frontend/src/pages/LiveClassRoom.js[m
+[1m+++ b/frontend/src/pages/LiveClassRoom.js[m
+[36m@@ -11,18 +11,9 @@[m [mimport {[m
+   Flex,[m
+   IconButton,[m
+   Badge,[m
+[31m-  Divider,[m
+   Input,[m
+[31m-  Textarea,[m
+   Avatar,[m
+   useColorModeValue,[m
+[31m-  Modal,[m
+[31m-  ModalOverlay,[m
+[31m-  ModalContent,[m
+[31m-  ModalHeader,[m
+[31m-  ModalBody,[m
+[31m-  ModalCloseButton,[m
+[31m-  useDisclosure,[m
+   Alert,[m
+   AlertIcon,[m
+   AlertTitle,[m
+[36m@@ -34,8 +25,6 @@[m [mimport {[m
+   CardHeader,[m
+   List,[m
+   ListItem,[m
+[31m-  ListIcon,[m
+[31m-  Progress,[m
+   Spinner,[m
+   Center,[m
+   Icon[m
+[36m@@ -47,20 +36,9 @@[m [mimport {[m
+   FaMicrophoneSlash,[m
+   FaComments,[m
+   FaUsers,[m
+[31m-  FaShare,[m
+[31m-  FaStop,[m
+[31m-  FaCog,[m
+   FaSignOutAlt,[m
+   FaHandPaper,[m
+[31m-  FaCheck,[m
+[31m-  FaTimes,[m
+[31m-  FaPlay,[m
+[31m-  FaPause,[m
+[31m-  FaVolumeUp,[m
+[31m-  FaVolumeMute,[m
+[31m-  FaDesktop,[m
+[31m-  FaMobile,[m
+[31m-  FaTablet[m
+[32m+[m[32m  FaDesktop[m
+ } from 'react-icons/fa';[m
+ import { useParams, useNavigate } from 'react-router-dom';[m
+ import { useAuth } from '../context/AuthContext';[m
+[36m@@ -93,19 +71,16 @@[m [mconst LiveClassRoom = () => {[m
+   const [isAudioEnabled, setIsAudioEnabled] = useState(true);[m
+   const [isScreenSharing, setIsScreenSharing] = useState(false);[m
+   const [isHandRaised, setIsHandRaised] = useState(false);[m
+[31m-  const [isMuted, setIsMuted] = useState(false);[m
+   [m
+   // UI state[m
+   const [showChat, setShowChat] = useState(true);[m
+   const [showParticipants, setShowParticipants] = useState(false);[m
+[31m-  const [showSettings, setShowSettings] = useState(false);[m
+   [m
+   // WebRTC state[m
+   const [peerConnection, setPeerConnection] = useState(null);[m
+   const [localStream, setLocalStream] = useState(null);[m
+   const [remoteStream, setRemoteStream] = useState(null);[m
+   const [screenStream, setScreenStream] = useState(null);[m
+[31m-  const [peers, setPeers] = useState([]);[m
+   [m
+   const bgColor = useColorModeValue('gray.50', 'gray.900');[m
+   const cardBg = useColorModeValue('white', 'gray.800');[m
