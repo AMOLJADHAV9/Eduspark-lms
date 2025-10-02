@@ -35,7 +35,7 @@ const liveClassSchema = new mongoose.Schema({
   zegoRoomId: { type: String },
   
   // Meeting details (for other platforms)
-  meetingId: { type: String, unique: true },
+  meetingId: { type: String },
   meetingUrl: { type: String },
   meetingPassword: { type: String },
   
@@ -72,7 +72,11 @@ const liveClassSchema = new mongoose.Schema({
   attendanceCount: { type: Number, default: 0 },
   averageWatchTime: { type: Number, default: 0 }, // in minutes
   
-}, { timestamps: true });
+}, { 
+  timestamps: true,
+  // Disable autoIndex to prevent conflicts with existing database indexes
+  autoIndex: false
+});
 
 // Generate unique meeting ID
 liveClassSchema.pre('save', async function(next) {
@@ -82,4 +86,34 @@ liveClassSchema.pre('save', async function(next) {
   next();
 });
 
-module.exports = mongoose.model('LiveClass', liveClassSchema); 
+// Explicitly define indexes to avoid conflicts
+liveClassSchema.index({ meetingId: 1 }, { unique: true, sparse: true });
+liveClassSchema.index({ course: 1 });
+liveClassSchema.index({ instructor: 1 });
+liveClassSchema.index({ scheduledAt: 1 });
+liveClassSchema.index({ status: 1 });
+
+// Function to clean up problematic indexes
+const cleanUpIndexes = async () => {
+  try {
+    const collection = mongoose.connection.collection('liveclasses');
+    // Get all indexes
+    const indexes = await collection.indexes();
+    
+    // Look for the problematic liveID index
+    const liveIdIndex = indexes.find(index => index.name === 'liveID_1');
+    if (liveIdIndex) {
+      console.log('Found problematic liveID index, removing it...');
+      await collection.dropIndex('liveID_1');
+      console.log('Successfully removed liveID index');
+    }
+  } catch (error) {
+    // Index might not exist, which is fine
+    console.log('Index cleanup completed or no problematic indexes found');
+  }
+};
+
+// Clean up indexes when the model is first loaded
+cleanUpIndexes().catch(console.error);
+
+module.exports = mongoose.model('LiveClass', liveClassSchema);

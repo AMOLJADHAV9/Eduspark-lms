@@ -462,9 +462,21 @@ exports.createTeacherLiveClass = async (req, res) => {
       zegoRoomId
     });
 
+    // Create notifications for enrolled students
+    try {
+      const notificationTitle = `New Live Class: ${title}`;
+      const notificationMessage = `A new live class "${title}" has been scheduled for ${scheduledAt.toLocaleDateString()} at ${scheduledAt.toLocaleTimeString()}. Join us for an interactive learning session!`;
+      
+      await createLiveClassNotification(liveClass._id, notificationTitle, notificationMessage);
+    } catch (notificationError) {
+      console.error('Failed to create notifications:', notificationError);
+      // Don't fail the live class creation if notifications fail
+    }
+
     await liveClass.populate('course', 'title');
     res.status(201).json(liveClass);
   } catch (error) {
+    console.error('Error creating live class:', error);
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };

@@ -27,7 +27,12 @@ import {
   Textarea,
   Select,
   Icon,
-  Divider
+  Divider,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
+  NumberIncrementStepper,
+  NumberDecrementStepper
 } from '@chakra-ui/react';
 import {
   FaVideo,
@@ -151,9 +156,12 @@ const TeacherLiveClasses = () => {
       });
 
       if (!res.ok) {
-        throw new Error('Failed to save live class');
+        const errorData = await res.json();
+        throw new Error(errorData.message || 'Failed to save live class');
       }
 
+      const result = await res.json();
+      
       toast({
         title: 'Success',
         description: `Live class ${selectedClass ? 'updated' : 'created'} successfully`,
@@ -172,13 +180,17 @@ const TeacherLiveClasses = () => {
         maxStudents: '',
         streamingPlatform: 'youtube',
         youtubeStreamUrl: '',
-        zegoRoomId: ''
+        zegoRoomId: '',
+        meetingUrl: ''
       });
       fetchLiveClasses();
+      
+      return result;
     } catch (error) {
+      console.error('Error saving live class:', error);
       toast({
         title: 'Error',
-        description: error.message,
+        description: error.message || 'Failed to save live class',
         status: 'error'
       });
     }
@@ -189,11 +201,11 @@ const TeacherLiveClasses = () => {
     setFormData({
       title: liveClass.title,
       description: liveClass.description,
-      courseId: liveClass.courseId,
-      scheduledDate: liveClass.scheduledDate?.split('T')[0] || '',
-      scheduledTime: liveClass.scheduledTime || '',
+      courseId: liveClass.course._id || liveClass.courseId,
+      scheduledDate: liveClass.scheduledAt ? new Date(liveClass.scheduledAt).toISOString().split('T')[0] : '',
+      scheduledTime: liveClass.scheduledAt ? new Date(liveClass.scheduledAt).toTimeString().slice(0, 5) : '',
       duration: liveClass.duration,
-      maxStudents: liveClass.maxStudents,
+      maxStudents: liveClass.maxParticipants || liveClass.maxStudents,
       streamingPlatform: liveClass.streamingPlatform || 'youtube',
       youtubeStreamUrl: liveClass.youtubeStreamUrl || '',
       zegoRoomId: liveClass.zegoRoomId || '',
@@ -214,7 +226,8 @@ const TeacherLiveClasses = () => {
       });
 
       if (!res.ok) {
-        throw new Error('Failed to delete live class');
+        const errorData = await res.json();
+        throw new Error(errorData.message || 'Failed to delete live class');
       }
 
       toast({
@@ -225,9 +238,10 @@ const TeacherLiveClasses = () => {
 
       fetchLiveClasses();
     } catch (error) {
+      console.error('Error deleting live class:', error);
       toast({
         title: 'Error',
-        description: error.message,
+        description: error.message || 'Failed to delete live class',
         status: 'error'
       });
     }
@@ -245,7 +259,8 @@ const TeacherLiveClasses = () => {
       });
 
       if (!res.ok) {
-        throw new Error('Failed to start live stream');
+        const errorData = await res.json();
+        throw new Error(errorData.message || 'Failed to start live stream');
       }
 
       toast({
@@ -259,9 +274,10 @@ const TeacherLiveClasses = () => {
       // Refresh the live classes list
       fetchLiveClasses();
     } catch (error) {
+      console.error('Error starting live stream:', error);
       toast({
         title: 'Error',
-        description: error.message,
+        description: error.message || 'Failed to start live stream',
         status: 'error'
       });
     }
@@ -275,7 +291,8 @@ const TeacherLiveClasses = () => {
       });
 
       if (!res.ok) {
-        throw new Error('Failed to end live stream');
+        const errorData = await res.json();
+        throw new Error(errorData.message || 'Failed to end live stream');
       }
 
       toast({
@@ -289,47 +306,38 @@ const TeacherLiveClasses = () => {
       // Refresh the live classes list
       fetchLiveClasses();
     } catch (error) {
+      console.error('Error ending live stream:', error);
       toast({
         title: 'Error',
-        description: error.message,
+        description: error.message || 'Failed to end live stream',
         status: 'error'
       });
     }
   };
 
   const getCourseName = (courseId) => {
-    // Handle case where courseId might be an object
-    const actualCourseId = typeof courseId === 'object' ? courseId._id : courseId;
-    const course = courses.find(c => c._id === actualCourseId);
+    const course = courses.find(c => c._id === courseId);
     return course ? course.title : 'Unknown Course';
   };
 
   const getStatusColor = (status) => {
-    // Handle case where status might be an object
-    const actualStatus = typeof status === 'object' && status !== null ? status.toString() : status;
-    
-    switch (actualStatus) {
+    switch (status) {
       case 'scheduled': return 'blue';
       case 'live': return 'green';
-      case 'completed': return 'gray';
+      case 'ended': return 'gray';
       case 'cancelled': return 'red';
       default: return 'gray';
     }
   };
 
-  const formatDateTime = (date, time) => {
+  const formatDateTime = (date) => {
     if (!date) return 'Not scheduled';
     
-    // Handle case where date might be an object
-    const actualDate = typeof date === 'object' && date !== null ? date.toString() : date;
-    const actualTime = typeof time === 'object' && time !== null ? time.toString() : time;
-    
     try {
-      const dateObj = new Date(actualDate);
+      const dateObj = new Date(date);
       if (isNaN(dateObj.getTime())) return 'Invalid date';
       
-      const formattedDate = dateObj.toLocaleDateString();
-      return actualTime ? `${formattedDate} at ${actualTime}` : formattedDate;
+      return dateObj.toLocaleString();
     } catch (error) {
       return 'Invalid date';
     }
@@ -379,7 +387,23 @@ const TeacherLiveClasses = () => {
                 <Button
                   colorScheme="green"
                   leftIcon={<FaPlus />}
-                  onClick={() => setIsModalOpen(true)}
+                  onClick={() => {
+                    setSelectedClass(null);
+                    setFormData({
+                      title: '',
+                      description: '',
+                      courseId: '',
+                      scheduledDate: '',
+                      scheduledTime: '',
+                      duration: '',
+                      maxStudents: '',
+                      streamingPlatform: 'youtube',
+                      youtubeStreamUrl: '',
+                      zegoRoomId: '',
+                      meetingUrl: ''
+                    });
+                    setIsModalOpen(true);
+                  }}
                   _hover={{ transform: 'translateY(-2px)', boxShadow: '0 4px 12px rgba(34, 197, 94, 0.4)' }}
                   transition="all 0.2s ease"
                   size={{ base: "md", md: "lg" }}
@@ -419,7 +443,23 @@ const TeacherLiveClasses = () => {
                   <Button
                     colorScheme="green"
                     leftIcon={<FaPlus />}
-                    onClick={() => setIsModalOpen(true)}
+                    onClick={() => {
+                      setSelectedClass(null);
+                      setFormData({
+                        title: '',
+                        description: '',
+                        courseId: '',
+                        scheduledDate: '',
+                        scheduledTime: '',
+                        duration: '',
+                        maxStudents: '',
+                        streamingPlatform: 'youtube',
+                        youtubeStreamUrl: '',
+                        zegoRoomId: '',
+                        meetingUrl: ''
+                      });
+                      setIsModalOpen(true);
+                    }}
                     _hover={{ transform: 'translateY(-2px)', boxShadow: '0 4px 12px rgba(34, 197, 94, 0.4)' }}
                     transition="all 0.2s ease"
                   >
@@ -445,36 +485,36 @@ const TeacherLiveClasses = () => {
                         <HStack justify="space-between" w="full">
                           <Icon as={FaVideo} color="teal.300" boxSize={6} />
                           <Badge colorScheme={getStatusColor(liveClass.status)} variant="solid">
-                            {typeof liveClass.status === 'string' ? liveClass.status : 'unknown'}
+                            {liveClass.status}
                           </Badge>
                         </HStack>
                         <VStack align="start" spacing={1}>
-                          <Heading size="md" color="white">
+                          <Heading size="md" color="gray.800">
                             {liveClass.title || 'Untitled Class'}
                           </Heading>
-                          <Text color="gray.300" fontSize="sm">
-                            {getCourseName(liveClass.courseId)}
+                          <Text color="gray.600" fontSize="sm">
+                            {getCourseName(liveClass.course._id || liveClass.courseId)}
                           </Text>
-                          <Text color="gray.400" fontSize="xs">
-                            {formatDateTime(liveClass.scheduledDate, liveClass.scheduledTime)}
+                          <Text color="gray.500" fontSize="xs">
+                            {formatDateTime(liveClass.scheduledAt)}
                           </Text>
                         </VStack>
                       </VStack>
                     </CardHeader>
                     <CardBody>
                       <VStack spacing={4} align="stretch">
-                        <Text color="gray.200" fontSize="sm" noOfLines={3}>
-                          {typeof liveClass.description === 'string' ? liveClass.description : 'No description available'}
+                        <Text color="gray.600" fontSize="sm" noOfLines={3}>
+                          {liveClass.description || 'No description available'}
                         </Text>
                         
-                        <HStack justify="space-between" fontSize="sm" color="gray.400">
+                        <HStack justify="space-between" fontSize="sm" color="gray.500">
                           <HStack spacing={1}>
                             <Icon as={FaClock} boxSize={3} />
-                            <Text>{typeof liveClass.duration === 'number' ? liveClass.duration : 0} min</Text>
+                            <Text>{liveClass.duration} min</Text>
                           </HStack>
                           <HStack spacing={1}>
                             <Icon as={FaUsers} boxSize={3} />
-                            <Text>{typeof liveClass.enrolledStudents === 'number' ? liveClass.enrolledStudents : 0}/{typeof liveClass.maxStudents === 'number' ? liveClass.maxStudents : 0} students</Text>
+                            <Text>{liveClass.enrolledStudents?.length || 0}/{liveClass.maxParticipants || liveClass.maxStudents} students</Text>
                           </HStack>
                         </HStack>
                         
@@ -576,7 +616,7 @@ const TeacherLiveClasses = () => {
                 </FormControl>
 
                 <FormControl isRequired>
-                  <FormLabel>Course</FormLabel>
+                  <FormLabel>Select Course</FormLabel>
                   <Select
                     value={formData.courseId}
                     onChange={(e) => setFormData({ ...formData, courseId: e.target.value })}
@@ -588,147 +628,116 @@ const TeacherLiveClasses = () => {
                       </option>
                     ))}
                   </Select>
-                  {formData.courseId && (
-                    <Text fontSize="sm" color="gray.500" mt={2}>
-                      {(() => {
-                        const selectedCourse = courses.find(c => c._id === formData.courseId);
-                        return selectedCourse 
-                          ? `${selectedCourse.enrollmentCount || 0} students have purchased this course and will be notified about this live class.`
-                          : '';
-                      })()}
-                    </Text>
-                  )}
                 </FormControl>
+
+                <HStack spacing={4}>
+                  <FormControl isRequired>
+                    <FormLabel>Date</FormLabel>
+                    <Input
+                      type="date"
+                      value={formData.scheduledDate}
+                      onChange={(e) => setFormData({ ...formData, scheduledDate: e.target.value })}
+                    />
+                  </FormControl>
+
+                  <FormControl isRequired>
+                    <FormLabel>Time</FormLabel>
+                    <Input
+                      type="time"
+                      value={formData.scheduledTime}
+                      onChange={(e) => setFormData({ ...formData, scheduledTime: e.target.value })}
+                    />
+                  </FormControl>
+                </HStack>
+
+                <HStack spacing={4}>
+                  <FormControl isRequired>
+                    <FormLabel>Duration (minutes)</FormLabel>
+                    <NumberInput
+                      value={formData.duration}
+                      onChange={(value) => setFormData({ ...formData, duration: value })}
+                      min={1}
+                    >
+                      <NumberInputField />
+                      <NumberInputStepper>
+                        <NumberIncrementStepper />
+                        <NumberDecrementStepper />
+                      </NumberInputStepper>
+                    </NumberInput>
+                  </FormControl>
+
+                  <FormControl isRequired>
+                    <FormLabel>Student Limit</FormLabel>
+                    <NumberInput
+                      value={formData.maxStudents}
+                      onChange={(value) => setFormData({ ...formData, maxStudents: value })}
+                      min={1}
+                    >
+                      <NumberInputField />
+                      <NumberInputStepper>
+                        <NumberIncrementStepper />
+                        <NumberDecrementStepper />
+                      </NumberInputStepper>
+                    </NumberInput>
+                  </FormControl>
+                </HStack>
 
                 <FormControl isRequired>
-                  <FormLabel>Date</FormLabel>
-                  <Input
-                    type="date"
-                    value={formData.scheduledDate}
-                    onChange={(e) => setFormData({ ...formData, scheduledDate: e.target.value })}
-                  />
-                </FormControl>
-
-                <FormControl isRequired>
-                  <FormLabel>Time</FormLabel>
-                  <Input
-                    type="time"
-                    value={formData.scheduledTime}
-                    onChange={(e) => setFormData({ ...formData, scheduledTime: e.target.value })}
-                  />
-                </FormControl>
-
-                <FormControl isRequired>
-                  <FormLabel>Duration (minutes)</FormLabel>
-                  <Input
-                    type="number"
-                    value={formData.duration}
-                    onChange={(e) => setFormData({ ...formData, duration: e.target.value })}
-                    placeholder="Enter duration in minutes"
-                  />
-                </FormControl>
-
-                <FormControl isRequired>
-                  <FormLabel>Maximum Students</FormLabel>
-                  <Input
-                    type="number"
-                    value={formData.maxStudents}
-                    onChange={(e) => setFormData({ ...formData, maxStudents: e.target.value })}
-                    placeholder="Enter maximum number of students"
-                  />
-                </FormControl>
-
-                <FormControl>
                   <FormLabel>Streaming Platform</FormLabel>
                   <Select
                     value={formData.streamingPlatform}
                     onChange={(e) => setFormData({ ...formData, streamingPlatform: e.target.value })}
-                    placeholder="Select streaming platform"
                   >
-                    <option value="youtube">YouTube</option>
+                    <option value="youtube">YouTube Streaming</option>
                     <option value="google_meet">Google Meet</option>
-                    <option value="custom">Custom URL</option>
-                    <option value="zego">ZEGOCLOUD</option>
-                    {/* Add other platforms here as needed */}
+                    <option value="custom">Custom Link</option>
                   </Select>
                 </FormControl>
 
                 {formData.streamingPlatform === 'youtube' && (
-                  <>
-                    <FormControl>
-                      <FormLabel>YouTube Stream URL</FormLabel>
-                      <Input
-                        value={formData.youtubeStreamUrl}
-                        onChange={(e) => setFormData({ ...formData, youtubeStreamUrl: e.target.value })}
-                        placeholder="https://www.youtube.com/watch?v=YOUR_STREAM_KEY"
-                      />
-                      <Text fontSize="xs" color="gray.500" mt={1}>
-                        Paste the YouTube live stream URL here. This is the URL you get when you start a live stream on YouTube.
-                      </Text>
-                    </FormControl>
-                    
-                    <Box p={4} bg="blue.50" borderRadius="md" border="1px" borderColor="blue.200">
-                      <Text fontSize="sm" fontWeight="semibold" color="blue.800" mb={2}>
-                        How to get your YouTube Stream URL:
-                      </Text>
-                      <VStack align="start" spacing={1} fontSize="xs" color="blue.700">
-                        <Text>1. Go to YouTube Studio</Text>
-                        <Text>2. Click "Go Live" or "Create" → "Go Live"</Text>
-                        <Text>3. Set up your stream details</Text>
-                        <Text>4. Copy the stream URL (looks like: https://www.youtube.com/watch?v=STREAM_KEY)</Text>
-                        <Text>5. Paste it in the field above</Text>
-                      </VStack>
-                    </Box>
-                    
-                    <Box p={4} bg="green.50" borderRadius="md" border="1px" borderColor="green.200">
-                      <Text fontSize="sm" fontWeight="semibold" color="green.800" mb={2}>
-                        How to start your live class:
-                      </Text>
-                      <VStack align="start" spacing={1} fontSize="xs" color="green.700">
-                        <Text>1. Start your YouTube live stream first</Text>
-                        <Text>2. Copy the public YouTube URL</Text>
-                        <Text>3. Paste it in the field above</Text>
-                        <Text>4. Save the live class</Text>
-                        <Text>5. Click "Start Live" button when ready to let students join</Text>
-                      </VStack>
-                    </Box>
-                  </>
+                  <FormControl isRequired>
+                    <FormLabel>YouTube Stream URL</FormLabel>
+                    <Input
+                      value={formData.youtubeStreamUrl}
+                      onChange={(e) => setFormData({ ...formData, youtubeStreamUrl: e.target.value })}
+                      placeholder="https://www.youtube.com/watch?v=YOUR_STREAM_KEY"
+                    />
+                    <Text fontSize="xs" color="gray.500" mt={1}>
+                      Paste the YouTube live stream URL here
+                    </Text>
+                  </FormControl>
                 )}
 
-                {formData.streamingPlatform === 'zego' && (
-                  <>
-                    <FormControl>
-                      <FormLabel>Zego Room ID</FormLabel>
-                      <Input
-                        value={formData.zegoRoomId}
-                        onChange={(e) => setFormData({ ...formData, zegoRoomId: e.target.value })}
-                        placeholder="Enter a unique room ID (e.g., course123-lecture1)"
-                      />
-                      <Text fontSize="xs" color="gray.500" mt={1}>
-                        Students will join this room using embedded video. Token is generated securely on the server.
-                      </Text>
-                    </FormControl>
-                  </>
+                {formData.streamingPlatform === 'google_meet' && (
+                  <FormControl isRequired>
+                    <FormLabel>Google Meet Link</FormLabel>
+                    <Input
+                      value={formData.meetingUrl}
+                      onChange={(e) => setFormData({ ...formData, meetingUrl: e.target.value })}
+                      placeholder="https://meet.google.com/abc-defg-hij"
+                    />
+                    <Text fontSize="xs" color="gray.500" mt={1}>
+                      Paste the full Google Meet URL students should join
+                    </Text>
+                  </FormControl>
                 )}
 
-                {(formData.streamingPlatform === 'google_meet' || formData.streamingPlatform === 'custom') && (
-                  <>
-                    <FormControl isRequired>
-                      <FormLabel>{formData.streamingPlatform === 'google_meet' ? 'Google Meet Link' : 'Meeting URL'}</FormLabel>
-                      <Input
-                        value={formData.meetingUrl}
-                        onChange={(e) => setFormData({ ...formData, meetingUrl: e.target.value })}
-                        placeholder={formData.streamingPlatform === 'google_meet' ? 'https://meet.google.com/abc-defg-hij' : 'https://your-stream-url.com/session'}
-                      />
-                      <Text fontSize="xs" color="gray.500" mt={1}>
-                        Paste the full meeting URL students should join.
-                      </Text>
-                    </FormControl>
-                  </>
+                {formData.streamingPlatform === 'custom' && (
+                  <FormControl isRequired>
+                    <FormLabel>Custom Meeting Link</FormLabel>
+                    <Input
+                      value={formData.meetingUrl}
+                      onChange={(e) => setFormData({ ...formData, meetingUrl: e.target.value })}
+                      placeholder="https://your-stream-url.com/session"
+                    />
+                    <Text fontSize="xs" color="gray.500" mt={1}>
+                      Paste the full meeting URL students should join
+                    </Text>
+                  </FormControl>
                 )}
 
                 <FormControl>
-                  <FormLabel>Description</FormLabel>
+                  <FormLabel>Course Lecture Description</FormLabel>
                   <Textarea
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
@@ -770,4 +779,4 @@ const TeacherLiveClasses = () => {
   );
 };
 
-export default TeacherLiveClasses; 
+export default TeacherLiveClasses;
